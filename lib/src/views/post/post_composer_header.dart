@@ -7,10 +7,15 @@ class PostComposerHeader extends StatelessWidget {
   final LMTextView title;
   final Function onTap;
   final Function? onPressedBack;
+  final LMTextView? actionText;
 
-  const PostComposerHeader(
-      {Key? key, required this.title, this.onPressedBack, required this.onTap})
-      : super(key: key);
+  const PostComposerHeader({
+    Key? key,
+    required this.title,
+    this.onPressedBack,
+    required this.onTap,
+    this.actionText,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +57,11 @@ class PostComposerHeader extends StatelessWidget {
             LMTextButton(
               padding:
                   const EdgeInsets.symmetric(horizontal: 24, vertical: 4.0),
-              text: LMTextView(
-                text: "Post",
-                textStyle: theme.textTheme.bodyMedium,
-              ),
+              text: actionText ??
+                  LMTextView(
+                    text: "Post",
+                    textStyle: theme.textTheme.bodyMedium,
+                  ),
               borderRadius: 6,
               backgroundColor: Theme.of(context).primaryColor,
               onTap: () => onTap(),

@@ -123,26 +123,29 @@ class _LMFeedState extends State<LMFeed> {
   @override
   Widget build(BuildContext context) {
     Size screeSize = MediaQuery.of(context).size;
+
     return InternetWidget(
       offline: FullScreenWidget(
         child: Container(
           width: screeSize.width,
-          color: Colors.white,
+          color: ColorTheme.backgroundColor,
           child: const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Icon(
                 Icons.signal_wifi_off,
                 size: 40,
-                color: kPrimaryColor,
+                color: ColorTheme.primaryColor,
               ),
               kVerticalPaddingLarge,
-              Text("No internet\nCheck your connection and try again",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: kPrimaryColor,
-                    fontSize: 14,
-                  )),
+              Text(
+                "No internet\nCheck your connection and try again",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: ColorTheme.primaryColor,
+                  fontSize: 14,
+                ),
+              ),
             ],
           ),
         ),

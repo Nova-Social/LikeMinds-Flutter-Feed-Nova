@@ -114,9 +114,10 @@ class _TaggingAheadTextFieldState extends State<TaggingAheadTextField> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6.0),
+    ThemeData theme = Theme.of(context);
+    return SizedBox(
       child: TypeAheadField<UserTag>(
+        tagColor: theme.colorScheme.primary,
         onTagTap: (p) {},
         suggestionsBoxController: _suggestionsBoxController,
         suggestionsBoxDecoration: SuggestionsBoxDecoration(
@@ -162,9 +163,9 @@ class _TaggingAheadTextFieldState extends State<TaggingAheadTextField> {
         keepSuggestionsOnSuggestionSelected: true,
         itemBuilder: (context, opt) {
           return Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              border: Border(
+            decoration: BoxDecoration(
+              color: theme.colorScheme.background,
+              border: const Border(
                 bottom: BorderSide(
                   color: kGrey3Color,
                   width: 0.5,
@@ -184,15 +185,13 @@ class _TaggingAheadTextFieldState extends State<TaggingAheadTextField> {
                         fallbackText: opt.name!,
                         imageUrl: opt.imageUrl!,
                         onTap: null,
-                        size: 32,
+                        size: 40,
                       ),
                     ),
                     const SizedBox(width: 12),
                     LMTextView(
                       text: opt.name!,
-                      textStyle: const TextStyle(
-                        fontSize: 14,
-                      ),
+                      textStyle: theme.textTheme.titleMedium,
                     ),
                   ],
                 ),
