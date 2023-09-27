@@ -10,10 +10,12 @@ class TopicBottomSheet extends StatefulWidget {
   final List<TopicUI> selectedTopics;
   final Function(List<TopicUI>, TopicUI) onTopicSelected;
   final bool? isEnabled;
+  final Color? backgroundColor;
   const TopicBottomSheet({
     Key? key,
     required this.selectedTopics,
     required this.onTopicSelected,
+    this.backgroundColor,
     this.isEnabled,
   }) : super(key: key);
 
@@ -109,7 +111,7 @@ class _TopicBottomSheetState extends State<TopicBottomSheet> {
         maxHeight: 300,
         minHeight: screenSize.height * 0.2,
       ),
-      color: theme.colorScheme.background,
+      color: widget.backgroundColor ?? theme.colorScheme.background,
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Column(
         children: [
@@ -214,7 +216,9 @@ class _TopicBottomSheetState extends State<TopicBottomSheet> {
                                               ),
                                               backgroundColor: isTopicSelected
                                                   ? theme.colorScheme.primary
-                                                  : null,
+                                                  : widget.backgroundColor ??
+                                                      theme.colorScheme
+                                                          .background,
                                               onDeleted: null,
                                               clipBehavior: Clip.hardEdge,
                                               materialTapTargetSize:

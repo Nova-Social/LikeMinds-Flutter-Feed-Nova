@@ -16,9 +16,13 @@ import 'package:likeminds_feed_nova_fl/src/models/post_view_model.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/ui_constants.dart';
+import 'package:likeminds_feed_nova_fl/src/utils/post/post_action_id.dart';
+import 'package:likeminds_feed_nova_fl/src/utils/post/post_utils.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/utils.dart';
+import 'package:likeminds_feed_nova_fl/src/views/post/edit_post_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post/new_post_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post_detail_screen.dart';
+import 'package:likeminds_feed_nova_fl/src/widgets/delete_dialog.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/post/post_something.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/post/post_widget.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/topic/topic_bottom_sheet.dart';
@@ -37,6 +41,7 @@ class UniversalFeedScreen extends StatefulWidget {
 }
 
 class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
+  ThemeData? theme;
   /* 
   * defines the height of topic feed bar
   * initialy set to 0, after fetching the topics
@@ -202,7 +207,7 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
       elevation: 5,
       isDismissible: true,
       useRootNavigator: true,
-      backgroundColor: kWhiteColor,
+      backgroundColor: Colors.transparent,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(28.0),
@@ -213,6 +218,7 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
       clipBehavior: Clip.hardEdge,
       builder: (context) => TopicBottomSheet(
         key: GlobalKey(),
+        backgroundColor: theme!.colorScheme.surface,
         selectedTopics: selectedTopics,
         onTopicSelected: (updatedTopics, tappedTopic) {
           updateSelectedTopics(updatedTopics);
@@ -224,7 +230,7 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    ThemeData theme = Theme.of(context);
+    theme = Theme.of(context);
     return Scaffold(
       backgroundColor: ColorTheme.backgroundColor,
       appBar: AppBar(
@@ -307,7 +313,7 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
                                             showBorder: true,
                                             borderColor: appSecondaryBlack,
                                             textStyle:
-                                                theme.textTheme.bodyLarge,
+                                                theme!.textTheme.bodyLarge,
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 12.0,
                                                 vertical: 4.0),
@@ -315,7 +321,7 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
                                               type: LMIconType.icon,
                                               icon: CupertinoIcons.chevron_down,
                                               size: 16,
-                                              color: theme.colorScheme
+                                              color: theme!.colorScheme
                                                   .onPrimaryContainer,
                                             ),
                                           )
@@ -333,9 +339,9 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
                                                 showBorder: false,
                                                 height: 30,
                                                 backgroundColor:
-                                                    theme.colorScheme.primary,
+                                                    theme!.colorScheme.primary,
                                                 textStyle:
-                                                    theme.textTheme.bodyLarge,
+                                                    theme!.textTheme.bodyLarge,
                                                 padding:
                                                     const EdgeInsets.symmetric(
                                                         horizontal: 12.0,
@@ -345,7 +351,7 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
                                                   icon: CupertinoIcons
                                                       .chevron_down,
                                                   size: 16,
-                                                  color: theme.colorScheme
+                                                  color: theme!.colorScheme
                                                       .onPrimaryContainer,
                                                 ),
                                               )
@@ -359,9 +365,9 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
                                                 showBorder: false,
                                                 height: 30,
                                                 backgroundColor:
-                                                    theme.colorScheme.primary,
+                                                    theme!.colorScheme.primary,
                                                 textStyle:
-                                                    theme.textTheme.bodyLarge,
+                                                    theme!.textTheme.bodyLarge,
                                                 padding:
                                                     const EdgeInsets.symmetric(
                                                         horizontal: 12.0,
@@ -387,11 +393,11 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
                                                         text: selectedTopics
                                                             .length
                                                             .toString(),
-                                                        textStyle: theme
+                                                        textStyle: theme!
                                                             .textTheme
                                                             .bodySmall!
                                                             .copyWith(
-                                                          color: theme
+                                                          color: theme!
                                                               .colorScheme
                                                               .primary,
                                                         ),
@@ -403,7 +409,7 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
                                                       icon: CupertinoIcons
                                                           .chevron_down,
                                                       size: 16,
-                                                      color: theme.colorScheme
+                                                      color: theme!.colorScheme
                                                           .onPrimaryContainer,
                                                     ),
                                                   ],
@@ -578,7 +584,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
     NewPostBloc newPostBloc = BlocProvider.of<NewPostBloc>(context);
     ThemeData theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: theme.colorScheme.onBackground,
+      backgroundColor: theme!.colorScheme.onBackground,
       body: Column(
         children: [
           BlocConsumer<NewPostBloc, NewPostState>(
@@ -836,8 +842,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                     width: 153,
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 12, horizontal: 20),
-                                    backgroundColor:
-                                        Theme.of(context).colorScheme.primary,
+                                    backgroundColor: theme.colorScheme.primary,
                                     text: LMTextView(
                                       text: "Create Post",
                                       textStyle: theme.textTheme.bodyMedium,
@@ -847,9 +852,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                       type: LMIconType.icon,
                                       icon: Icons.add,
                                       size: 18,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primaryContainer,
+                                      color: theme.colorScheme.primaryContainer,
                                     ),
                                     onTap: right
                                         ? () {
@@ -891,15 +894,101 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                   post: item,
                                   topics: widget.feedResponse.topics,
                                   user: widget.feedResponse.users[item.userId]!,
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
+                                  onMenuTap: (int id) {
+                                    if (id == postDeleteId) {
+                                      showDialog(
+                                          context: context,
+                                          builder: (childContext) =>
+                                              deleteConfirmationDialog(
+                                                childContext,
+                                                title: 'Delete Post',
+                                                userId: item.userId,
+                                                content:
+                                                    'Are you sure you want to delete this post. This action can not be reversed.',
+                                                action: (String reason) async {
+                                                  Navigator.of(childContext)
+                                                      .pop();
+                                                  final res = await locator<
+                                                          LikeMindsService>()
+                                                      .getMemberState();
+                                                  //Implement delete post analytics tracking
+                                                  LMAnalytics.get().track(
+                                                    AnalyticsKeys.postDeleted,
+                                                    {
+                                                      "user_state":
+                                                          res.state == 1
+                                                              ? "CM"
+                                                              : "member",
+                                                      "post_id": item.id,
+                                                      "user_id": item.userId,
+                                                    },
+                                                  );
+                                                  newPostBloc.add(
+                                                    DeletePost(
+                                                      postId: item.id,
+                                                      reason:
+                                                          reason ?? 'Self Post',
+                                                    ),
+                                                  );
+                                                },
+                                                actionText: 'Delete',
+                                              ));
+                                    } else if (id == postPinId ||
+                                        id == postUnpinId) {
+                                      String? postType = getPostType(item
+                                              .attachments
+                                              ?.first
+                                              .attachmentType ??
+                                          0);
+                                      if (item.isPinned) {
+                                        LMAnalytics.get()
+                                            .track(AnalyticsKeys.postUnpinned, {
+                                          "created_by_id": item.userId,
+                                          "post_id": item.id,
+                                          "post_type": postType,
+                                        });
+                                      } else {
+                                        LMAnalytics.get()
+                                            .track(AnalyticsKeys.postPinned, {
+                                          "created_by_id": item.userId,
+                                          "post_id": item.id,
+                                          "post_type": postType,
+                                        });
+                                      }
+                                      newPostBloc.add(TogglePinPost(
+                                          postId: item.id,
+                                          isPinned: !item.isPinned));
+                                    } else if (id == postEditId) {
+                                      String? postType;
+                                      postType = getPostType(item.attachments
+                                              ?.first.attachmentType ??
+                                          0);
+                                      LMAnalytics.get().track(
+                                        AnalyticsKeys.postEdited,
+                                        {
+                                          "created_by_id": item.userId,
+                                          "post_id": item.id,
+                                          "post_type": postType,
+                                        },
+                                      );
+                                      Navigator.of(context).push(
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              PostDetailScreen(
+                                          builder: (context) => EditPostScreen(
                                             postId: item.id,
                                           ),
-                                        ));
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => PostDetailScreen(
+                                          postId: item.id,
+                                        ),
+                                      ),
+                                    );
                                   },
                                   isFeed: true,
                                   refresh: (bool isDeleted) async {
@@ -945,13 +1034,12 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                   padding:
                       const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                   borderRadius: 28,
-                  backgroundColor: right
-                      ? Theme.of(context).colorScheme.primary
-                      : kGrey3Color,
+                  backgroundColor:
+                      right ? theme.colorScheme.primary : kGrey3Color,
                   placement: LMIconPlacement.end,
                   text: LMTextView(
                     text: "Create Post",
-                    textStyle: theme.textTheme.bodyMedium,
+                    textStyle: theme!.textTheme.bodyMedium,
                   ),
                   margin: 5,
                   icon: LMIcon(
@@ -959,7 +1047,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                     icon: Icons.add,
                     fit: BoxFit.cover,
                     size: 18,
-                    color: Theme.of(context).colorScheme.primaryContainer,
+                    color: theme.colorScheme.primaryContainer,
                   ),
                   onTap: right
                       ? () {

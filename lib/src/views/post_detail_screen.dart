@@ -15,7 +15,9 @@ import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart
 import 'package:likeminds_feed_nova_fl/src/utils/constants/ui_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/local_preference/user_local_preference.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_action_id.dart';
+import 'package:likeminds_feed_nova_fl/src/utils/post/post_utils.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/tagging/tagging_textfield_ta.dart';
+import 'package:likeminds_feed_nova_fl/src/views/post/edit_post_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/delete_dialog.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/post/post_widget.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/reply/comment_reply.dart';
@@ -806,6 +808,110 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                               postDetailResponse!
                                                   .postReplies!.userId]!,
                                           onTap: () {},
+                                          onMenuTap: (int id) {
+                                            if (id == postDeleteId) {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (childContext) =>
+                                                      deleteConfirmationDialog(
+                                                        childContext,
+                                                        title: 'Delete Post',
+                                                        userId:
+                                                            postData!.userId,
+                                                        content:
+                                                            'Are you sure you want to delete this post. This action can not be reversed.',
+                                                        action: (String
+                                                            reason) async {
+                                                          Navigator.of(
+                                                                  childContext)
+                                                              .pop();
+                                                          final res = await locator<
+                                                                  LikeMindsService>()
+                                                              .getMemberState();
+                                                          //Implement delete post analytics tracking
+                                                          LMAnalytics.get()
+                                                              .track(
+                                                            AnalyticsKeys
+                                                                .postDeleted,
+                                                            {
+                                                              "user_state":
+                                                                  res.state == 1
+                                                                      ? "CM"
+                                                                      : "member",
+                                                              "post_id":
+                                                                  postData!.id,
+                                                              "user_id":
+                                                                  postData!
+                                                                      .userId,
+                                                            },
+                                                          );
+                                                          newPostBloc.add(
+                                                            DeletePost(
+                                                              postId:
+                                                                  postData!.id,
+                                                              reason: reason ??
+                                                                  'Self Post',
+                                                            ),
+                                                          );
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        actionText: 'Delete',
+                                                      ));
+                                            } else if (id == postPinId ||
+                                                id == postUnpinId) {
+                                              String? postType = getPostType(
+                                                  postData!.attachments?.first
+                                                          .attachmentType ??
+                                                      0);
+                                              if (postData!.isPinned) {
+                                                LMAnalytics.get().track(
+                                                    AnalyticsKeys.postUnpinned,
+                                                    {
+                                                      "created_by_id":
+                                                          postData!.userId,
+                                                      "post_id": postData!.id,
+                                                      "post_type": postType,
+                                                    });
+                                              } else {
+                                                LMAnalytics.get().track(
+                                                    AnalyticsKeys.postPinned, {
+                                                  "created_by_id":
+                                                      postData!.userId,
+                                                  "post_id": postData!.id,
+                                                  "post_type": postType,
+                                                });
+                                              }
+                                              newPostBloc.add(TogglePinPost(
+                                                  postId: postData!.id,
+                                                  isPinned:
+                                                      !postData!.isPinned));
+                                            } else if (id == postEditId) {
+                                              String? postType;
+                                              postType = getPostType(postData!
+                                                      .attachments
+                                                      ?.first
+                                                      .attachmentType ??
+                                                  0);
+                                              LMAnalytics.get().track(
+                                                AnalyticsKeys.postEdited,
+                                                {
+                                                  "created_by_id":
+                                                      postData!.userId,
+                                                  "post_id": postData!.id,
+                                                  "post_type": postType,
+                                                },
+                                              );
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      EditPostScreen(
+                                                    postId: postData!.id,
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          },
                                           isFeed: false,
                                           refresh: (bool isDeleted) async {},
                                         ),

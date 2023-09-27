@@ -222,6 +222,7 @@ class _FeedScreenState extends State<FeedScreen> {
                           post: item,
                           user: feedResponse.users[item.userId]!,
                           topics: feedResponse.topics,
+                          onMenuTap: (int id) {},
                           onTap: () {
                             Navigator.push(
                               context,

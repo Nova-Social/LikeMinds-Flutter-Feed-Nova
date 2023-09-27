@@ -258,6 +258,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
     newPostBloc = BlocProvider.of<NewPostBloc>(context);
     Size screenSize = MediaQuery.of(context).size;
     return WillPopScope(
@@ -291,7 +292,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         child: Scaffold(
-          backgroundColor: kWhiteColor,
+          backgroundColor: theme.colorScheme.background,
           floatingActionButton: Padding(
             padding: const EdgeInsets.only(bottom: 64.0, left: 16.0),
             child: Row(
@@ -329,25 +330,33 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                     horizontalMargin: 16.0,
                                     pressType: PressType.singleClick,
                                     menuBuilder: () => TopicPopUp(
-                                        selectedTopics: selectedTopic,
-                                        isEnabled: true,
-                                        onTopicSelected:
-                                            (updatedTopics, tappedTopic) {
-                                          if (selectedTopic.isEmpty) {
-                                            selectedTopic.add(tappedTopic);
+                                      selectedTopics: selectedTopic,
+                                      backgroundColor:
+                                          theme.colorScheme.surface,
+                                      selectedTextColor:
+                                          theme.colorScheme.primaryContainer,
+                                      unSelectedTextColor:
+                                          theme.colorScheme.primaryContainer,
+                                      selectedColor: theme.colorScheme.primary,
+                                      isEnabled: true,
+                                      onTopicSelected:
+                                          (updatedTopics, tappedTopic) {
+                                        if (selectedTopic.isEmpty) {
+                                          selectedTopic.add(tappedTopic);
+                                        } else {
+                                          if (selectedTopic.first.id ==
+                                              tappedTopic.id) {
+                                            selectedTopic.clear();
                                           } else {
-                                            if (selectedTopic.first.id ==
-                                                tappedTopic.id) {
-                                              selectedTopic.clear();
-                                            } else {
-                                              selectedTopic.clear();
-                                              selectedTopic.add(tappedTopic);
-                                            }
+                                            selectedTopic.clear();
+                                            selectedTopic.add(tappedTopic);
                                           }
-                                          _controllerPopUp.hideMenu();
-                                          rebuildTopicFloatingButton.value =
-                                              !rebuildTopicFloatingButton.value;
-                                        }),
+                                        }
+                                        _controllerPopUp.hideMenu();
+                                        rebuildTopicFloatingButton.value =
+                                            !rebuildTopicFloatingButton.value;
+                                      },
+                                    ),
                                     child: Container(
                                       height: 36,
                                       alignment: Alignment.bottomLeft,
@@ -355,11 +364,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                       decoration: BoxDecoration(
                                         borderRadius:
                                             BorderRadius.circular(500),
-                                        color: kWhiteColor,
-                                        border: Border.all(
-                                          color: kPrimaryColor,
-                                          width: 1,
-                                        ),
+                                        color: theme.colorScheme.primary,
                                       ),
                                       child: LMTopicChip(
                                         topic: selectedTopic.isEmpty
@@ -369,13 +374,12 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                                   ..name("Topic"))
                                                 .build()
                                             : selectedTopic.first,
-                                        textStyle: const TextStyle(
-                                            color: kPrimaryColor),
-                                        icon: const LMIcon(
+                                        textStyle: theme.textTheme.bodyMedium,
+                                        icon: LMIcon(
                                           type: LMIconType.icon,
                                           icon: CupertinoIcons.chevron_down,
                                           size: 16,
-                                          color: kPrimaryColor,
+                                          color: theme.colorScheme.onPrimary,
                                         ),
                                       ),
                                     ),
@@ -407,13 +411,13 @@ class _NewPostScreenState extends State<NewPostScreen> {
                     ),
                     child: Column(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 4.0),
-                              child: LMProfilePicture(
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              LMProfilePicture(
                                 fallbackText: user.name,
                                 imageUrl: user.imageUrl,
                                 onTap: () {
@@ -422,24 +426,41 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                         user.sdkClientInfo!.userUniqueId);
                                   }
                                 },
-                                size: 36,
+                                size: 48,
                               ),
-                            ),
-                            kHorizontalPaddingMedium,
+                              kHorizontalPaddingLarge,
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 6.0),
+                                  child: LMTextView(
+                                    text: user.name,
+                                    overflow: TextOverflow.ellipsis,
+                                    textStyle: theme.textTheme.titleMedium,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        kVerticalPaddingLarge,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Expanded(
                               child: Column(
                                 children: [
                                   Container(
-                                    decoration: const BoxDecoration(
-                                      color: kWhiteColor,
-                                    ),
+                                    decoration: const BoxDecoration(),
                                     constraints: BoxConstraints(
                                         maxHeight: screenSize.height * 0.8),
                                     child: TaggingAheadTextField(
                                       isDown: true,
                                       minLines: 3,
-                                      decoration: const InputDecoration(
+                                      decoration: InputDecoration(
                                         border: InputBorder.none,
+                                        hintText: 'What\'s on your mind?',
+                                        hintStyle: theme.textTheme.labelMedium,
                                       ),
                                       onTagSelected: (tag) {
                                         userTags.add(tag);
@@ -460,209 +481,219 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                     ),
                                   ValueListenableBuilder(
                                       valueListenable: rebuildLinkPreview,
-                                      builder: (context, value, child) =>
-                                          (postMedia.isEmpty &&
-                                                  linkModel != null &&
-                                                  showLinkPreview)
-                                              ? Stack(
-                                                  children: [
-                                                    LMLinkPreview(
-                                                      linkModel: linkModel,
-                                                      backgroundColor:
-                                                          kSecondary100,
-                                                      showLinkUrl: false,
-                                                      onTap: () {
-                                                        launchUrl(
-                                                          Uri.parse(linkModel
-                                                                  ?.ogTags
-                                                                  ?.url ??
-                                                              ''),
-                                                          mode: LaunchMode
-                                                              .externalApplication,
-                                                        );
-                                                      },
-                                                      border: Border.all(
-                                                        width: 1,
-                                                        color: kSecondary100,
-                                                      ),
-                                                      title: LMTextView(
-                                                        text: linkModel?.ogTags
-                                                                ?.title ??
-                                                            "--",
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        textStyle:
-                                                            const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color:
-                                                              kHeadingBlackColor,
-                                                          height: 1.30,
-                                                        ),
-                                                      ),
-                                                      subtitle: LMTextView(
-                                                        text: linkModel?.ogTags
-                                                                ?.description ??
-                                                            "--",
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        textStyle:
-                                                            const TextStyle(
-                                                          color:
-                                                              kHeadingBlackColor,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          height: 1.30,
-                                                        ),
+                                      builder: (context, value, child) {
+                                        return (postMedia.isEmpty &&
+                                                linkModel != null &&
+                                                showLinkPreview)
+                                            ? Stack(
+                                                children: [
+                                                  LMLinkPreview(
+                                                    linkModel: linkModel,
+                                                    backgroundColor:
+                                                        kSecondary100,
+                                                    showLinkUrl: false,
+                                                    onTap: () {
+                                                      launchUrl(
+                                                        Uri.parse(linkModel
+                                                                ?.ogTags?.url ??
+                                                            ''),
+                                                        mode: LaunchMode
+                                                            .externalApplication,
+                                                      );
+                                                    },
+                                                    border: Border.all(
+                                                      width: 1,
+                                                      color: kSecondary100,
+                                                    ),
+                                                    title: LMTextView(
+                                                      text: linkModel
+                                                              ?.ogTags?.title ??
+                                                          "--",
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      textStyle:
+                                                          const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color:
+                                                            kHeadingBlackColor,
+                                                        height: 1.30,
                                                       ),
                                                     ),
-                                                    Positioned(
-                                                      top: 5,
-                                                      right: 5,
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          showLinkPreview =
-                                                              false;
-                                                          rebuildLinkPreview
-                                                                  .value =
-                                                              !rebuildLinkPreview
-                                                                  .value;
-                                                        },
-                                                        child:
-                                                            const CloseButtonIcon(),
+                                                    subtitle: LMTextView(
+                                                      text: linkModel?.ogTags
+                                                              ?.description ??
+                                                          "--",
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      textStyle:
+                                                          const TextStyle(
+                                                        color:
+                                                            kHeadingBlackColor,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        height: 1.30,
                                                       ),
-                                                    )
-                                                  ],
-                                                )
-                                              : const SizedBox()),
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                    top: 5,
+                                                    right: 5,
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                        showLinkPreview = false;
+                                                        rebuildLinkPreview
+                                                                .value =
+                                                            !rebuildLinkPreview
+                                                                .value;
+                                                      },
+                                                      child:
+                                                          const CloseButtonIcon(),
+                                                    ),
+                                                  )
+                                                ],
+                                              )
+                                            : const SizedBox();
+                                      }),
                                   if (postMedia.isNotEmpty)
                                     postMedia.first.mediaType ==
                                             MediaType.document
                                         ? getPostDocument(screenSize.width)
-                                        : Container(
-                                            padding: const EdgeInsets.only(
-                                              top: kPaddingSmall,
-                                            ),
-                                            height: 200,
-                                            alignment: Alignment.center,
-                                            child: ListView.builder(
-                                              itemCount: postMedia.length,
-                                              scrollDirection: Axis.horizontal,
-                                              itemBuilder:
-                                                  (BuildContext context,
-                                                      int index) {
-                                                return Stack(children: [
-                                                  Row(
-                                                    children: [
-                                                      SizedBox(
-                                                        // height: 180,
-                                                        // width: postMedia[
-                                                        //                 index]
-                                                        //             .mediaType ==
-                                                        //         MediaType
-                                                        //             .video
-                                                        //     ? 200
-                                                        //     : 180,
-                                                        child: Stack(
-                                                          children: [
-                                                            postMedia[index]
-                                                                        .mediaType ==
-                                                                    MediaType
-                                                                        .video
-                                                                ? ClipRRect(
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .all(
-                                                                            Radius.circular(12)),
-                                                                    child:
-                                                                        Container(
-                                                                      height:
-                                                                          200,
-                                                                      width:
-                                                                          200,
-                                                                      color: Colors
-                                                                          .black,
+                                        : Builder(builder: (context) {
+                                            int mediaLength = postMedia.length;
+                                            return Container(
+                                              padding: const EdgeInsets.only(
+                                                top: kPaddingSmall,
+                                              ),
+                                              height: mediaLength == 1
+                                                  ? screenSize.width - 32
+                                                  : 200,
+                                              alignment: Alignment.center,
+                                              child: ListView.builder(
+                                                itemCount: mediaLength,
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemBuilder:
+                                                    (BuildContext context,
+                                                        int index) {
+                                                  return Stack(children: [
+                                                    Row(
+                                                      children: [
+                                                        SizedBox(
+                                                          child: Stack(
+                                                            children: [
+                                                              postMedia[index]
+                                                                          .mediaType ==
+                                                                      MediaType
+                                                                          .video
+                                                                  ? ClipRRect(
+                                                                      borderRadius: const BorderRadius
+                                                                          .all(
+                                                                          Radius.circular(
+                                                                              20)),
                                                                       child:
-                                                                          LMVideo(
-                                                                        videoFile:
-                                                                            postMedia[index].mediaFile!,
-                                                                        // height:
-                                                                        //     180,
-                                                                        boxFit:
-                                                                            BoxFit.contain,
-                                                                        showControls:
-                                                                            false,
-                                                                        // width:
-                                                                        //     300,
-                                                                        borderRadius:
-                                                                            18,
+                                                                          Container(
+                                                                        height: mediaLength ==
+                                                                                1
+                                                                            ? screenSize.width -
+                                                                                32
+                                                                            : 200,
+                                                                        width: mediaLength ==
+                                                                                1
+                                                                            ? screenSize.width -
+                                                                                32
+                                                                            : 200,
+                                                                        color: Colors
+                                                                            .black,
+                                                                        child:
+                                                                            LMVideo(
+                                                                          videoFile:
+                                                                              postMedia[index].mediaFile!,
+                                                                          // height:
+                                                                          //     180,
+                                                                          boxFit:
+                                                                              BoxFit.contain,
+                                                                          showControls:
+                                                                              false,
+                                                                          // width:
+                                                                          //     300,
+                                                                          borderRadius:
+                                                                              18,
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                  : ClipRRect(
+                                                                      borderRadius: const BorderRadius
+                                                                          .all(
+                                                                          Radius.circular(
+                                                                              20)),
+                                                                      child:
+                                                                          Container(
+                                                                        height: mediaLength ==
+                                                                                1
+                                                                            ? screenSize.width -
+                                                                                32
+                                                                            : 200,
+                                                                        width: mediaLength ==
+                                                                                1
+                                                                            ? screenSize.width -
+                                                                                32
+                                                                            : 200,
+                                                                        color: Colors
+                                                                            .black,
+                                                                        child:
+                                                                            LMImage(
+                                                                          // height:
+                                                                          //     180,
+                                                                          // width:
+                                                                          //     180,
+                                                                          boxFit:
+                                                                              BoxFit.contain,
+                                                                          borderRadius:
+                                                                              18,
+                                                                          imageFile:
+                                                                              postMedia[index].mediaFile!,
+                                                                        ),
                                                                       ),
                                                                     ),
-                                                                  )
-                                                                : ClipRRect(
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .all(
-                                                                            Radius.circular(12)),
-                                                                    child:
-                                                                        Container(
-                                                                      height:
-                                                                          200,
-                                                                      width:
-                                                                          200,
-                                                                      color: Colors
-                                                                          .black,
-                                                                      child:
-                                                                          LMImage(
-                                                                        // height:
-                                                                        //     180,
-                                                                        // width:
-                                                                        //     180,
-                                                                        boxFit:
-                                                                            BoxFit.contain,
-                                                                        borderRadius:
-                                                                            18,
-                                                                        imageFile:
-                                                                            postMedia[index].mediaFile!,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                            Positioned(
-                                                              top: -8,
-                                                              right: 0,
-                                                              child: IconButton(
-                                                                  onPressed: () =>
+                                                              Positioned(
+                                                                top: 4,
+                                                                right: 4,
+                                                                child:
+                                                                    LMIconButton(
+                                                                  onTap: (active) =>
                                                                       removeAttachmenetAtIndex(
                                                                           index),
-                                                                  icon: Icon(
-                                                                    CupertinoIcons
+                                                                  icon: LMIcon(
+                                                                    type: LMIconType
+                                                                        .icon,
+                                                                    icon: CupertinoIcons
                                                                         .xmark_circle_fill,
-                                                                    shadows: const [
-                                                                      Shadow(
-                                                                        offset: Offset(
-                                                                            1,
-                                                                            1),
-                                                                        color: Colors
-                                                                            .black38,
-                                                                      )
-                                                                    ],
-                                                                    color: kWhiteColor
+                                                                    backgroundColor: theme
+                                                                        .colorScheme
+                                                                        .background
                                                                         .withOpacity(
-                                                                            0.8),
-                                                                  )),
-                                                            )
-                                                          ],
+                                                                            0.5),
+                                                                    color: theme
+                                                                        .colorScheme
+                                                                        .onPrimary,
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
                                                         ),
-                                                      ),
-                                                      const SizedBox(width: 8),
-                                                    ],
-                                                  ),
-                                                ]);
-                                              },
-                                            ),
-                                          ),
+                                                        const SizedBox(
+                                                            width: 8),
+                                                      ],
+                                                    ),
+                                                  ]);
+                                                },
+                                              ),
+                                            );
+                                          }),
                                   kVerticalPaddingMedium,
                                 ],
                               ),
@@ -681,35 +712,51 @@ class _NewPostScreenState extends State<NewPostScreen> {
                     showDialog(
                       context: context,
                       builder: (dialogContext) => AlertDialog(
-                        title: const Text('Discard Post'),
-                        content: const Text(
-                            'Are you sure you want to discard the current post?'),
+                        content: LMTextView(
+                          text:
+                              'Are you sure you want to discard your changes?',
+                          maxLines: 3,
+                          textStyle: theme.textTheme.labelLarge,
+                        ),
                         actions: <Widget>[
-                          TextButton(
-                            child: const Text('No'),
-                            onPressed: () {
-                              Navigator.of(dialogContext).pop();
-                            },
-                          ),
-                          TextButton(
-                            child: const Text('Yes'),
-                            onPressed: () {
-                              Navigator.of(dialogContext).pop();
-                              Navigator.of(context).pop();
-                            },
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(right: 4.0, bottom: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                LMTextButton(
+                                  text: LMTextView(
+                                    text: 'No thanks',
+                                    textStyle: theme.textTheme.headlineMedium,
+                                  ),
+                                  onTap: () {
+                                    Navigator.of(dialogContext).pop();
+                                  },
+                                ),
+                                kHorizontalPaddingLarge,
+                                LMTextButton(
+                                  text: LMTextView(
+                                    text: 'Discard',
+                                    textStyle: theme.textTheme.headlineMedium!
+                                        .copyWith(
+                                            color: theme.colorScheme.error),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0, vertical: 4.0),
+                                  onTap: () {
+                                    Navigator.of(dialogContext).pop();
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
                     );
                   },
-                  title: const LMTextView(
-                    text: "Create Post",
-                    textStyle: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: kGrey1Color,
-                    ),
-                  ),
+                  title: const LMTextView(text: ''),
                   onTap: () {
                     _focusNode.unfocus();
 
@@ -754,31 +801,24 @@ class _NewPostScreenState extends State<NewPostScreen> {
                   child: Container(
                     // height: 32,
                     decoration: BoxDecoration(
-                      color: kWhiteColor,
-                      boxShadow: [
-                        BoxShadow(
-                          color: kGrey3Color.withOpacity(0.4),
-                          offset: const Offset(0.0, -1.0),
-                          blurRadius: 1.0,
-                        ), //BoxShadow
-                      ],
+                      color: theme.colorScheme.background,
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          isMediaPost
-                              ? LMIconButton(
-                                  icon: LMIcon(
-                                    type: LMIconType.svg,
-                                    assetPath: kAssetGalleryIcon,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    boxPadding: 0,
-                                    size: 44,
-                                  ),
-                                  onTap: (active) async {
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Opacity(
+                          opacity: isMediaPost ? 1 : 0.5,
+                          child: LMIconButton(
+                            icon: LMIcon(
+                              type: LMIconType.svg,
+                              assetPath: kAssetGalleryIcon,
+                              color: theme.colorScheme.primary,
+                              boxPadding: 0,
+                              size: 28,
+                            ),
+                            onTap: isMediaPost
+                                ? (active) async {
                                     LMAnalytics.get().track(
                                         AnalyticsKeys.clickedOnAttachment,
                                         {'type': 'image'});
@@ -787,50 +827,50 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                     if (result) {
                                       pickImages();
                                     }
-                                  },
-                                )
-                              : const SizedBox.shrink(),
-                          // isMediaPost
-                          //     ? const SizedBox(width: 8)
-                          //     : const SizedBox.shrink(),
-                          // isMediaPost
-                          //     ? LMIconButton(
-                          //         icon: LMIcon(
-                          //           type: LMIconType.svg,
-                          //           assetPath: kAssetVideoIcon,
-                          //           color:
-                          //               Theme.of(context).colorScheme.primary,
-                          //           boxPadding: 0,
-                          //           size: 44,
-                          //         ),
-                          //         onTap: (active) async {
-                          //           onUploading();
-                          //           List<MediaModel>? pickedMediaFiles =
-                          //               await PostMediaPicker.pickVideos(
-                          //                   postMedia.length);
-                          //           if (pickedMediaFiles != null) {
-                          //             setPickedMediaFiles(pickedMediaFiles);
-                          //             onUploadedMedia(true);
-                          //           } else {
-                          //             onUploadedMedia(false);
-                          //           }
-                          //         },
-                          //       )
-                          //     : const SizedBox.shrink(),
-                          isDocumentPost
-                              ? const SizedBox(width: 8)
-                              : const SizedBox.shrink(),
-                          isDocumentPost
-                              ? LMIconButton(
-                                  icon: LMIcon(
-                                    type: LMIconType.svg,
-                                    assetPath: kAssetDocPDFIcon,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    boxPadding: 0,
-                                    size: 44,
-                                  ),
-                                  onTap: (active) async {
+                                  }
+                                : (active) {},
+                          ),
+                        ),
+                        // isMediaPost
+                        //     ? const SizedBox(width: 8)
+                        //     : const SizedBox.shrink(),
+                        // isMediaPost
+                        //     ? LMIconButton(
+                        //         icon: LMIcon(
+                        //           type: LMIconType.svg,
+                        //           assetPath: kAssetVideoIcon,
+                        //           color:
+                        //               Theme.of(context).colorScheme.primary,
+                        //           boxPadding: 0,
+                        //           size: 44,
+                        //         ),
+                        //         onTap: (active) async {
+                        //           onUploading();
+                        //           List<MediaModel>? pickedMediaFiles =
+                        //               await PostMediaPicker.pickVideos(
+                        //                   postMedia.length);
+                        //           if (pickedMediaFiles != null) {
+                        //             setPickedMediaFiles(pickedMediaFiles);
+                        //             onUploadedMedia(true);
+                        //           } else {
+                        //             onUploadedMedia(false);
+                        //           }
+                        //         },
+                        //       )
+                        //     : const SizedBox.shrink(),
+                        const SizedBox(width: 16.0),
+                        Opacity(
+                          opacity: isDocumentPost ? 1 : 0.5,
+                          child: LMIconButton(
+                            icon: LMIcon(
+                              type: LMIconType.svg,
+                              assetPath: kAssetDocPDFIcon,
+                              color: theme.colorScheme.primary,
+                              boxPadding: 0,
+                              size: 28,
+                            ),
+                            onTap: isDocumentPost
+                                ? (active) async {
                                     if (postMedia.length >= 3) {
                                       //  TODO: Add your own toast message for document limit
                                       return;
@@ -848,12 +888,13 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                     } else {
                                       onUploadedDocument(false);
                                     }
-                                  },
-                                )
-                              : const SizedBox.shrink(),
-                          const SizedBox(width: 8),
-                        ],
-                      ),
+                                  }
+                                : (active) {},
+                          ),
+                        ),
+
+                        const SizedBox(width: 8),
+                      ],
                     ),
                   ),
                 ),
