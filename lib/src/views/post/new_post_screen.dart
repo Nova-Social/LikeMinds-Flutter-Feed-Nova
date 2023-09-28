@@ -266,22 +266,45 @@ class _NewPostScreenState extends State<NewPostScreen> {
         showDialog(
           context: context,
           builder: (dialogContext) => AlertDialog(
-            title: const Text('Discard Post'),
-            content: const Text(
-                'Are you sure you want to discard the current post?'),
+            shadowColor: Colors.transparent,
+            backgroundColor: theme.colorScheme.background,
+            elevation: 0,
+            content: LMTextView(
+              text: 'Are you sure you want to discard your changes?',
+              maxLines: 3,
+              textStyle: theme.textTheme.labelLarge,
+            ),
             actions: <Widget>[
-              TextButton(
-                child: const Text('No'),
-                onPressed: () {
-                  Navigator.of(dialogContext).pop();
-                },
-              ),
-              TextButton(
-                child: const Text('Yes'),
-                onPressed: () {
-                  Navigator.of(dialogContext).pop();
-                  Navigator.of(context).pop();
-                },
+              Padding(
+                padding: const EdgeInsets.only(right: 4.0, bottom: 10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    LMTextButton(
+                      text: LMTextView(
+                        text: 'No thanks',
+                        textStyle: theme.textTheme.headlineMedium,
+                      ),
+                      onTap: () {
+                        Navigator.of(dialogContext).pop();
+                      },
+                    ),
+                    kHorizontalPaddingLarge,
+                    LMTextButton(
+                      text: LMTextView(
+                        text: 'Discard',
+                        textStyle: theme.textTheme.headlineMedium!
+                            .copyWith(color: theme.colorScheme.error),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 4.0),
+                      onTap: () {
+                        Navigator.of(dialogContext).pop();
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -489,8 +512,8 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                                 children: [
                                                   LMLinkPreview(
                                                     linkModel: linkModel,
-                                                    backgroundColor:
-                                                        kSecondary100,
+                                                    backgroundColor: theme!
+                                                        .colorScheme.surface,
                                                     showLinkUrl: false,
                                                     onTap: () {
                                                       launchUrl(
@@ -501,10 +524,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                                             .externalApplication,
                                                       );
                                                     },
-                                                    border: Border.all(
-                                                      width: 1,
-                                                      color: kSecondary100,
-                                                    ),
+                                                    border: const Border(),
                                                     title: LMTextView(
                                                       text: linkModel
                                                               ?.ogTags?.title ??
@@ -512,30 +532,19 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                                       maxLines: 1,
                                                       overflow:
                                                           TextOverflow.ellipsis,
-                                                      textStyle:
-                                                          const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color:
-                                                            kHeadingBlackColor,
-                                                        height: 1.30,
-                                                      ),
+                                                      textStyle: theme!
+                                                          .textTheme.titleLarge,
                                                     ),
                                                     subtitle: LMTextView(
                                                       text: linkModel?.ogTags
                                                               ?.description ??
                                                           "--",
-                                                      maxLines: 1,
+                                                      maxLines: 2,
                                                       overflow:
                                                           TextOverflow.ellipsis,
-                                                      textStyle:
-                                                          const TextStyle(
-                                                        color:
-                                                            kHeadingBlackColor,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        height: 1.30,
-                                                      ),
+                                                      textStyle: theme!
+                                                          .textTheme
+                                                          .displayLarge,
                                                     ),
                                                   ),
                                                   Positioned(
@@ -712,6 +721,9 @@ class _NewPostScreenState extends State<NewPostScreen> {
                     showDialog(
                       context: context,
                       builder: (dialogContext) => AlertDialog(
+                        shadowColor: Colors.transparent,
+                        backgroundColor: theme.colorScheme.background,
+                        elevation: 0,
                         content: LMTextView(
                           text:
                               'Are you sure you want to discard your changes?',
@@ -892,8 +904,29 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                 : (active) {},
                           ),
                         ),
-
-                        const SizedBox(width: 8),
+                        const Spacer(),
+                        LMIconButton(
+                          icon: LMIcon(
+                            type: LMIconType.svg,
+                            assetPath: kAssetMentionIcon,
+                            color: theme.colorScheme.primary,
+                            boxPadding: 0,
+                            size: 28,
+                          ),
+                          onTap: (active) {
+                            if (!_focusNode.hasFocus) {
+                              _focusNode.requestFocus();
+                            }
+                            String currentText = _controller.text;
+                            if (currentText.isNotEmpty) {
+                              currentText = '$currentText @';
+                            } else {
+                              currentText = '@';
+                            }
+                            _controller.value =
+                                TextEditingValue(text: currentText);
+                          },
+                        ),
                       ],
                     ),
                   ),

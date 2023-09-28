@@ -374,7 +374,7 @@ class _SSPostWidgetState extends State<SSPostWidget> {
                       ? postDetails!.attachments!.first.attachmentType == 4
                           ? LMLinkPreview(
                               attachment: postDetails!.attachments![0],
-                              backgroundColor: ColorTheme.backgroundColor,
+                              backgroundColor: theme.colorScheme.surface,
                               showLinkUrl: false,
                               onTap: () {
                                 if (postDetails!.attachments!.first
@@ -387,33 +387,22 @@ class _SSPostWidgetState extends State<SSPostWidget> {
                                   );
                                 }
                               },
-                              border: Border.all(
-                                width: 1,
-                                color: kSecondary100,
-                              ),
+                              border: const Border(),
                               title: LMTextView(
                                 text: postDetails!.attachments!.first
                                         .attachmentMeta.ogTags?.title ??
                                     "--",
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                textStyle: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: kWhiteColor,
-                                  height: 1.30,
-                                ),
+                                textStyle: theme.textTheme.titleLarge,
                               ),
                               subtitle: LMTextView(
                                 text: postDetails!.attachments!.first
                                         .attachmentMeta.ogTags?.description ??
                                     "--",
-                                maxLines: 1,
+                                maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                textStyle: const TextStyle(
-                                  color: kWhiteColor,
-                                  fontWeight: FontWeight.w400,
-                                  height: 1.30,
-                                ),
+                                textStyle: theme.textTheme.displayLarge,
                               ),
                             )
                           : SizedBox(
