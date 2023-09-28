@@ -204,7 +204,7 @@ class _LMFeedState extends State<LMFeed> {
                             return Container(
                               height: MediaQuery.of(context).size.height,
                               width: MediaQuery.of(context).size.width,
-                              color: kBackgroundColor,
+                              color: ColorTheme.backgroundColor,
                               child: const Center(
                                 child: LMLoader(
                                   isPrimary: true,
@@ -221,12 +221,12 @@ class _LMFeedState extends State<LMFeed> {
                   return Container(
                     height: MediaQuery.of(context).size.height,
                     width: MediaQuery.of(context).size.width,
-                    color: kBackgroundColor,
+                    color: ColorTheme.backgroundColor,
                     child: const Center(
                       child: Text("An error has occured",
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Colors.black,
+                            color: ColorTheme.white,
                             fontSize: 16,
                           )),
                     ),
@@ -235,7 +235,7 @@ class _LMFeedState extends State<LMFeed> {
                 return Container(
                   height: MediaQuery.of(context).size.height,
                   width: MediaQuery.of(context).size.width,
-                  color: kBackgroundColor,
+                  color: ColorTheme.backgroundColor,
                 );
               },
             );

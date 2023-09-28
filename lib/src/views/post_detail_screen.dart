@@ -13,11 +13,13 @@ import 'package:likeminds_feed_nova_fl/src/models/post_view_model.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/ui_constants.dart';
+import 'package:likeminds_feed_nova_fl/src/utils/icons.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/local_preference/user_local_preference.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_action_id.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_utils.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/tagging/tagging_textfield_ta.dart';
 import 'package:likeminds_feed_nova_fl/src/views/likes/likes_horizontal_view.dart';
+import 'package:likeminds_feed_nova_fl/src/views/likes/likes_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post/edit_post_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/delete_dialog.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/post/post_widget.dart';
@@ -816,8 +818,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                             },
                             child: CustomScrollView(
                               slivers: [
-                                const SliverPadding(
-                                    padding: EdgeInsets.only(top: 16)),
                                 SliverToBoxAdapter(
                                   child: postData == null
                                       ? Center(
@@ -826,7 +826,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                   .colorScheme
                                                   .primary),
                                         )
-                                      : SSPostWidget(
+                                      : NovaPostWidget(
                                           post: postData!,
                                           topics:
                                               postDetailResponse!.topics ?? {},
@@ -954,11 +954,25 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   ),
                                 ),
                                 SliverToBoxAdapter(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0),
-                                    child:
-                                        LikesListWidget(postId: widget.postId),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => LikesScreen(
+                                              postId: widget.postId),
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      color: Colors.transparent,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0),
+                                      child: AbsorbPointer(
+                                        absorbing: true,
+                                        child: LikesListWidget(
+                                            postId: widget.postId),
+                                      ),
+                                    ),
                                   ),
                                 ),
                                 const SliverPadding(
@@ -1015,9 +1029,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                     item.menuItems.removeWhere(
                                                         (element) =>
                                                             element.id ==
-                                                                commentReportId ||
-                                                            element.id ==
-                                                                commentEditId);
+                                                            commentReportId);
                                                     return LMCommentTile(
                                                       key: ValueKey(item.id),
                                                       width: screenSize.width,
@@ -1031,71 +1043,154 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                         horizontal: 12.0,
                                                         vertical: 6.0,
                                                       ),
+                                                      menu: LMIconButton(
+                                                        icon: LMIcon(
+                                                          type: LMIconType.icon,
+                                                          icon: Icons.more_vert,
+                                                          color: theme
+                                                              .colorScheme
+                                                              .primaryContainer,
+                                                        ),
+                                                        onTap: (bool value) {
+                                                          showModalBottomSheet(
+                                                            context: context,
+                                                            elevation: 5,
+                                                            isDismissible: true,
+                                                            useRootNavigator:
+                                                                true,
+                                                            clipBehavior:
+                                                                Clip.hardEdge,
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .transparent,
+                                                            enableDrag: false,
+                                                            shape:
+                                                                const RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .only(
+                                                                topLeft: Radius
+                                                                    .circular(
+                                                                        32),
+                                                                topRight: Radius
+                                                                    .circular(
+                                                                        32),
+                                                              ),
+                                                            ),
+                                                            builder: (context) =>
+                                                                LMBottomSheet(
+                                                              margin:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      top: 30),
+                                                              borderRadius:
+                                                                  const BorderRadius
+                                                                      .only(
+                                                                topLeft: Radius
+                                                                    .circular(
+                                                                        32),
+                                                                topRight: Radius
+                                                                    .circular(
+                                                                        32),
+                                                              ),
+                                                              dragBarColor: theme
+                                                                  .colorScheme
+                                                                  .onSurface,
+                                                              backgroundColor:
+                                                                  theme
+                                                                      .colorScheme
+                                                                      .surface,
+                                                              children:
+                                                                  item.menuItems
+                                                                      .map(
+                                                                        (e) =>
+                                                                            GestureDetector(
+                                                                          onTap:
+                                                                              () {
+                                                                            Navigator.of(context).pop();
+                                                                            if (e.id ==
+                                                                                6) {
+                                                                              deselectCommentToEdit();
+                                                                              deselectCommentToReply();
+                                                                              // Delete post
+                                                                              showDialog(
+                                                                                  context: context,
+                                                                                  builder: (childContext) => deleteConfirmationDialog(
+                                                                                        childContext,
+                                                                                        title: 'Delete Comment',
+                                                                                        userId: item.userId,
+                                                                                        content: 'Are you sure you want to delete this post. This action can not be reversed.',
+                                                                                        action: (String reason) async {
+                                                                                          Navigator.of(childContext).pop();
+                                                                                          //Implement delete post analytics tracking
+                                                                                          LMAnalytics.get().track(
+                                                                                            AnalyticsKeys.commentDeleted,
+                                                                                            {
+                                                                                              "post_id": widget.postId,
+                                                                                              "comment_id": item.id,
+                                                                                            },
+                                                                                          );
+                                                                                          if (postDetailResponse != null) {
+                                                                                            postDetailResponse!.users?.putIfAbsent(currentUser.userUniqueId, () => currentUser);
+                                                                                          }
+                                                                                          _addCommentReplyBloc.add(DeleteComment((DeleteCommentRequestBuilder()
+                                                                                                ..postId(widget.postId)
+                                                                                                ..commentId(item.id)
+                                                                                                ..reason(reason.isEmpty ? "Reason for deletion" : reason))
+                                                                                              .build()));
+                                                                                        },
+                                                                                        actionText: 'Delete',
+                                                                                      ));
+                                                                            } else if (e.id ==
+                                                                                8) {
+                                                                              debugPrint('Editing functionality');
+                                                                              _addCommentReplyBloc.add(EditCommentCancel());
+                                                                              _addCommentReplyBloc.add(
+                                                                                EditingComment(
+                                                                                  commentId: item.id,
+                                                                                  text: item.text,
+                                                                                ),
+                                                                              );
+                                                                            }
+                                                                          },
+                                                                          child:
+                                                                              Container(
+                                                                            color:
+                                                                                Colors.transparent,
+                                                                            padding:
+                                                                                const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16.0),
+                                                                            margin:
+                                                                                const EdgeInsets.only(bottom: 24.09),
+                                                                            width:
+                                                                                screenSize.width - 32.0,
+                                                                            child:
+                                                                                Row(children: [
+                                                                              getIconFromDropDownItemId(
+                                                                                e.id,
+                                                                                20,
+                                                                                theme.colorScheme.primaryContainer,
+                                                                              ),
+                                                                              kHorizontalPaddingLarge,
+                                                                              LMTextView(
+                                                                                text: e.title,
+                                                                                textStyle: theme.textTheme.headlineLarge,
+                                                                              ),
+                                                                            ]),
+                                                                          ),
+                                                                        ),
+                                                                      )
+                                                                      .toList(),
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
                                                       onTagTap:
                                                           (String userId) {
                                                         locator<LikeMindsService>()
                                                             .routeToProfile(
                                                                 userId);
                                                       },
-                                                      onMenuTap: (id) {
-                                                        if (id == 6) {
-                                                          deselectCommentToEdit();
-                                                          deselectCommentToReply();
-                                                          // Delete post
-                                                          showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (childContext) =>
-                                                                      deleteConfirmationDialog(
-                                                                        childContext,
-                                                                        title:
-                                                                            'Delete Comment',
-                                                                        userId:
-                                                                            item.userId,
-                                                                        content:
-                                                                            'Are you sure you want to delete this post. This action can not be reversed.',
-                                                                        action: (String
-                                                                            reason) async {
-                                                                          Navigator.of(childContext)
-                                                                              .pop();
-                                                                          //Implement delete post analytics tracking
-                                                                          LMAnalytics.get()
-                                                                              .track(
-                                                                            AnalyticsKeys.commentDeleted,
-                                                                            {
-                                                                              "post_id": widget.postId,
-                                                                              "comment_id": item.id,
-                                                                            },
-                                                                          );
-                                                                          if (postDetailResponse !=
-                                                                              null) {
-                                                                            postDetailResponse!.users?.putIfAbsent(currentUser.userUniqueId,
-                                                                                () => currentUser);
-                                                                          }
-                                                                          _addCommentReplyBloc.add(DeleteComment((DeleteCommentRequestBuilder()
-                                                                                ..postId(widget.postId)
-                                                                                ..commentId(item.id)
-                                                                                ..reason(reason.isEmpty ? "Reason for deletion" : reason))
-                                                                              .build()));
-                                                                        },
-                                                                        actionText:
-                                                                            'Delete',
-                                                                      ));
-                                                        } else if (id == 8) {
-                                                          debugPrint(
-                                                              'Editing functionality');
-                                                          _addCommentReplyBloc.add(
-                                                              EditCommentCancel());
-                                                          _addCommentReplyBloc
-                                                              .add(
-                                                            EditingComment(
-                                                              commentId:
-                                                                  item.id,
-                                                              text: item.text,
-                                                            ),
-                                                          );
-                                                        }
-                                                      },
+                                                      onMenuTap: (id) {},
                                                       comment: item,
                                                       user: postDetailResponse!
                                                           .users![item.userId]!,

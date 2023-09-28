@@ -19,7 +19,7 @@ import 'package:overlay_support/overlay_support.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
 
-class SSPostWidget extends StatefulWidget {
+class NovaPostWidget extends StatefulWidget {
   final PostViewModel post;
   final User user;
   final Map<String, Topic> topics;
@@ -28,7 +28,7 @@ class SSPostWidget extends StatefulWidget {
   final Function(bool isDeleted) refresh;
   final Function(int) onMenuTap;
 
-  const SSPostWidget({
+  const NovaPostWidget({
     Key? key,
     required this.post,
     required this.user,
@@ -40,10 +40,10 @@ class SSPostWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<SSPostWidget> createState() => _SSPostWidgetState();
+  State<NovaPostWidget> createState() => _NovaPostWidgetState();
 }
 
-class _SSPostWidgetState extends State<SSPostWidget> {
+class _NovaPostWidgetState extends State<NovaPostWidget> {
   int postLikes = 0;
   int comments = 0;
   PostViewModel? postDetails;
@@ -59,7 +59,7 @@ class _SSPostWidgetState extends State<SSPostWidget> {
   }
 
   @override
-  void didUpdateWidget(covariant SSPostWidget oldWidget) {
+  void didUpdateWidget(covariant NovaPostWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     setPostDetails();
   }

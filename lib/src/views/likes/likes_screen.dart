@@ -32,6 +32,7 @@ class _LikesScreenState extends State<LikesScreen> {
   LikesBloc? _likesBloc;
   int _offset = 1;
   Map<String, User> userData = {};
+  ThemeData? theme;
 
   final PagingController<int, Like> _pagingControllerLikes =
       PagingController(firstPageKey: 1);
@@ -140,13 +141,14 @@ class _LikesScreenState extends State<LikesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    theme = Theme.of(context);
     return WillPopScope(
       onWillPop: () {
         Navigator.of(context).pop();
         return Future(() => false);
       },
       child: Scaffold(
-        backgroundColor: kWhiteColor,
+        backgroundColor: theme!.colorScheme.background,
         body: BlocConsumer(
             bloc: _likesBloc,
             buildWhen: (previous, current) {
@@ -187,12 +189,15 @@ class _LikesScreenState extends State<LikesScreen> {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            icon: const Icon(Icons.arrow_back_ios),
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: theme!.colorScheme.onPrimaryContainer,
+            ),
           ),
           kHorizontalPaddingSmall,
           Text(
             text,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+            style: theme!.textTheme.titleLarge!.copyWith(fontSize: 18),
           )
         ],
       ),
@@ -335,14 +340,6 @@ class LikesTile extends StatelessWidget {
                   textStyle: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                  ),
-                ),
-                subText: LMTextView(
-                  text: "@${user!.name.toLowerCase().split(" ").join("")}",
-                  textStyle: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                    color: kGreyColor,
                   ),
                 ),
               ),

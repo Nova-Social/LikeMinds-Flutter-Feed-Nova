@@ -76,8 +76,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
     ToggleLikeCommentBloc toggleLikeCommentBloc =
         BlocProvider.of<ToggleLikeCommentBloc>(context);
     replies = replies.map((e) {
-      e.menuItems.removeWhere((element) =>
-          element.id == commentReportId || element.id == commentEditId);
+      e.menuItems.removeWhere((element) => element.id == commentReportId);
       return e;
     }).toList();
     return replies.mapIndexed((index, element) {

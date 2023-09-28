@@ -890,7 +890,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                             return Column(
                               children: [
                                 const SizedBox(height: 4),
-                                SSPostWidget(
+                                NovaPostWidget(
                                   post: item,
                                   topics: widget.feedResponse.topics,
                                   user: widget.feedResponse.users[item.userId]!,

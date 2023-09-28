@@ -144,31 +144,32 @@ class _LikesListWidgetState extends State<LikesListWidget> {
   Widget build(BuildContext context) {
     theme = Theme.of(context);
     return BlocConsumer(
-        bloc: _likesBloc,
-        buildWhen: (previous, current) {
-          if (current is LikesPaginationLoading &&
-              (previous is LikesLoaded || previous is CommentLikesLoaded)) {
-            return false;
+      bloc: _likesBloc,
+      buildWhen: (previous, current) {
+        if (current is LikesPaginationLoading &&
+            (previous is LikesLoaded || previous is CommentLikesLoaded)) {
+          return false;
+        }
+        return true;
+      },
+      listener: (context, state) => updatePagingControllers(state),
+      builder: (context, state) {
+        if (state is LikesLoading) {
+          return getLikesLoadingView();
+        } else if (state is LikesError) {
+          return getLikesErrorView(state.message);
+        } else if (state is LikesLoaded) {
+          if (!widget.isCommentLikes) {
+            logLikeListEvent(state.response.totalCount);
           }
-          return true;
-        },
-        listener: (context, state) => updatePagingControllers(state),
-        builder: (context, state) {
-          if (state is LikesLoading) {
-            return getLikesLoadingView();
-          } else if (state is LikesError) {
-            return getLikesErrorView(state.message);
-          } else if (state is LikesLoaded) {
-            if (!widget.isCommentLikes) {
-              logLikeListEvent(state.response.totalCount);
-            }
-            return getLikesLoadedView(state: state);
-          } else if (state is CommentLikesLoaded) {
-            return getCommentLikesLoadedView(commentState: state);
-          } else {
-            return const SizedBox();
-          }
-        });
+          return getLikesLoadedView(state: state);
+        } else if (state is CommentLikesLoaded) {
+          return getCommentLikesLoadedView(commentState: state);
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
   }
 
   Widget getCommentLikesLoadedView({CommentLikesLoaded? commentState}) {
