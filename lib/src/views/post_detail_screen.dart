@@ -17,6 +17,7 @@ import 'package:likeminds_feed_nova_fl/src/utils/local_preference/user_local_pre
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_action_id.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_utils.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/tagging/tagging_textfield_ta.dart';
+import 'package:likeminds_feed_nova_fl/src/views/likes/likes_horizontal_view.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post/edit_post_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/delete_dialog.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/post/post_widget.dart';
@@ -74,7 +75,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     _addCommentReplyBloc.close();
     _pagingController.dispose();
     _commentController?.dispose();
-    focusNode.dispose();
     rebuildButton.dispose();
     rebuildPostWidget.dispose();
     rebuildReplyWidget.dispose();
@@ -356,7 +356,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           },
                           builder: (context, state) => Container(
                             decoration: BoxDecoration(
-                              color: kWhiteColor,
+                              color: theme.colorScheme.background,
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.1),
@@ -384,30 +384,28 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                     text: isEditing
                                                         ? "Editing ${selectedReplyId != null ? 'reply' : 'comment'}"
                                                         : "Replying to",
-                                                    textStyle: const TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: kGrey1Color,
-                                                    ),
+                                                    textStyle: theme
+                                                        .textTheme.labelMedium,
                                                   ),
                                                   const SizedBox(
                                                     width: 8,
                                                   ),
                                                   isEditing
                                                       ? const SizedBox()
-                                                      : LMTextView(
-                                                          text:
-                                                              selectedUsername!,
-                                                          textStyle:
-                                                              const TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            color: kLinkColor,
+                                                      : Expanded(
+                                                          child: LMTextView(
+                                                            text:
+                                                                selectedUsername!,
+                                                            textStyle: theme
+                                                                .textTheme
+                                                                .titleMedium!
+                                                                .copyWith(
+                                                                    color: theme
+                                                                        .colorScheme
+                                                                        .primary),
                                                           ),
                                                         ),
-                                                  const Spacer(),
+                                                  kHorizontalPaddingLarge,
                                                   LMIconButton(
                                                     onTap: (active) {
                                                       if (isEditing) {
@@ -437,12 +435,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                           : const SizedBox();
                                     }),
                                 Container(
-                                  decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary
-                                          .withOpacity(0.04),
-                                      borderRadius: BorderRadius.circular(24)),
                                   margin: const EdgeInsets.symmetric(
                                       horizontal: 8.0),
                                   padding: const EdgeInsets.all(3.0),
@@ -460,8 +452,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                     .userUniqueId);
                                           }
                                         },
-                                        size: 36,
+                                        size: 32,
                                       ),
+                                      kHorizontalPaddingMedium,
                                       Expanded(
                                         child: TaggingAheadTextField(
                                           isDown: false,
@@ -474,12 +467,42 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                             enabled: right,
                                             border: InputBorder.none,
                                             hintText: right
-                                                ? 'Write a comment'
+                                                ? 'Comment you thoughts'
                                                 : "You do not have permission to comment.",
+                                            hintStyle: theme
+                                                .textTheme.bodyMedium!
+                                                .copyWith(
+                                                    color: ColorTheme
+                                                        .darkBlack300),
                                           ),
                                           focusNode: focusNode,
                                           onChange: (String p0) {},
                                         ),
+                                      ),
+                                      LMIconButton(
+                                        icon: LMIcon(
+                                          type: LMIconType.svg,
+                                          assetPath: kAssetMentionIcon,
+                                          color: theme
+                                              .colorScheme.primaryContainer,
+                                          boxPadding: 0,
+                                          size: 19,
+                                        ),
+                                        onTap: (active) {
+                                          if (!focusNode.hasFocus) {
+                                            focusNode.requestFocus();
+                                          }
+                                          String currentText =
+                                              _commentController!.text;
+                                          if (currentText.isNotEmpty) {
+                                            currentText = '$currentText @';
+                                          } else {
+                                            currentText = '@';
+                                          }
+                                          _commentController!.value =
+                                              TextEditingValue(
+                                                  text: currentText);
+                                        },
                                       ),
                                       Container(
                                         padding: const EdgeInsets.symmetric(
@@ -654,14 +677,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                       text:
                                                                           LMTextView(
                                                                         text:
-                                                                            "Post",
+                                                                            "Comment",
                                                                         textAlign:
                                                                             TextAlign.center,
-                                                                        textStyle: TextStyle(
-                                                                            fontSize:
-                                                                                12.5,
-                                                                            color:
-                                                                                Theme.of(context).colorScheme.primary),
+                                                                        textStyle:
+                                                                            TextStyle(
+                                                                          fontSize:
+                                                                              12.5,
+                                                                          color: Theme.of(context)
+                                                                              .colorScheme
+                                                                              .primary,
+                                                                        ),
                                                                       ),
                                                                       onTap:
                                                                           () {
@@ -916,9 +942,27 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                           refresh: (bool isDeleted) async {},
                                         ),
                                 ),
-                                const SliverPadding(
-                                  padding: EdgeInsets.only(bottom: 12),
+                                SliverToBoxAdapter(
+                                  child: Container(
+                                    height: 0.1,
+                                    width: screenSize.width,
+                                    margin: const EdgeInsets.only(
+                                        bottom: 12.0, left: 16.0, right: 16.0),
+                                    decoration: BoxDecoration(
+                                      color: theme.colorScheme.onPrimary,
+                                    ),
+                                  ),
                                 ),
+                                SliverToBoxAdapter(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0),
+                                    child:
+                                        LikesListWidget(postId: widget.postId),
+                                  ),
+                                ),
+                                const SliverPadding(
+                                    padding: EdgeInsets.only(bottom: 16.0)),
                                 postData == null
                                     ? const SliverToBoxAdapter(
                                         child: SizedBox(),
@@ -976,9 +1020,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                 commentEditId);
                                                     return LMCommentTile(
                                                       key: ValueKey(item.id),
+                                                      width: screenSize.width,
                                                       backgroundColor: theme
-                                                          .colorScheme
-                                                          .background,
+                                                          .colorScheme.surface,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.0),
+                                                      margin: const EdgeInsets
+                                                          .symmetric(
+                                                        horizontal: 12.0,
+                                                        vertical: 6.0,
+                                                      ),
                                                       onTagTap:
                                                           (String userId) {
                                                         locator<LikeMindsService>()
@@ -1073,56 +1125,38 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                 .users![item
                                                                     .userId]!
                                                                 .imageUrl,
-                                                        size: 36,
+                                                        size: 42,
                                                       ),
                                                       subtitleText: LMTextView(
                                                         text:
-                                                            "@${postDetailResponse!.users![item.userId]!.name.toLowerCase().split(' ').join()} · ${timeago.format(item.createdAt)}",
-                                                        textStyle: TextStyle(
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .onSecondary,
-                                                        ),
+                                                            "${timeago.format(item.createdAt)}",
+                                                        textStyle: theme
+                                                            .textTheme
+                                                            .labelSmall,
                                                       ),
                                                       actionsPadding:
                                                           const EdgeInsets.only(
-                                                              left: 48),
+                                                              left: 56),
                                                       commentActions: [
                                                         LMTextButton(
                                                           margin: 10,
                                                           text: LMTextView(
-                                                            text: item.likesCount ==
-                                                                    0
-                                                                ? "Like"
-                                                                : item.likesCount ==
-                                                                        1
-                                                                    ? "1 Like"
-                                                                    : "${item.likesCount} Likes",
+                                                            text:
+                                                                "${item.likesCount}",
                                                             textStyle: TextStyle(
-                                                                color: Theme.of(
-                                                                        context)
+                                                                color: theme
                                                                     .colorScheme
-                                                                    .onSecondary,
+                                                                    .onPrimary,
                                                                 fontSize: 12),
                                                           ),
                                                           activeText:
                                                               LMTextView(
-                                                            text: item.likesCount ==
-                                                                    0
-                                                                ? "Like"
-                                                                : item.likesCount ==
-                                                                        1
-                                                                    ? "1 Like"
-                                                                    : "${item.likesCount} Likes",
+                                                            text:
+                                                                "${item.likesCount}",
                                                             textStyle: TextStyle(
-                                                                color: Theme.of(
-                                                                        context)
+                                                                color: theme
                                                                     .colorScheme
-                                                                    .primary,
+                                                                    .onPrimary,
                                                                 fontSize: 12),
                                                           ),
                                                           onTap: () {
@@ -1151,20 +1185,25 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                   !item.isLiked;
                                                             });
                                                           },
-                                                          icon: const LMIcon(
+                                                          icon: LMIcon(
                                                             type:
                                                                 LMIconType.svg,
                                                             assetPath:
                                                                 kAssetLikeIcon,
                                                             size: 20,
+                                                            color: theme
+                                                                .colorScheme
+                                                                .onPrimary,
                                                           ),
-                                                          activeIcon:
-                                                              const LMIcon(
+                                                          activeIcon: LMIcon(
                                                             type:
                                                                 LMIconType.svg,
                                                             assetPath:
                                                                 kAssetLikeFilledIcon,
                                                             size: 20,
+                                                            color: theme
+                                                                .colorScheme
+                                                                .error,
                                                           ),
                                                           isActive:
                                                               item.isLiked,
@@ -1175,15 +1214,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                           children: [
                                                             LMTextButton(
                                                               margin: 10,
-                                                              text:
-                                                                  const LMTextView(
-                                                                      text:
-                                                                          "Reply",
-                                                                      textStyle:
-                                                                          TextStyle(
-                                                                        fontSize:
-                                                                            12,
-                                                                      )),
+                                                              text: LMTextView(
+                                                                text: "Reply",
+                                                                textStyle: theme
+                                                                    .textTheme
+                                                                    .labelMedium,
+                                                              ),
                                                               onTap: () {
                                                                 selectCommentToReply(
                                                                   item.id,
@@ -1193,14 +1229,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                       .name,
                                                                 );
                                                               },
-                                                              icon:
-                                                                  const LMIcon(
-                                                                type: LMIconType
-                                                                    .svg,
-                                                                assetPath:
-                                                                    kAssetCommentIcon,
-                                                                size: 20,
-                                                              ),
                                                             ),
                                                             kHorizontalPaddingMedium,
                                                             item.repliesCount >

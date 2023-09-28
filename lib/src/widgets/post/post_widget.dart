@@ -146,9 +146,7 @@ class _SSPostWidgetState extends State<SSPostWidget> {
                                   LMTextView(
                                     text: "Pinned Post",
                                     textStyle: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary,
+                                      color: theme.colorScheme.onPrimary,
                                     ),
                                   )
                                 ],

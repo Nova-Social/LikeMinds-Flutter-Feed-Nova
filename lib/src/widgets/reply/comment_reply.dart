@@ -43,6 +43,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
   List<CommentReply> replies = [];
   Map<String, User> users = {};
   List<Widget> repliesW = [];
+  ThemeData? theme;
 
   Reply? reply;
   late final User user;
@@ -84,6 +85,9 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
       return StatefulBuilder(builder: (context, setReplyState) {
         return LMReplyTile(
             comment: element,
+            backgroundColor: theme!.colorScheme.surface,
+            borderRadius: BorderRadius.circular(10.0),
+            margin: const EdgeInsets.only(bottom: 6.0, right: 16.0),
             onTagTap: (String userId) {
               locator<LikeMindsService>().routeToProfile(userId);
             },
@@ -100,13 +104,8 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
               size: 32,
             ),
             subtitleText: LMTextView(
-              text:
-                  "@${user.name.toLowerCase().split(' ').join()} · ${timeago.format(element.createdAt)}",
-              textStyle: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w400,
-                color: kGreyColor,
-              ),
+              text: "${timeago.format(element.createdAt)}",
+              textStyle: theme!.textTheme.labelSmall,
             ),
             onMenuTap: (value) async {
               if (value == 6) {
@@ -151,25 +150,17 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
               }
             },
             commentActions: [
+              const SizedBox(
+                width: 50.0,
+              ),
               LMTextButton(
                 text: LMTextView(
-                  text: element.likesCount == 0
-                      ? "Like"
-                      : element.likesCount == 1
-                          ? "1 Like"
-                          : "${element.likesCount} Likes",
-                  textStyle: const TextStyle(fontSize: 12),
+                  text: "${element.likesCount}",
+                  textStyle: theme!.textTheme.labelSmall,
                 ),
                 activeText: LMTextView(
-                  text: element.likesCount == 0
-                      ? "Like"
-                      : element.likesCount == 1
-                          ? "1 Like"
-                          : "${element.likesCount} Likes",
-                  textStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 12,
-                  ),
+                  text: "${element.likesCount}",
+                  textStyle: theme!.textTheme.labelSmall,
                 ),
                 onTap: () {
                   toggleLikeCommentBloc.add(
@@ -195,10 +186,11 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                   assetPath: kAssetLikeIcon,
                   size: 20,
                 ),
-                activeIcon: const LMIcon(
+                activeIcon: LMIcon(
                   type: LMIconType.svg,
                   assetPath: kAssetLikeFilledIcon,
                   size: 20,
+                  color: theme!.colorScheme.error,
                 ),
                 isActive: element.isLiked,
               ),
@@ -213,6 +205,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
     addCommentReplyBloc = BlocProvider.of<AddCommentReplyBloc>(context);
     _commentRepliesBloc = BlocProvider.of<CommentRepliesBloc>(context);
     initialiseReply();
+    theme = Theme.of(context);
     return ValueListenableBuilder(
       valueListenable: rebuildReplyList,
       builder: (context, _, __) {
