@@ -68,7 +68,9 @@ class _EditPostScreenState extends State<EditPostScreen> {
       itemBuilder: (context, index) => LMDocument(
         size:
             getFileSizeString(bytes: attachments![index].attachmentMeta.size!),
+        showBorder: false,
         type: attachments![index].attachmentMeta.format!,
+        backgroundColor: theme!.colorScheme.surface,
         documentIcon: const LMIcon(
           type: LMIconType.svg,
           assetPath: kAssetPDFIcon,

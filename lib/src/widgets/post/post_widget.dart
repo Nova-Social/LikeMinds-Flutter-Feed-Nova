@@ -316,7 +316,8 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                   attachments: postDetails!.attachments!,
                                   borderRadius: 16.0,
                                   showLinkUrl: false,
-                                  backgroundColor: kSecondary100,
+                                  backgroundColor: theme.colorScheme.surface,
+                                  showBorder: false,
                                   carouselActiveIndicatorColor:
                                       theme.colorScheme.primary,
                                   carouselInactiveIndicatorColor: theme
