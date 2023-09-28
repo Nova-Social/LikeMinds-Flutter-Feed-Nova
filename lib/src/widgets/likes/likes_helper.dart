@@ -10,8 +10,9 @@ Widget getLikesTileShimmer() {
       bottom: 16.0,
     ),
     child: Shimmer.fromColors(
-      baseColor: Colors.black26,
-      highlightColor: Colors.black12,
+      baseColor: Colors.grey.shade500,
+      highlightColor: const Color.fromARGB(255, 111, 111, 115),
+      period: const Duration(milliseconds: 1000),
       child: Row(
         children: [
           const SizedBox(
