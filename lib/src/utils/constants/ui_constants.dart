@@ -4,14 +4,17 @@ class ColorTheme {
   static const backgroundColor = Color.fromRGBO(24, 23, 25, 1);
   static const primaryColor = Color.fromRGBO(180, 134, 255, 1);
   static const darkBlack300 = Color.fromRGBO(49, 49, 50, 1);
+  static const darkBlack500 = Color.fromRGBO(36, 35, 37, 1);
   static const lightWhite300 = Color.fromRGBO(241, 241, 241, 0.694);
   static const white = Color.fromRGBO(255, 255, 255, 1);
   static const white400 = Color.fromRGBO(241, 241, 241, 0.498);
+  static const white600 = Color.fromRGBO(241, 241, 241, 0.12);
   static const redColor = Color.fromRGBO(255, 73, 90, 1);
 
   static final novaTheme = ThemeData.from(
     colorScheme: ColorScheme.fromSeed(
       background: ColorTheme.backgroundColor,
+      surface: ColorTheme.darkBlack500,
       onBackground: ColorTheme.darkBlack300,
       seedColor: ColorTheme.primaryColor,
       primary: ColorTheme.primaryColor,
@@ -19,6 +22,7 @@ class ColorTheme {
       onPrimary: ColorTheme.lightWhite300,
       error: ColorTheme.redColor,
       onPrimaryContainer: ColorTheme.white,
+      onSurface: ColorTheme.white600,
     ),
     textTheme: const TextTheme(
       titleLarge: TextStyle(
@@ -26,84 +30,91 @@ class ColorTheme {
         color: ColorTheme.white,
         fontWeight: FontWeight.w700,
         fontFamily: 'Gantari',
-        height: 0,
       ),
       titleMedium: TextStyle(
         fontSize: 14,
         color: ColorTheme.white,
-        fontFamily: 'Gantari',
+        //fontFamily: 'Gantari',
         fontWeight: FontWeight.w700,
-        height: 0,
+        ////height: 0,
       ),
       titleSmall: TextStyle(
         fontSize: 12,
         color: ColorTheme.white,
         fontWeight: FontWeight.w700,
         fontFamily: 'Gantari',
-        height: 0,
       ),
       labelLarge: TextStyle(
         fontSize: 16,
         color: ColorTheme.lightWhite300,
         fontFamily: 'Gantari',
         fontWeight: FontWeight.w500,
-        height: 0,
       ),
       labelMedium: TextStyle(
         fontSize: 14,
         color: ColorTheme.lightWhite300,
         fontWeight: FontWeight.w500,
         fontFamily: 'Gantari',
-        height: 0,
       ),
       labelSmall: TextStyle(
         fontSize: 12,
         color: ColorTheme.lightWhite300,
         fontWeight: FontWeight.w500,
         fontFamily: 'Gantari',
-        height: 0,
       ),
       bodyLarge: TextStyle(
         fontSize: 16,
         color: ColorTheme.white,
         fontFamily: 'Gantari',
         fontWeight: FontWeight.w400,
-        height: 0.09,
       ),
       bodyMedium: TextStyle(
         fontSize: 14,
         color: ColorTheme.white,
         fontWeight: FontWeight.w400,
         fontFamily: 'Gantari',
-        height: 0.09,
       ),
       bodySmall: TextStyle(
         fontSize: 12,
         color: ColorTheme.white,
         fontWeight: FontWeight.w400,
         fontFamily: 'Gantari',
-        height: 0.09,
       ),
       displayLarge: TextStyle(
         fontSize: 16,
         color: ColorTheme.lightWhite300,
         fontWeight: FontWeight.w400,
         fontFamily: 'Gantari',
-        height: 0.09,
       ),
       displayMedium: TextStyle(
         fontSize: 14,
         color: ColorTheme.lightWhite300,
         fontWeight: FontWeight.w400,
         fontFamily: 'Gantari',
-        height: 0.09,
       ),
       displaySmall: TextStyle(
         fontSize: 12,
         color: ColorTheme.lightWhite300,
         fontWeight: FontWeight.w400,
         fontFamily: 'Gantari',
-        height: 0.09,
+      ),
+      headlineLarge: TextStyle(
+        fontSize: 16,
+        color: ColorTheme.white,
+        fontFamily: 'Gantari',
+        fontWeight: FontWeight.w500,
+      ),
+      headlineMedium: TextStyle(
+        fontSize: 14,
+        color: ColorTheme.white,
+        fontWeight: FontWeight.w500,
+        fontFamily: 'Gantari',
+      ),
+      headlineSmall: TextStyle(
+        fontSize: 12,
+        color: ColorTheme.white,
+        fontWeight: FontWeight.w500,
+        fontFamily: 'Gantari',
       ),
     ),
   );

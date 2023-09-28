@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:likeminds_feed/likeminds_feed.dart';
@@ -7,15 +6,14 @@ import 'package:likeminds_feed_nova_fl/src/blocs/new_post/new_post_bloc.dart';
 import 'package:likeminds_feed_nova_fl/src/models/post_view_model.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart';
-import 'package:likeminds_feed_nova_fl/src/utils/constants/ui_constants.dart';
+import 'package:likeminds_feed_nova_fl/src/utils/icons.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_action_id.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_utils.dart';
-import 'package:likeminds_feed_nova_fl/src/views/likes/likes_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/views/media_preview.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post/edit_post_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post_detail_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/delete_dialog.dart';
-import 'package:likeminds_feed_nova_fl/src/widgets/topic/topic_chip_widget.dart';
+
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -28,6 +26,7 @@ class SSPostWidget extends StatefulWidget {
   final bool isFeed;
   final Function() onTap;
   final Function(bool isDeleted) refresh;
+  final Function(int) onMenuTap;
 
   const SSPostWidget({
     Key? key,
@@ -37,6 +36,7 @@ class SSPostWidget extends StatefulWidget {
     required this.topics,
     required this.refresh,
     required this.isFeed,
+    required this.onMenuTap,
   }) : super(key: key);
 
   @override
@@ -64,19 +64,12 @@ class _SSPostWidgetState extends State<SSPostWidget> {
     setPostDetails();
   }
 
-  removeEditPost() {
-    postDetails!.menuItems.removeWhere((element) {
-      return element.id == postEditId;
-    });
-  }
-
   void setPostDetails() {
     postDetails = widget.post;
     postLikes = postDetails!.likeCount;
     comments = postDetails!.commentCount;
     isLiked = postDetails!.isLiked;
     isPinned = postDetails!.isPinned;
-    removeEditPost();
   }
 
   @override
@@ -169,124 +162,191 @@ class _SSPostWidgetState extends State<SSPostWidget> {
                       valueListenable: rebuildPostWidget,
                       builder: (context, _, __) {
                         return LMPostHeader(
-                          user: widget.user,
-                          isFeed: widget.isFeed,
-                          customTitle: LMTextView(
-                            text: widget.user.customTitle!.isNotEmpty
-                                ? widget.user.customTitle!
-                                : "",
-                            // maxLines: 1,
-                            textStyle: theme.textTheme.titleSmall,
-                          ),
-                          fallbackTextStyle: theme.textTheme.titleLarge!
-                              .copyWith(fontSize: 28),
-                          imageSize: 52,
-                          onProfileTap: () {
-                            if (widget.user.sdkClientInfo != null) {
-                              locator<LikeMindsService>().routeToProfile(
-                                  widget.user.sdkClientInfo!.userUniqueId);
-                            }
-                          },
-                          titleText: LMTextView(
-                            text: widget.user.name,
-                            textStyle: theme.textTheme.titleLarge,
-                          ),
-                          subText: LMTextView(
-                            text:
-                                "@${widget.user.name.toLowerCase().split(" ").join("")}",
-                            textStyle: theme.textTheme.labelMedium,
-                          ),
-                          createdAt: LMTextView(
-                            text: timeago.format(widget.post.createdAt),
-                            textStyle: theme.textTheme.labelMedium,
-                          ),
-                          menu: LMPostMenu(
-                            menuItems: postDetails!.menuItems,
-                            onSelected: (id) {
-                              if (id == postDeleteId) {
-                                // Delete post
-                                showDialog(
-                                    context: context,
-                                    builder: (childContext) =>
-                                        deleteConfirmationDialog(
-                                          childContext,
-                                          title: 'Delete Post',
-                                          userId: postDetails!.userId,
-                                          content:
-                                              'Are you sure you want to delete this post. This action can not be reversed.',
-                                          action: (String reason) async {
-                                            Navigator.of(childContext).pop();
-                                            final res = await locator<
-                                                    LikeMindsService>()
-                                                .getMemberState();
-                                            //Implement delete post analytics tracking
-                                            LMAnalytics.get().track(
-                                              AnalyticsKeys.postDeleted,
-                                              {
-                                                "user_state": res.state == 1
-                                                    ? "CM"
-                                                    : "member",
-                                                "post_id": postDetails!.id,
-                                                "user_id": postDetails!.userId,
-                                              },
-                                            );
-                                            newPostBloc.add(
-                                              DeletePost(
-                                                postId: postDetails!.id,
-                                                reason: reason ?? 'Self Post',
-                                              ),
-                                            );
-                                            if (!widget.isFeed) {
-                                              Navigator.of(context).pop();
-                                            }
-                                          },
-                                          actionText: 'Delete',
-                                        ));
-                              } else if (id == postPinId || id == postUnpinId) {
-                                String? postType = getPostType(postDetails!
-                                        .attachments?.first.attachmentType ??
-                                    0);
-                                if (isPinned!) {
-                                  LMAnalytics.get()
-                                      .track(AnalyticsKeys.postUnpinned, {
-                                    "created_by_id": postDetails!.userId,
-                                    "post_id": postDetails!.id,
-                                    "post_type": postType,
-                                  });
-                                } else {
-                                  LMAnalytics.get()
-                                      .track(AnalyticsKeys.postPinned, {
-                                    "created_by_id": postDetails!.userId,
-                                    "post_id": postDetails!.id,
-                                    "post_type": postType,
-                                  });
-                                }
-                                newPostBloc.add(TogglePinPost(
-                                    postId: postDetails!.id,
-                                    isPinned: !isPinned!));
-                              } else if (id == postEditId) {
-                                String? postType;
-                                postType = getPostType(postDetails!
-                                        .attachments?.first.attachmentType ??
-                                    0);
-                                LMAnalytics.get()
-                                    .track(AnalyticsKeys.postEdited, {
-                                  "created_by_id": postDetails!.userId,
-                                  "post_id": postDetails!.id,
-                                  "post_type": postType,
-                                });
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => EditPostScreen(
-                                      postId: postDetails!.id,
-                                    ),
-                                  ),
-                                );
+                            user: widget.user,
+                            isFeed: widget.isFeed,
+                            customTitle: LMTextView(
+                              text: widget.user.customTitle!.isNotEmpty
+                                  ? widget.user.customTitle!
+                                  : "",
+                              // maxLines: 1,
+                              textStyle: theme.textTheme.titleSmall,
+                            ),
+                            fallbackTextStyle: theme.textTheme.titleLarge!
+                                .copyWith(fontSize: 28),
+                            imageSize: 52,
+                            onProfileTap: () {
+                              if (widget.user.sdkClientInfo != null) {
+                                locator<LikeMindsService>().routeToProfile(
+                                    widget.user.sdkClientInfo!.userUniqueId);
                               }
                             },
-                            isFeed: widget.isFeed,
-                          ),
-                        );
+                            titleText: LMTextView(
+                              text: widget.user.name,
+                              textStyle: theme.textTheme.titleLarge,
+                            ),
+                            subText: LMTextView(
+                              text:
+                                  "@${widget.user.name.toLowerCase().split(" ").join("")}",
+                              textStyle: theme.textTheme.labelMedium,
+                            ),
+                            createdAt: LMTextView(
+                              text: timeago.format(widget.post.createdAt),
+                              textStyle: theme.textTheme.labelMedium,
+                            ),
+                            menu: LMIconButton(
+                              icon: LMIcon(
+                                type: LMIconType.icon,
+                                icon: Icons.more_vert,
+                                color: theme.colorScheme.primaryContainer,
+                              ),
+                              onTap: (bool value) {
+                                showModalBottomSheet(
+                                  context: context,
+                                  elevation: 5,
+                                  isDismissible: true,
+                                  useRootNavigator: true,
+                                  clipBehavior: Clip.hardEdge,
+                                  backgroundColor: Colors.transparent,
+                                  enableDrag: false,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(32),
+                                      topRight: Radius.circular(32),
+                                    ),
+                                  ),
+                                  builder: (context) => LMBottomSheet(
+                                    margin: const EdgeInsets.only(top: 30),
+                                    borderRadius: const BorderRadius.only(
+                                      topLeft: Radius.circular(32),
+                                      topRight: Radius.circular(32),
+                                    ),
+                                    dragBarColor: theme.colorScheme.onSurface,
+                                    backgroundColor: theme.colorScheme.surface,
+                                    children: widget.post.menuItems
+                                        .map(
+                                          (e) => GestureDetector(
+                                            onTap: () {
+                                              Navigator.of(context).pop();
+                                              widget.onMenuTap(e.id);
+                                            },
+                                            child: Container(
+                                              color: Colors.transparent,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 2.0,
+                                                      horizontal: 16.0),
+                                              margin: const EdgeInsets.only(
+                                                  bottom: 24.09),
+                                              width: screenSize.width - 32.0,
+                                              child: Row(children: [
+                                                getIconFromDropDownItemId(
+                                                  e.id,
+                                                  20,
+                                                  theme.colorScheme
+                                                      .primaryContainer,
+                                                ),
+                                                kHorizontalPaddingLarge,
+                                                LMTextView(
+                                                  text: e.title,
+                                                  textStyle: theme
+                                                      .textTheme.headlineLarge,
+                                                ),
+                                              ]),
+                                            ),
+                                          ),
+                                        )
+                                        .toList(),
+                                  ),
+                                );
+                              },
+                            )
+                            // menu: LMPostMenu(
+                            //   menuItems: postDetails!.menuItems,
+                            //   onSelected: (id) {
+                            //     if (id == postDeleteId) {
+                            //       // Delete post
+                            //       showDialog(
+                            //           context: context,
+                            //           builder: (childContext) =>
+                            //               deleteConfirmationDialog(
+                            //                 childContext,
+                            //                 title: 'Delete Post',
+                            //                 userId: postDetails!.userId,
+                            //                 content:
+                            //                     'Are you sure you want to delete this post. This action can not be reversed.',
+                            //                 action: (String reason) async {
+                            //                   Navigator.of(childContext).pop();
+                            //                   final res = await locator<
+                            //                           LikeMindsService>()
+                            //                       .getMemberState();
+                            //                   //Implement delete post analytics tracking
+                            //                   LMAnalytics.get().track(
+                            //                     AnalyticsKeys.postDeleted,
+                            //                     {
+                            //                       "user_state": res.state == 1
+                            //                           ? "CM"
+                            //                           : "member",
+                            //                       "post_id": postDetails!.id,
+                            //                       "user_id": postDetails!.userId,
+                            //                     },
+                            //                   );
+                            //                   newPostBloc.add(
+                            //                     DeletePost(
+                            //                       postId: postDetails!.id,
+                            //                       reason: reason ?? 'Self Post',
+                            //                     ),
+                            //                   );
+                            //                   if (!widget.isFeed) {
+                            //                     Navigator.of(context).pop();
+                            //                   }
+                            //                 },
+                            //                 actionText: 'Delete',
+                            //               ));
+                            //     } else if (id == postPinId || id == postUnpinId) {
+                            //       String? postType = getPostType(postDetails!
+                            //               .attachments?.first.attachmentType ??
+                            //           0);
+                            //       if (isPinned!) {
+                            //         LMAnalytics.get()
+                            //             .track(AnalyticsKeys.postUnpinned, {
+                            //           "created_by_id": postDetails!.userId,
+                            //           "post_id": postDetails!.id,
+                            //           "post_type": postType,
+                            //         });
+                            //       } else {
+                            //         LMAnalytics.get()
+                            //             .track(AnalyticsKeys.postPinned, {
+                            //           "created_by_id": postDetails!.userId,
+                            //           "post_id": postDetails!.id,
+                            //           "post_type": postType,
+                            //         });
+                            //       }
+                            //       newPostBloc.add(TogglePinPost(
+                            //           postId: postDetails!.id,
+                            //           isPinned: !isPinned!));
+                            //     } else if (id == postEditId) {
+                            //       String? postType;
+                            //       postType = getPostType(postDetails!
+                            //               .attachments?.first.attachmentType ??
+                            //           0);
+                            //       LMAnalytics.get()
+                            //           .track(AnalyticsKeys.postEdited, {
+                            //         "created_by_id": postDetails!.userId,
+                            //         "post_id": postDetails!.id,
+                            //         "post_type": postType,
+                            //       });
+                            //       Navigator.of(context).push(
+                            //         MaterialPageRoute(
+                            //           builder: (context) => EditPostScreen(
+                            //             postId: postDetails!.id,
+                            //           ),
+                            //         ),
+                            //       );
+                            //     }
+                            //   },
+                            //   isFeed: widget.isFeed,
+                            // ),
+                            );
                       }),
                   const SizedBox(height: 16),
                   // postDetails!.topics.isEmpty ||

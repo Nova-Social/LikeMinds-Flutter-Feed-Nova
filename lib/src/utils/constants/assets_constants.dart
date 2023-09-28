@@ -20,6 +20,14 @@ const String kAssetPDFIcon =
     "packages/likeminds_feed_nova_fl/assets/icons/pdf.svg";
 const String kAssetChatIcon =
     "packages/likeminds_feed_nova_fl/assets/icons/chat_lines.svg";
+const String kAssetDeleteIcon =
+    "packages/likeminds_feed_nova_fl/assets/icons/delete.svg";
+const String kAssetEditIcon =
+    "packages/likeminds_feed_nova_fl/assets/icons/edit.svg";
+const String kAssetReportIcon =
+    "packages/likeminds_feed_nova_fl/assets/icons/report.svg";
+const String kAssetSaveIcon =
+    "packages/likeminds_feed_nova_fl/assets/icons/save.svg";
 
 const List<String> svgAssets = [
   kAssetDocPDFIcon,
@@ -33,4 +41,8 @@ const List<String> svgAssets = [
   kAssetShareIcon,
   kAssetPDFIcon,
   kAssetChatIcon,
+  kAssetDeleteIcon,
+  kAssetEditIcon,
+  kAssetReportIcon,
+  kAssetSaveIcon,
 ];

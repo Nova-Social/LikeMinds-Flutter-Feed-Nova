@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/ui_constants.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
@@ -13,15 +14,16 @@ class PostComposerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
     return SizedBox(
       height: 56,
       child: Container(
-        decoration: const BoxDecoration(
-          color: kWhiteColor,
+        decoration: BoxDecoration(
+          color: theme.colorScheme.background,
           border: Border(
             bottom: BorderSide(
-              width: 0.1,
-              color: kGrey1Color,
+              width: 0.5,
+              color: theme.colorScheme.onPrimary,
             ),
           ),
         ),
@@ -32,31 +34,28 @@ class PostComposerHeader extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            LMTextButton(
-              text: LMTextView(
-                text: "Cancel",
-                textStyle:
-                    TextStyle(color: Theme.of(context).colorScheme.primary),
+            LMIconButton(
+              icon: LMIcon(
+                type: LMIconType.icon,
+                icon: CupertinoIcons.xmark,
+                color: theme.colorScheme.primaryContainer,
               ),
               onTap: onPressedBack == null
-                  ? () {
+                  ? (bool value) {
                       Navigator.pop(context);
                     }
-                  : () => onPressedBack!(),
+                  : (bool value) => onPressedBack!(),
             ),
             const Spacer(),
             title,
             const Spacer(),
             LMTextButton(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24, vertical: 4.0),
               text: LMTextView(
                 text: "Post",
-                textStyle: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
+                textStyle: theme.textTheme.bodyMedium,
               ),
-              width: 48,
               borderRadius: 6,
               backgroundColor: Theme.of(context).primaryColor,
               onTap: () => onTap(),

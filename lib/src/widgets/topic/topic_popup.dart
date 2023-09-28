@@ -12,11 +12,20 @@ class TopicPopUp extends StatefulWidget {
   final List<TopicUI> selectedTopics;
   final Function(List<TopicUI>, TopicUI) onTopicSelected;
   final bool? isEnabled;
+  final Color? backgroundColor;
+  final Color? selectedColor;
+  final Color? unSelectedTextColor;
+  final Color? selectedTextColor;
+
   const TopicPopUp({
     Key? key,
     required this.selectedTopics,
     required this.onTopicSelected,
     this.isEnabled,
+    this.backgroundColor,
+    this.selectedColor,
+    this.selectedTextColor,
+    this.unSelectedTextColor,
   }) : super(key: key);
 
   @override
@@ -109,7 +118,8 @@ class _TopicPopUpState extends State<TopicPopUp> {
       width: min(screenSize.width, 265),
       constraints: const BoxConstraints(maxHeight: 250),
       decoration: BoxDecoration(
-          color: kWhiteColor, borderRadius: BorderRadius.circular(4.0)),
+          color: widget.backgroundColor ?? kWhiteColor,
+          borderRadius: BorderRadius.circular(4.0)),
       margin: const EdgeInsets.only(top: 32),
       padding: const EdgeInsets.all(8.0),
       child: BlocConsumer<TopicBloc, TopicState>(
@@ -180,10 +190,12 @@ class _TopicPopUpState extends State<TopicPopUp> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8.0, vertical: 10.0),
                                       decoration: BoxDecoration(
-                                        color: isTopicSelected
-                                            ? kSecondaryColorLight
-                                            : kWhiteColor,
-                                      ),
+                                          color: isTopicSelected
+                                              ? widget.selectedColor ??
+                                                  kSecondaryColorLight
+                                              : null,
+                                          borderRadius:
+                                              BorderRadius.circular(3.0)),
                                       alignment: Alignment.topLeft,
                                       clipBehavior: Clip.hardEdge,
                                       margin: const EdgeInsets.only(
@@ -196,12 +208,13 @@ class _TopicPopUpState extends State<TopicPopUp> {
                                               maxLines: 2,
                                               textStyle: TextStyle(
                                                 color: isTopicSelected
-                                                    ? theme
-                                                        .colorScheme.secondary
-                                                    : appBlack,
+                                                    ? widget.selectedTextColor ??
+                                                        theme.colorScheme
+                                                            .secondary
+                                                    : widget.unSelectedTextColor ??
+                                                        appBlack,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w500,
-                                                height: 1.30,
                                               ),
                                             ),
                                           ),
