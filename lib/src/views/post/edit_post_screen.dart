@@ -481,7 +481,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   textStyle: theme!
-                                                      .textTheme.titleLarge,
+                                                      .textTheme.titleMedium,
                                                 ),
                                                 subtitle: LMTextView(
                                                   text: linkModel?.ogTags
@@ -491,7 +491,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   textStyle: theme!
-                                                      .textTheme.displayLarge,
+                                                      .textTheme.displayMedium,
                                                 ),
                                               ),
                                               Positioned(

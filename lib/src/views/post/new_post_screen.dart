@@ -157,7 +157,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
     if (uploadResponse) {
       isDocumentPost = true;
       showLinkPreview = false;
-      isMediaPost = true;
+      isMediaPost = false;
       setState(() {
         isUploading = false;
       });
@@ -536,7 +536,8 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                       textStyle: theme!
-                                                          .textTheme.titleLarge,
+                                                          .textTheme
+                                                          .titleMedium,
                                                     ),
                                                     subtitle: LMTextView(
                                                       text: linkModel?.ogTags
@@ -547,7 +548,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                                           TextOverflow.ellipsis,
                                                       textStyle: theme!
                                                           .textTheme
-                                                          .displayLarge,
+                                                          .displayMedium,
                                                     ),
                                                   ),
                                                   Positioned(
@@ -778,13 +779,6 @@ class _NewPostScreenState extends State<NewPostScreen> {
                     String postText = _controller.text;
                     postText = postText.trim();
                     if (postText.isNotEmpty || postMedia.isNotEmpty) {
-                      if (selectedTopic.isEmpty) {
-                        toast(
-                          "Can't create a post without topic",
-                          duration: Toast.LENGTH_LONG,
-                        );
-                        return;
-                      }
                       checkTextLinks();
                       userTags =
                           TaggingHelper.matchTags(_controller.text, userTags);

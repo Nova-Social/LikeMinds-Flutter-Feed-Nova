@@ -128,22 +128,21 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                   ValueListenableBuilder(
                     valueListenable: rebuildPostWidget,
                     builder: (context, _, __) => isPinned!
-                        ? Column(
+                        ? const Column(
                             children: [
                               Row(
                                 children: [
                                   LMIcon(
                                     type: LMIconType.svg,
                                     assetPath: kAssetPinIcon,
-                                    color: theme.colorScheme.onPrimary,
+                                    color: ColorTheme.white,
                                     size: 20,
                                   ),
                                   kHorizontalPaddingMedium,
                                   LMTextView(
                                     text: "Pinned Post",
-                                    textStyle: TextStyle(
-                                      color: theme.colorScheme.onPrimary,
-                                    ),
+                                    textStyle:
+                                        TextStyle(color: ColorTheme.white),
                                   )
                                 ],
                               ),
@@ -158,13 +157,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                         return LMPostHeader(
                             user: widget.user,
                             isFeed: widget.isFeed,
-                            customTitle: LMTextView(
-                              text: widget.user.customTitle!.isNotEmpty
-                                  ? widget.user.customTitle!
-                                  : "",
-                              // maxLines: 1,
-                              textStyle: theme.textTheme.titleSmall,
-                            ),
+                            showCustomTitle: false,
                             fallbackTextStyle: theme.textTheme.titleLarge!
                                 .copyWith(fontSize: 28),
                             imageSize: 52,
@@ -231,7 +224,8 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                                 getIconFromDropDownItemId(
                                                   e.id,
                                                   20,
-                                                  theme.colorScheme.onPrimary,
+                                                  theme.colorScheme
+                                                      .onPrimaryContainer,
                                                 ),
                                                 kHorizontalPaddingLarge,
                                                 LMTextView(
@@ -257,6 +251,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                     textStyle: theme.textTheme.bodyMedium,
                   ),
                   postDetails!.attachments != null &&
+                          postDetails!.attachments!.isNotEmpty &&
                           postDetails!.text.isNotEmpty
                       ? const SizedBox(height: 16)
                       : const SizedBox(),
@@ -285,7 +280,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                     "--",
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                textStyle: theme.textTheme.titleLarge,
+                                textStyle: theme.textTheme.titleMedium,
                               ),
                               subtitle: LMTextView(
                                 text: postDetails!.attachments!.first
@@ -293,7 +288,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                     "--",
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                textStyle: theme.textTheme.displayLarge,
+                                textStyle: theme.textTheme.displayMedium,
                               ),
                             )
                           : SizedBox(

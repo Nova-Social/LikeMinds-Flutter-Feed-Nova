@@ -392,10 +392,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                   const SizedBox(
                                                     width: 8,
                                                   ),
-                                                  isEditing
-                                                      ? const SizedBox()
-                                                      : Expanded(
-                                                          child: LMTextView(
+                                                  Expanded(
+                                                    child: isEditing
+                                                        ? const SizedBox()
+                                                        : LMTextView(
                                                             text:
                                                                 selectedUsername!,
                                                             textStyle: theme
@@ -406,8 +406,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                         .colorScheme
                                                                         .primary),
                                                           ),
-                                                        ),
-                                                  kHorizontalPaddingLarge,
+                                                  ),
                                                   LMIconButton(
                                                     onTap: (active) {
                                                       if (isEditing) {
@@ -424,10 +423,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                         deselectCommentToReply();
                                                       }
                                                     },
-                                                    icon: const LMIcon(
+                                                    icon: LMIcon(
                                                       type: LMIconType.icon,
                                                       icon: Icons.close,
-                                                      color: kGreyColor,
+                                                      color: theme.colorScheme
+                                                          .onPrimary,
                                                       size: 24,
                                                     ),
                                                   ),
@@ -569,7 +569,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                       text:
                                                                           LMTextView(
                                                                         text:
-                                                                            "Post",
+                                                                            "Comment",
                                                                         textStyle:
                                                                             TextStyle(
                                                                           color: right
@@ -590,7 +590,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                         if (commentText
                                                                             .isEmpty) {
                                                                           toast(
-                                                                              "Please write something to post");
+                                                                              "Please write something to comment");
                                                                           return;
                                                                         }
 
@@ -705,7 +705,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                         if (commentText
                                                                             .isEmpty) {
                                                                           toast(
-                                                                              "Please write something to post");
+                                                                              "Please write something to comment");
                                                                           return;
                                                                         }
 
@@ -1377,6 +1377,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                           },
                                         ),
                                       ),
+                                SliverPadding(
+                                  padding: EdgeInsets.only(
+                                      bottom:
+                                          isEditing || isReplying ? 60.0 : 0),
+                                ),
                               ],
                             ),
                           );

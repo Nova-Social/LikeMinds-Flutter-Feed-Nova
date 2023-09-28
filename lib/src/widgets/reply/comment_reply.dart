@@ -186,7 +186,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                   getIconFromDropDownItemId(
                                     e.id,
                                     20,
-                                    theme!.colorScheme.onPrimary,
+                                    theme!.colorScheme.onPrimaryContainer,
                                   ),
                                   kHorizontalPaddingLarge,
                                   LMTextView(
