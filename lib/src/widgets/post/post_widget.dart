@@ -178,11 +178,6 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                               text: widget.user.name,
                               textStyle: theme.textTheme.titleLarge,
                             ),
-                            subText: LMTextView(
-                              text:
-                                  "@${widget.user.name.toLowerCase().split(" ").join("")}",
-                              textStyle: theme.textTheme.labelMedium,
-                            ),
                             createdAt: LMTextView(
                               text: timeago.format(widget.post.createdAt),
                               textStyle: theme.textTheme.labelMedium,
