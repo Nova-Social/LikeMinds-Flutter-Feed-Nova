@@ -68,7 +68,9 @@ class _EditPostScreenState extends State<EditPostScreen> {
       itemBuilder: (context, index) => LMDocument(
         size:
             getFileSizeString(bytes: attachments![index].attachmentMeta.size!),
+        showBorder: false,
         type: attachments![index].attachmentMeta.format!,
+        backgroundColor: theme!.colorScheme.surface,
         documentIcon: const LMIcon(
           type: LMIconType.svg,
           assetPath: kAssetPDFIcon,
@@ -445,12 +447,15 @@ class _EditPostScreenState extends State<EditPostScreen> {
                             ValueListenableBuilder(
                                 valueListenable: rebuildAttachments,
                                 builder: (context, value, child) =>
-                                    ((attachments != null ||
-                                                attachments!.isNotEmpty) &&
-                                            mapIntToMediaType(attachments!
-                                                    .first.attachmentType) ==
-                                                MediaType.link &&
-                                            showLinkPreview)
+                                    ((attachments != null &&
+                                                    attachments!.isNotEmpty) &&
+                                                mapIntToMediaType(attachments!
+                                                        .first
+                                                        .attachmentType) ==
+                                                    MediaType.link &&
+                                                showLinkPreview) ||
+                                            (linkModel != null &&
+                                                showLinkPreview)
                                         ? Stack(
                                             children: [
                                               LMLinkPreview(
@@ -476,7 +481,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   textStyle: theme!
-                                                      .textTheme.titleLarge,
+                                                      .textTheme.titleMedium,
                                                 ),
                                                 subtitle: LMTextView(
                                                   text: linkModel?.ogTags
@@ -486,7 +491,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   textStyle: theme!
-                                                      .textTheme.displayLarge,
+                                                      .textTheme.displayMedium,
                                                 ),
                                               ),
                                               Positioned(

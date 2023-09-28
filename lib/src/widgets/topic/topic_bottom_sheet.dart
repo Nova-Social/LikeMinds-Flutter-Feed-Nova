@@ -227,9 +227,10 @@ class _TopicBottomSheetState extends State<TopicBottomSheet> {
                                               shape: RoundedRectangleBorder(
                                                   side: isTopicSelected
                                                       ? BorderSide.none
-                                                      : const BorderSide(
-                                                          color:
-                                                              appSecondaryBlack,
+                                                      : BorderSide(
+                                                          color: theme
+                                                              .colorScheme
+                                                              .onPrimaryContainer,
                                                           width: 1.0,
                                                         ),
                                                   borderRadius:

@@ -311,7 +311,8 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
                                             borderWidth: 1,
                                             height: 30,
                                             showBorder: true,
-                                            borderColor: appSecondaryBlack,
+                                            borderColor: theme!
+                                                .colorScheme.onPrimaryContainer,
                                             textStyle:
                                                 theme!.textTheme.bodyLarge,
                                             padding: const EdgeInsets.symmetric(
@@ -584,7 +585,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
     NewPostBloc newPostBloc = BlocProvider.of<NewPostBloc>(context);
     ThemeData theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: theme!.colorScheme.onBackground,
+      backgroundColor: theme.colorScheme.onBackground,
       body: Column(
         children: [
           BlocConsumer<NewPostBloc, NewPostState>(
@@ -672,10 +673,10 @@ class _FeedRoomViewState extends State<FeedRoomView> {
               if (state is EditPostUploading) {
                 return Container(
                   height: 60,
-                  color: kWhiteColor,
+                  color: theme.colorScheme.background,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
@@ -683,17 +684,20 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
-                          SizedBox(
+                          const SizedBox(
                             width: 50,
                             height: 50,
                           ),
                           kHorizontalPaddingMedium,
-                          Text('Saving')
+                          Text(
+                            'Saving',
+                            style: theme.textTheme.bodyMedium,
+                          )
                         ],
                       ),
                       CircularProgressIndicator(
-                        backgroundColor: kGrey3Color,
-                        valueColor: AlwaysStoppedAnimation(kPrimaryColor),
+                        valueColor:
+                            AlwaysStoppedAnimation(theme.colorScheme.primary),
                         strokeWidth: 3,
                       ),
                     ],
@@ -703,7 +707,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
               if (state is NewPostUploading) {
                 return Container(
                   height: 60,
-                  color: kWhiteColor,
+                  color: theme.colorScheme.background,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Row(
@@ -716,7 +720,10 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                         children: <Widget>[
                           getLoaderThumbnail(state.thumbnailMedia),
                           kHorizontalPaddingMedium,
-                          const Text('Posting')
+                          Text(
+                            'Posting',
+                            style: theme.textTheme.bodyMedium,
+                          )
                         ],
                       ),
                       StreamBuilder(
@@ -731,9 +738,8 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                           snapshot.data == 0.0
                                       ? null
                                       : snapshot.data?.toDouble()),
-                                  backgroundColor: kGrey3Color,
-                                  valueColor: const AlwaysStoppedAnimation(
-                                      kPrimaryColor),
+                                  valueColor: AlwaysStoppedAnimation(
+                                      theme.colorScheme.primary),
                                   strokeWidth: 3,
                                 ));
                           }),
@@ -852,7 +858,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                       type: LMIconType.icon,
                                       icon: Icons.add,
                                       size: 18,
-                                      color: theme.colorScheme.primaryContainer,
+                                      color: theme.colorScheme.onPrimary,
                                     ),
                                     onTap: right
                                         ? () {
@@ -890,7 +896,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                             return Column(
                               children: [
                                 const SizedBox(height: 4),
-                                SSPostWidget(
+                                NovaPostWidget(
                                   post: item,
                                   topics: widget.feedResponse.topics,
                                   user: widget.feedResponse.users[item.userId]!,
@@ -959,18 +965,22 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                           postId: item.id,
                                           isPinned: !item.isPinned));
                                     } else if (id == postEditId) {
-                                      String? postType;
-                                      postType = getPostType(item.attachments
-                                              ?.first.attachmentType ??
-                                          0);
-                                      LMAnalytics.get().track(
-                                        AnalyticsKeys.postEdited,
-                                        {
-                                          "created_by_id": item.userId,
-                                          "post_id": item.id,
-                                          "post_type": postType,
-                                        },
-                                      );
+                                      try {
+                                        String? postType;
+                                        postType = getPostType(item.attachments
+                                                ?.first.attachmentType ??
+                                            0);
+                                        LMAnalytics.get().track(
+                                          AnalyticsKeys.postEdited,
+                                          {
+                                            "created_by_id": item.userId,
+                                            "post_id": item.id,
+                                            "post_type": postType,
+                                          },
+                                        );
+                                      } catch (err) {
+                                        debugPrint(err.toString());
+                                      }
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (context) => EditPostScreen(
@@ -1010,7 +1020,10 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                           firstPageProgressIndicatorBuilder: (context) =>
                               const LMFeedShimmer(),
                           newPageProgressIndicatorBuilder: (context) =>
-                              const LMFeedShimmer(),
+                              const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          ),
                         ),
                       );
                     },
@@ -1047,7 +1060,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                     icon: Icons.add,
                     fit: BoxFit.cover,
                     size: 18,
-                    color: theme.colorScheme.primaryContainer,
+                    color: theme.colorScheme.onPrimary,
                   ),
                   onTap: right
                       ? () {

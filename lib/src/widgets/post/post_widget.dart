@@ -7,19 +7,15 @@ import 'package:likeminds_feed_nova_fl/src/models/post_view_model.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/icons.dart';
-import 'package:likeminds_feed_nova_fl/src/utils/post/post_action_id.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_utils.dart';
 import 'package:likeminds_feed_nova_fl/src/views/media_preview.dart';
-import 'package:likeminds_feed_nova_fl/src/views/post/edit_post_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post_detail_screen.dart';
-import 'package:likeminds_feed_nova_fl/src/widgets/delete_dialog.dart';
-
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
 
-class SSPostWidget extends StatefulWidget {
+class NovaPostWidget extends StatefulWidget {
   final PostViewModel post;
   final User user;
   final Map<String, Topic> topics;
@@ -28,7 +24,7 @@ class SSPostWidget extends StatefulWidget {
   final Function(bool isDeleted) refresh;
   final Function(int) onMenuTap;
 
-  const SSPostWidget({
+  const NovaPostWidget({
     Key? key,
     required this.post,
     required this.user,
@@ -40,10 +36,10 @@ class SSPostWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<SSPostWidget> createState() => _SSPostWidgetState();
+  State<NovaPostWidget> createState() => _NovaPostWidgetState();
 }
 
-class _SSPostWidgetState extends State<SSPostWidget> {
+class _NovaPostWidgetState extends State<NovaPostWidget> {
   int postLikes = 0;
   int comments = 0;
   PostViewModel? postDetails;
@@ -59,7 +55,7 @@ class _SSPostWidgetState extends State<SSPostWidget> {
   }
 
   @override
-  void didUpdateWidget(covariant SSPostWidget oldWidget) {
+  void didUpdateWidget(covariant NovaPostWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     setPostDetails();
   }
@@ -132,24 +128,21 @@ class _SSPostWidgetState extends State<SSPostWidget> {
                   ValueListenableBuilder(
                     valueListenable: rebuildPostWidget,
                     builder: (context, _, __) => isPinned!
-                        ? Column(
+                        ? const Column(
                             children: [
                               Row(
                                 children: [
                                   LMIcon(
                                     type: LMIconType.svg,
                                     assetPath: kAssetPinIcon,
-                                    color: theme.colorScheme.onPrimary,
+                                    color: ColorTheme.white,
                                     size: 20,
                                   ),
                                   kHorizontalPaddingMedium,
                                   LMTextView(
                                     text: "Pinned Post",
-                                    textStyle: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onPrimary,
-                                    ),
+                                    textStyle:
+                                        TextStyle(color: ColorTheme.white),
                                   )
                                 ],
                               ),
@@ -164,13 +157,7 @@ class _SSPostWidgetState extends State<SSPostWidget> {
                         return LMPostHeader(
                             user: widget.user,
                             isFeed: widget.isFeed,
-                            customTitle: LMTextView(
-                              text: widget.user.customTitle!.isNotEmpty
-                                  ? widget.user.customTitle!
-                                  : "",
-                              // maxLines: 1,
-                              textStyle: theme.textTheme.titleSmall,
-                            ),
+                            showCustomTitle: false,
                             fallbackTextStyle: theme.textTheme.titleLarge!
                                 .copyWith(fontSize: 28),
                             imageSize: 52,
@@ -184,11 +171,6 @@ class _SSPostWidgetState extends State<SSPostWidget> {
                               text: widget.user.name,
                               textStyle: theme.textTheme.titleLarge,
                             ),
-                            subText: LMTextView(
-                              text:
-                                  "@${widget.user.name.toLowerCase().split(" ").join("")}",
-                              textStyle: theme.textTheme.labelMedium,
-                            ),
                             createdAt: LMTextView(
                               text: timeago.format(widget.post.createdAt),
                               textStyle: theme.textTheme.labelMedium,
@@ -197,7 +179,7 @@ class _SSPostWidgetState extends State<SSPostWidget> {
                               icon: LMIcon(
                                 type: LMIconType.icon,
                                 icon: Icons.more_vert,
-                                color: theme.colorScheme.primaryContainer,
+                                color: theme.colorScheme.onPrimary,
                               ),
                               onTap: (bool value) {
                                 showModalBottomSheet(
@@ -243,7 +225,7 @@ class _SSPostWidgetState extends State<SSPostWidget> {
                                                   e.id,
                                                   20,
                                                   theme.colorScheme
-                                                      .primaryContainer,
+                                                      .onPrimaryContainer,
                                                 ),
                                                 kHorizontalPaddingLarge,
                                                 LMTextView(
@@ -259,106 +241,9 @@ class _SSPostWidgetState extends State<SSPostWidget> {
                                   ),
                                 );
                               },
-                            )
-                            // menu: LMPostMenu(
-                            //   menuItems: postDetails!.menuItems,
-                            //   onSelected: (id) {
-                            //     if (id == postDeleteId) {
-                            //       // Delete post
-                            //       showDialog(
-                            //           context: context,
-                            //           builder: (childContext) =>
-                            //               deleteConfirmationDialog(
-                            //                 childContext,
-                            //                 title: 'Delete Post',
-                            //                 userId: postDetails!.userId,
-                            //                 content:
-                            //                     'Are you sure you want to delete this post. This action can not be reversed.',
-                            //                 action: (String reason) async {
-                            //                   Navigator.of(childContext).pop();
-                            //                   final res = await locator<
-                            //                           LikeMindsService>()
-                            //                       .getMemberState();
-                            //                   //Implement delete post analytics tracking
-                            //                   LMAnalytics.get().track(
-                            //                     AnalyticsKeys.postDeleted,
-                            //                     {
-                            //                       "user_state": res.state == 1
-                            //                           ? "CM"
-                            //                           : "member",
-                            //                       "post_id": postDetails!.id,
-                            //                       "user_id": postDetails!.userId,
-                            //                     },
-                            //                   );
-                            //                   newPostBloc.add(
-                            //                     DeletePost(
-                            //                       postId: postDetails!.id,
-                            //                       reason: reason ?? 'Self Post',
-                            //                     ),
-                            //                   );
-                            //                   if (!widget.isFeed) {
-                            //                     Navigator.of(context).pop();
-                            //                   }
-                            //                 },
-                            //                 actionText: 'Delete',
-                            //               ));
-                            //     } else if (id == postPinId || id == postUnpinId) {
-                            //       String? postType = getPostType(postDetails!
-                            //               .attachments?.first.attachmentType ??
-                            //           0);
-                            //       if (isPinned!) {
-                            //         LMAnalytics.get()
-                            //             .track(AnalyticsKeys.postUnpinned, {
-                            //           "created_by_id": postDetails!.userId,
-                            //           "post_id": postDetails!.id,
-                            //           "post_type": postType,
-                            //         });
-                            //       } else {
-                            //         LMAnalytics.get()
-                            //             .track(AnalyticsKeys.postPinned, {
-                            //           "created_by_id": postDetails!.userId,
-                            //           "post_id": postDetails!.id,
-                            //           "post_type": postType,
-                            //         });
-                            //       }
-                            //       newPostBloc.add(TogglePinPost(
-                            //           postId: postDetails!.id,
-                            //           isPinned: !isPinned!));
-                            //     } else if (id == postEditId) {
-                            //       String? postType;
-                            //       postType = getPostType(postDetails!
-                            //               .attachments?.first.attachmentType ??
-                            //           0);
-                            //       LMAnalytics.get()
-                            //           .track(AnalyticsKeys.postEdited, {
-                            //         "created_by_id": postDetails!.userId,
-                            //         "post_id": postDetails!.id,
-                            //         "post_type": postType,
-                            //       });
-                            //       Navigator.of(context).push(
-                            //         MaterialPageRoute(
-                            //           builder: (context) => EditPostScreen(
-                            //             postId: postDetails!.id,
-                            //           ),
-                            //         ),
-                            //       );
-                            //     }
-                            //   },
-                            //   isFeed: widget.isFeed,
-                            // ),
-                            );
+                            ));
                       }),
                   const SizedBox(height: 16),
-                  // postDetails!.topics.isEmpty ||
-                  //         widget.topics[postDetails!.topics.first] == null
-                  //     ? const SizedBox()
-                  //     : Padding(
-                  //         padding: const EdgeInsets.only(bottom: 12.0),
-                  //         child: TopicChipWidget(
-                  //           postTopic: TopicUI.fromTopic(
-                  //               widget.topics[postDetails!.topics.first]!),
-                  //         ),
-                  //       ),
                   LMPostContent(
                     onTagTap: (String userId) {
                       locator<LikeMindsService>().routeToProfile(userId);
@@ -366,6 +251,7 @@ class _SSPostWidgetState extends State<SSPostWidget> {
                     textStyle: theme.textTheme.bodyMedium,
                   ),
                   postDetails!.attachments != null &&
+                          postDetails!.attachments!.isNotEmpty &&
                           postDetails!.text.isNotEmpty
                       ? const SizedBox(height: 16)
                       : const SizedBox(),
@@ -394,7 +280,7 @@ class _SSPostWidgetState extends State<SSPostWidget> {
                                     "--",
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                textStyle: theme.textTheme.titleLarge,
+                                textStyle: theme.textTheme.titleMedium,
                               ),
                               subtitle: LMTextView(
                                 text: postDetails!.attachments!.first
@@ -402,7 +288,7 @@ class _SSPostWidgetState extends State<SSPostWidget> {
                                     "--",
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                textStyle: theme.textTheme.displayLarge,
+                                textStyle: theme.textTheme.displayMedium,
                               ),
                             )
                           : SizedBox(
@@ -425,19 +311,29 @@ class _SSPostWidgetState extends State<SSPostWidget> {
                                   attachments: postDetails!.attachments!,
                                   borderRadius: 16.0,
                                   showLinkUrl: false,
-                                  backgroundColor: kSecondary100,
+                                  backgroundColor: theme.colorScheme.surface,
+                                  showBorder: false,
                                   carouselActiveIndicatorColor:
                                       theme.colorScheme.primary,
                                   carouselInactiveIndicatorColor: theme
                                       .colorScheme.primary
                                       .withOpacity(0.3),
-                                  documentIcon: const LMIcon(
-                                    type: LMIconType.svg,
-                                    assetPath: kAssetDocPDFIcon,
-                                    size: 50,
-                                    boxPadding: 0,
-                                    fit: BoxFit.cover,
-                                    color: Colors.red,
+                                  documentIcon: Container(
+                                    width: 48,
+                                    height: 48,
+                                    decoration: ShapeDecoration(
+                                      color: theme.colorScheme.primaryContainer,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4)),
+                                    ),
+                                    child: Center(
+                                      child: LMTextView(
+                                        text: 'PDF',
+                                        textStyle: theme.textTheme.titleLarge!
+                                            .copyWith(fontSize: 18),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),

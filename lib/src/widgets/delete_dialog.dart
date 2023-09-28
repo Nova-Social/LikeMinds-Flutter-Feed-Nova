@@ -39,6 +39,7 @@ Dialog deleteConfirmationDialog(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           LMTextView(
             text: title,
@@ -47,6 +48,7 @@ Dialog deleteConfirmationDialog(
           kVerticalPaddingLarge,
           LMTextView(
             text: content,
+            maxLines: 3,
             textStyle: theme.textTheme.bodyMedium,
           ),
           user.userUniqueId == userId
@@ -83,7 +85,8 @@ Dialog deleteConfirmationDialog(
                                             elevation: 5,
                                             enableDrag: true,
                                             clipBehavior: Clip.hardEdge,
-                                            backgroundColor: kWhiteColor,
+                                            backgroundColor:
+                                                theme.colorScheme.surface,
                                             useSafeArea: true,
                                             shape: const RoundedRectangleBorder(
                                               borderRadius: BorderRadius.only(
@@ -97,23 +100,23 @@ Dialog deleteConfirmationDialog(
                                                     const EdgeInsets.symmetric(
                                                         horizontal: 20.0,
                                                         vertical: 30.0),
+                                                color: theme
+                                                    .colorScheme.background,
                                                 width: screenSize.width,
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    const Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 10.0),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 10.0),
                                                       child: Text(
                                                         'Reason for deletion',
                                                         textAlign:
                                                             TextAlign.left,
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: kFontMedium,
-                                                        ),
+                                                        style: theme.textTheme
+                                                            .titleLarge,
                                                       ),
                                                     ),
                                                     kVerticalPaddingXLarge,
@@ -152,15 +155,20 @@ Dialog deleteConfirmationDialog(
                                                                   children: [
                                                                     SizedBox(
                                                                       width: 35,
-                                                                      child: Radio(
-                                                                          value: reportTags[index]
-                                                                              .id,
-                                                                          groupValue: reasonForDeletion == null
-                                                                              ? -1
-                                                                              : reasonForDeletion!
-                                                                                  .id,
-                                                                          onChanged:
-                                                                              (value) {}),
+                                                                      child:
+                                                                          Radio(
+                                                                        value: reportTags[index]
+                                                                            .id,
+                                                                        groupValue: reasonForDeletion ==
+                                                                                null
+                                                                            ? -1
+                                                                            : reasonForDeletion!.id,
+                                                                        onChanged:
+                                                                            (value) {},
+                                                                        activeColor: theme
+                                                                            .colorScheme
+                                                                            .primary,
+                                                                      ),
                                                                     ),
                                                                     kHorizontalPaddingLarge,
                                                                     Text(
@@ -193,7 +201,7 @@ Dialog deleteConfirmationDialog(
                               child: Container(
                                   padding: const EdgeInsets.all(14.0),
                                   decoration: BoxDecoration(
-                                      color: kWhiteColor,
+                                      color: theme.colorScheme.surface,
                                       borderRadius: BorderRadius.circular(8.0),
                                       boxShadow: const [
                                         BoxShadow(
@@ -216,7 +224,7 @@ Dialog deleteConfirmationDialog(
                                         Icons.arrow_drop_down,
                                         color: Theme.of(context)
                                             .colorScheme
-                                            .onSecondary,
+                                            .onPrimary,
                                       )
                                     ],
                                   )),
@@ -237,12 +245,9 @@ Dialog deleteConfirmationDialog(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: const Text(
+                child: Text(
                   'Cancel',
-                  style: TextStyle(
-                    color: kGrey3Color,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: theme.textTheme.headlineMedium,
                 ),
               ),
               TextButton(
@@ -263,10 +268,8 @@ Dialog deleteConfirmationDialog(
                 ),
                 child: Text(
                   actionText,
-                  style: const TextStyle(
-                    color: kLinkColor,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: theme.textTheme.headlineMedium!
+                      .copyWith(color: theme.colorScheme.error),
                 ),
               )
             ],

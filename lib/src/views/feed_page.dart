@@ -218,7 +218,7 @@ class _FeedScreenState extends State<FeedScreen> {
                     return Column(
                       children: [
                         const SizedBox(height: 8),
-                        SSPostWidget(
+                        NovaPostWidget(
                           post: item,
                           user: feedResponse.users[item.userId]!,
                           topics: feedResponse.topics,

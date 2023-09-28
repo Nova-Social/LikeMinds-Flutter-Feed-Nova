@@ -29,6 +29,7 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
   await setupNotifications();
   LMFeed.setupFeed(
       apiKey: debug ? CredsDev.apiKey : CredsProd.apiKey,

@@ -7,6 +7,7 @@ import 'package:likeminds_feed/likeminds_feed.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/ui_constants.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
+import 'package:likeminds_feed_ui_fl/packages/expandable_text/expandable_text.dart';
 
 class MediaPreview extends StatefulWidget {
   final List<Attachment> postAttachments;
@@ -55,6 +56,7 @@ class _MediaPreviewState extends State<MediaPreview> {
     final DateFormat formatter = DateFormat('MMMM d, hh:mm');
     final String formatted = formatter.format(post.createdAt);
     final ThemeData theme = Theme.of(context);
+    final Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -115,55 +117,91 @@ class _MediaPreviewState extends State<MediaPreview> {
             child: Column(
               children: <Widget>[
                 Expanded(
-                  child: CarouselSlider.builder(
-                      options: CarouselOptions(
-                        clipBehavior: Clip.hardEdge,
-                        scrollDirection: Axis.horizontal,
-                        initialPage: position ?? 0,
-                        aspectRatio: 9 / 16,
-                        enlargeCenterPage: false,
-                        enableInfiniteScroll: false,
-                        enlargeFactor: 0.0,
-                        viewportFraction: 1.0,
-                        onPageChanged: (index, reason) {
-                          currPosition = index;
-                          rebuildCurr.value = !rebuildCurr.value;
-                        },
-                      ),
-                      itemCount: postAttachments.length,
-                      itemBuilder: (context, index, realIndex) {
-                        if (postAttachments[index].attachmentType == 2) {
-                          return LMVideo(
-                            videoUrl: postAttachments[index].attachmentMeta.url,
-                            showControls: true,
-                          );
-                        }
-
-                        return Container(
-                          color: Colors.black,
-                          width: MediaQuery.of(context).size.width,
-                          child: ExtendedImage.network(
-                            postAttachments[index].attachmentMeta.url!,
-                            cache: true,
-                            fit: BoxFit.contain,
-                            mode: ExtendedImageMode.gesture,
-                            initGestureConfigHandler: (state) {
-                              return GestureConfig(
-                                hitTestBehavior: HitTestBehavior.opaque,
-                                minScale: 0.9,
-                                animationMinScale: 0.7,
-                                maxScale: 3.0,
-                                animationMaxScale: 3.5,
-                                speed: 1.0,
-                                inertialSpeed: 100.0,
-                                initialScale: 1.0,
-                                inPageView: true,
-                                initialAlignment: InitialAlignment.center,
-                              );
+                  child: Stack(
+                    children: [
+                      CarouselSlider.builder(
+                          options: CarouselOptions(
+                            clipBehavior: Clip.hardEdge,
+                            scrollDirection: Axis.horizontal,
+                            initialPage: position ?? 0,
+                            aspectRatio: 9 / 16,
+                            enlargeCenterPage: false,
+                            enableInfiniteScroll: false,
+                            enlargeFactor: 0.0,
+                            viewportFraction: 1.0,
+                            onPageChanged: (index, reason) {
+                              currPosition = index;
+                              rebuildCurr.value = !rebuildCurr.value;
                             },
                           ),
-                        );
-                      }),
+                          itemCount: postAttachments.length,
+                          itemBuilder: (context, index, realIndex) {
+                            if (postAttachments[index].attachmentType == 2) {
+                              return LMVideo(
+                                videoUrl:
+                                    postAttachments[index].attachmentMeta.url,
+                                showControls: true,
+                              );
+                            }
+
+                            return Container(
+                              color: Colors.black,
+                              width: MediaQuery.of(context).size.width,
+                              child: ExtendedImage.network(
+                                postAttachments[index].attachmentMeta.url!,
+                                cache: true,
+                                fit: BoxFit.contain,
+                                mode: ExtendedImageMode.gesture,
+                                initGestureConfigHandler: (state) {
+                                  return GestureConfig(
+                                    hitTestBehavior: HitTestBehavior.opaque,
+                                    minScale: 0.9,
+                                    animationMinScale: 0.7,
+                                    maxScale: 3.0,
+                                    animationMaxScale: 3.5,
+                                    speed: 1.0,
+                                    inertialSpeed: 100.0,
+                                    initialScale: 1.0,
+                                    inPageView: true,
+                                    initialAlignment: InitialAlignment.center,
+                                  );
+                                },
+                              ),
+                            );
+                          }),
+                      Positioned(
+                        bottom: 0,
+                        child: Opacity(
+                          opacity: showData ? 1.0 : 0.0,
+                          child: Container(
+                            alignment: Alignment.centerLeft,
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 12.0),
+                            decoration: const BoxDecoration(boxShadow: [
+                              BoxShadow(
+                                color: Colors.black38,
+                                blurRadius: 10.0,
+                              )
+                            ]),
+                            width: screenSize.width,
+                            height: 50,
+                            child: ExpandableText(
+                              widget.post.text,
+                              expandText: '',
+                              maxLines: 2,
+                              onTagTap: (value) {},
+                              hashtagStyle: theme.textTheme.bodyMedium!
+                                  .copyWith(color: theme.colorScheme.primary),
+                              linkStyle: theme.textTheme.bodyMedium!
+                                  .copyWith(color: theme.colorScheme.primary),
+                              textAlign: TextAlign.left,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
                 Opacity(
                   opacity: showData ? 1.0 : 0.0,

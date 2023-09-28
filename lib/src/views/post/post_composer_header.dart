@@ -43,7 +43,7 @@ class PostComposerHeader extends StatelessWidget {
               icon: LMIcon(
                 type: LMIconType.icon,
                 icon: CupertinoIcons.xmark,
-                color: theme.colorScheme.primaryContainer,
+                color: theme.colorScheme.onPrimary,
               ),
               onTap: onPressedBack == null
                   ? (bool value) {

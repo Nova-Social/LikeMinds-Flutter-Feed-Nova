@@ -52,6 +52,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
   ValueNotifier<bool> rebuildTopicFloatingButton = ValueNotifier(false);
   final CustomPopupMenuController _controllerPopUp =
       CustomPopupMenuController();
+  ThemeData? theme;
 
   NewPostBloc? newPostBloc;
   late final User user;
@@ -156,7 +157,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
     if (uploadResponse) {
       isDocumentPost = true;
       showLinkPreview = false;
-      isMediaPost = true;
+      isMediaPost = false;
       setState(() {
         isUploading = false;
       });
@@ -187,6 +188,8 @@ class _NewPostScreenState extends State<NewPostScreen> {
           OpenFilex.open(postMedia[index].mediaFile!.path);
         },
         type: postMedia[index].format!,
+        showBorder: false,
+        backgroundColor: theme!.colorScheme.surface,
         documentIcon: const LMIcon(
           type: LMIconType.svg,
           assetPath: kAssetDocPDFIcon,
@@ -258,7 +261,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
+    theme = Theme.of(context);
     newPostBloc = BlocProvider.of<NewPostBloc>(context);
     Size screenSize = MediaQuery.of(context).size;
     return WillPopScope(
@@ -267,12 +270,12 @@ class _NewPostScreenState extends State<NewPostScreen> {
           context: context,
           builder: (dialogContext) => AlertDialog(
             shadowColor: Colors.transparent,
-            backgroundColor: theme.colorScheme.background,
+            backgroundColor: theme!.colorScheme.background,
             elevation: 0,
             content: LMTextView(
               text: 'Are you sure you want to discard your changes?',
               maxLines: 3,
-              textStyle: theme.textTheme.labelLarge,
+              textStyle: theme!.textTheme.labelLarge,
             ),
             actions: <Widget>[
               Padding(
@@ -283,7 +286,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                     LMTextButton(
                       text: LMTextView(
                         text: 'No thanks',
-                        textStyle: theme.textTheme.headlineMedium,
+                        textStyle: theme!.textTheme.headlineMedium,
                       ),
                       onTap: () {
                         Navigator.of(dialogContext).pop();
@@ -293,8 +296,8 @@ class _NewPostScreenState extends State<NewPostScreen> {
                     LMTextButton(
                       text: LMTextView(
                         text: 'Discard',
-                        textStyle: theme.textTheme.headlineMedium!
-                            .copyWith(color: theme.colorScheme.error),
+                        textStyle: theme!.textTheme.headlineMedium!
+                            .copyWith(color: theme!.colorScheme.error),
                       ),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16.0, vertical: 4.0),
@@ -315,7 +318,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         child: Scaffold(
-          backgroundColor: theme.colorScheme.background,
+          backgroundColor: theme!.colorScheme.background,
           floatingActionButton: Padding(
             padding: const EdgeInsets.only(bottom: 64.0, left: 16.0),
             child: Row(
@@ -355,12 +358,12 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                     menuBuilder: () => TopicPopUp(
                                       selectedTopics: selectedTopic,
                                       backgroundColor:
-                                          theme.colorScheme.surface,
+                                          theme!.colorScheme.surface,
                                       selectedTextColor:
-                                          theme.colorScheme.primaryContainer,
+                                          theme!.colorScheme.onPrimary,
                                       unSelectedTextColor:
-                                          theme.colorScheme.primaryContainer,
-                                      selectedColor: theme.colorScheme.primary,
+                                          theme!.colorScheme.onPrimary,
+                                      selectedColor: theme!.colorScheme.primary,
                                       isEnabled: true,
                                       onTopicSelected:
                                           (updatedTopics, tappedTopic) {
@@ -387,7 +390,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                       decoration: BoxDecoration(
                                         borderRadius:
                                             BorderRadius.circular(500),
-                                        color: theme.colorScheme.primary,
+                                        color: theme!.colorScheme.primary,
                                       ),
                                       child: LMTopicChip(
                                         topic: selectedTopic.isEmpty
@@ -397,12 +400,12 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                                   ..name("Topic"))
                                                 .build()
                                             : selectedTopic.first,
-                                        textStyle: theme.textTheme.bodyMedium,
+                                        textStyle: theme!.textTheme.bodyMedium,
                                         icon: LMIcon(
                                           type: LMIconType.icon,
                                           icon: CupertinoIcons.chevron_down,
                                           size: 16,
-                                          color: theme.colorScheme.onPrimary,
+                                          color: theme!.colorScheme.onPrimary,
                                         ),
                                       ),
                                     ),
@@ -458,7 +461,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                   child: LMTextView(
                                     text: user.name,
                                     overflow: TextOverflow.ellipsis,
-                                    textStyle: theme.textTheme.titleMedium,
+                                    textStyle: theme!.textTheme.titleMedium,
                                   ),
                                 ),
                               ),
@@ -483,7 +486,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                       decoration: InputDecoration(
                                         border: InputBorder.none,
                                         hintText: 'What\'s on your mind?',
-                                        hintStyle: theme.textTheme.labelMedium,
+                                        hintStyle: theme!.textTheme.labelMedium,
                                       ),
                                       onTagSelected: (tag) {
                                         userTags.add(tag);
@@ -533,7 +536,8 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                       textStyle: theme!
-                                                          .textTheme.titleLarge,
+                                                          .textTheme
+                                                          .titleMedium,
                                                     ),
                                                     subtitle: LMTextView(
                                                       text: linkModel?.ogTags
@@ -544,7 +548,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                                           TextOverflow.ellipsis,
                                                       textStyle: theme!
                                                           .textTheme
-                                                          .displayLarge,
+                                                          .displayMedium,
                                                     ),
                                                   ),
                                                   Positioned(
@@ -680,12 +684,12 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                                                         .icon,
                                                                     icon: CupertinoIcons
                                                                         .xmark_circle_fill,
-                                                                    backgroundColor: theme
+                                                                    backgroundColor: theme!
                                                                         .colorScheme
                                                                         .background
                                                                         .withOpacity(
                                                                             0.5),
-                                                                    color: theme
+                                                                    color: theme!
                                                                         .colorScheme
                                                                         .onPrimary,
                                                                   ),
@@ -722,13 +726,13 @@ class _NewPostScreenState extends State<NewPostScreen> {
                       context: context,
                       builder: (dialogContext) => AlertDialog(
                         shadowColor: Colors.transparent,
-                        backgroundColor: theme.colorScheme.background,
+                        backgroundColor: theme!.colorScheme.background,
                         elevation: 0,
                         content: LMTextView(
                           text:
                               'Are you sure you want to discard your changes?',
                           maxLines: 3,
-                          textStyle: theme.textTheme.labelLarge,
+                          textStyle: theme!.textTheme.labelLarge,
                         ),
                         actions: <Widget>[
                           Padding(
@@ -740,7 +744,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                 LMTextButton(
                                   text: LMTextView(
                                     text: 'No thanks',
-                                    textStyle: theme.textTheme.headlineMedium,
+                                    textStyle: theme!.textTheme.headlineMedium,
                                   ),
                                   onTap: () {
                                     Navigator.of(dialogContext).pop();
@@ -750,9 +754,9 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                 LMTextButton(
                                   text: LMTextView(
                                     text: 'Discard',
-                                    textStyle: theme.textTheme.headlineMedium!
+                                    textStyle: theme!.textTheme.headlineMedium!
                                         .copyWith(
-                                            color: theme.colorScheme.error),
+                                            color: theme!.colorScheme.error),
                                   ),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 16.0, vertical: 4.0),
@@ -775,13 +779,6 @@ class _NewPostScreenState extends State<NewPostScreen> {
                     String postText = _controller.text;
                     postText = postText.trim();
                     if (postText.isNotEmpty || postMedia.isNotEmpty) {
-                      if (selectedTopic.isEmpty) {
-                        toast(
-                          "Can't create a post without topic",
-                          duration: Toast.LENGTH_LONG,
-                        );
-                        return;
-                      }
                       checkTextLinks();
                       userTags =
                           TaggingHelper.matchTags(_controller.text, userTags);
@@ -813,7 +810,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                   child: Container(
                     // height: 32,
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.background,
+                      color: theme!.colorScheme.background,
                     ),
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
@@ -825,7 +822,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                             icon: LMIcon(
                               type: LMIconType.svg,
                               assetPath: kAssetGalleryIcon,
-                              color: theme.colorScheme.primary,
+                              color: theme!.colorScheme.primary,
                               boxPadding: 0,
                               size: 28,
                             ),
@@ -852,7 +849,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                         //           type: LMIconType.svg,
                         //           assetPath: kAssetVideoIcon,
                         //           color:
-                        //               Theme.of(context).colorScheme.primary,
+                        //                theme!.of(context).colorScheme.primary,
                         //           boxPadding: 0,
                         //           size: 44,
                         //         ),
@@ -877,7 +874,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                             icon: LMIcon(
                               type: LMIconType.svg,
                               assetPath: kAssetDocPDFIcon,
-                              color: theme.colorScheme.primary,
+                              color: theme!.colorScheme.primary,
                               boxPadding: 0,
                               size: 28,
                             ),
@@ -909,7 +906,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                           icon: LMIcon(
                             type: LMIconType.svg,
                             assetPath: kAssetMentionIcon,
-                            color: theme.colorScheme.primary,
+                            color: theme!.colorScheme.primary,
                             boxPadding: 0,
                             size: 28,
                           ),

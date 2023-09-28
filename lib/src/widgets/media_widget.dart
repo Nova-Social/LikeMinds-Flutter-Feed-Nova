@@ -74,6 +74,8 @@ class _SSPostMediaState extends State<SSPostMedia> {
               assetPath: kAssetPDFIcon,
               size: 20,
             ),
+            showBorder: false,
+            backgroundColor: Theme.of(context).colorScheme.surface,
             size: PostHelper.getFileSizeString(bytes: e.attachmentMeta.size!),
             documentUrl: e.attachmentMeta.url,
             type: e.attachmentMeta.format!,
