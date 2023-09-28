@@ -445,12 +445,15 @@ class _EditPostScreenState extends State<EditPostScreen> {
                             ValueListenableBuilder(
                                 valueListenable: rebuildAttachments,
                                 builder: (context, value, child) =>
-                                    ((attachments != null ||
-                                                attachments!.isNotEmpty) &&
-                                            mapIntToMediaType(attachments!
-                                                    .first.attachmentType) ==
-                                                MediaType.link &&
-                                            showLinkPreview)
+                                    ((attachments != null &&
+                                                    attachments!.isNotEmpty) &&
+                                                mapIntToMediaType(attachments!
+                                                        .first
+                                                        .attachmentType) ==
+                                                    MediaType.link &&
+                                                showLinkPreview) ||
+                                            (linkModel != null &&
+                                                showLinkPreview)
                                         ? Stack(
                                             children: [
                                               LMLinkPreview(

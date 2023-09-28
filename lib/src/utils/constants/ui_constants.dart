@@ -10,6 +10,7 @@ class ColorTheme {
   static const white400 = Color.fromRGBO(241, 241, 241, 0.498);
   static const white600 = Color.fromRGBO(241, 241, 241, 0.12);
   static const redColor = Color.fromRGBO(255, 73, 90, 1);
+  static const pdfBlue = Color.fromRGBO(71, 111, 254, 1);
 
   static final novaTheme = ThemeData.from(
     colorScheme: ColorScheme.fromSeed(
@@ -23,6 +24,7 @@ class ColorTheme {
       error: ColorTheme.redColor,
       onPrimaryContainer: ColorTheme.white,
       onSurface: ColorTheme.white600,
+      primaryContainer: ColorTheme.pdfBlue,
     ),
     textTheme: const TextTheme(
       titleLarge: TextStyle(

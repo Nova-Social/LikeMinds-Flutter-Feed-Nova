@@ -7,13 +7,9 @@ import 'package:likeminds_feed_nova_fl/src/models/post_view_model.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/icons.dart';
-import 'package:likeminds_feed_nova_fl/src/utils/post/post_action_id.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_utils.dart';
 import 'package:likeminds_feed_nova_fl/src/views/media_preview.dart';
-import 'package:likeminds_feed_nova_fl/src/views/post/edit_post_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post_detail_screen.dart';
-import 'package:likeminds_feed_nova_fl/src/widgets/delete_dialog.dart';
-
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -195,7 +191,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                               icon: LMIcon(
                                 type: LMIconType.icon,
                                 icon: Icons.more_vert,
-                                color: theme.colorScheme.primaryContainer,
+                                color: theme.colorScheme.onPrimary,
                               ),
                               onTap: (bool value) {
                                 showModalBottomSheet(
@@ -240,8 +236,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                                 getIconFromDropDownItemId(
                                                   e.id,
                                                   20,
-                                                  theme.colorScheme
-                                                      .primaryContainer,
+                                                  theme.colorScheme.onPrimary,
                                                 ),
                                                 kHorizontalPaddingLarge,
                                                 LMTextView(
@@ -257,106 +252,9 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                   ),
                                 );
                               },
-                            )
-                            // menu: LMPostMenu(
-                            //   menuItems: postDetails!.menuItems,
-                            //   onSelected: (id) {
-                            //     if (id == postDeleteId) {
-                            //       // Delete post
-                            //       showDialog(
-                            //           context: context,
-                            //           builder: (childContext) =>
-                            //               deleteConfirmationDialog(
-                            //                 childContext,
-                            //                 title: 'Delete Post',
-                            //                 userId: postDetails!.userId,
-                            //                 content:
-                            //                     'Are you sure you want to delete this post. This action can not be reversed.',
-                            //                 action: (String reason) async {
-                            //                   Navigator.of(childContext).pop();
-                            //                   final res = await locator<
-                            //                           LikeMindsService>()
-                            //                       .getMemberState();
-                            //                   //Implement delete post analytics tracking
-                            //                   LMAnalytics.get().track(
-                            //                     AnalyticsKeys.postDeleted,
-                            //                     {
-                            //                       "user_state": res.state == 1
-                            //                           ? "CM"
-                            //                           : "member",
-                            //                       "post_id": postDetails!.id,
-                            //                       "user_id": postDetails!.userId,
-                            //                     },
-                            //                   );
-                            //                   newPostBloc.add(
-                            //                     DeletePost(
-                            //                       postId: postDetails!.id,
-                            //                       reason: reason ?? 'Self Post',
-                            //                     ),
-                            //                   );
-                            //                   if (!widget.isFeed) {
-                            //                     Navigator.of(context).pop();
-                            //                   }
-                            //                 },
-                            //                 actionText: 'Delete',
-                            //               ));
-                            //     } else if (id == postPinId || id == postUnpinId) {
-                            //       String? postType = getPostType(postDetails!
-                            //               .attachments?.first.attachmentType ??
-                            //           0);
-                            //       if (isPinned!) {
-                            //         LMAnalytics.get()
-                            //             .track(AnalyticsKeys.postUnpinned, {
-                            //           "created_by_id": postDetails!.userId,
-                            //           "post_id": postDetails!.id,
-                            //           "post_type": postType,
-                            //         });
-                            //       } else {
-                            //         LMAnalytics.get()
-                            //             .track(AnalyticsKeys.postPinned, {
-                            //           "created_by_id": postDetails!.userId,
-                            //           "post_id": postDetails!.id,
-                            //           "post_type": postType,
-                            //         });
-                            //       }
-                            //       newPostBloc.add(TogglePinPost(
-                            //           postId: postDetails!.id,
-                            //           isPinned: !isPinned!));
-                            //     } else if (id == postEditId) {
-                            //       String? postType;
-                            //       postType = getPostType(postDetails!
-                            //               .attachments?.first.attachmentType ??
-                            //           0);
-                            //       LMAnalytics.get()
-                            //           .track(AnalyticsKeys.postEdited, {
-                            //         "created_by_id": postDetails!.userId,
-                            //         "post_id": postDetails!.id,
-                            //         "post_type": postType,
-                            //       });
-                            //       Navigator.of(context).push(
-                            //         MaterialPageRoute(
-                            //           builder: (context) => EditPostScreen(
-                            //             postId: postDetails!.id,
-                            //           ),
-                            //         ),
-                            //       );
-                            //     }
-                            //   },
-                            //   isFeed: widget.isFeed,
-                            // ),
-                            );
+                            ));
                       }),
                   const SizedBox(height: 16),
-                  // postDetails!.topics.isEmpty ||
-                  //         widget.topics[postDetails!.topics.first] == null
-                  //     ? const SizedBox()
-                  //     : Padding(
-                  //         padding: const EdgeInsets.only(bottom: 12.0),
-                  //         child: TopicChipWidget(
-                  //           postTopic: TopicUI.fromTopic(
-                  //               widget.topics[postDetails!.topics.first]!),
-                  //         ),
-                  //       ),
                   LMPostContent(
                     onTagTap: (String userId) {
                       locator<LikeMindsService>().routeToProfile(userId);
@@ -429,13 +327,22 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                   carouselInactiveIndicatorColor: theme
                                       .colorScheme.primary
                                       .withOpacity(0.3),
-                                  documentIcon: const LMIcon(
-                                    type: LMIconType.svg,
-                                    assetPath: kAssetDocPDFIcon,
-                                    size: 50,
-                                    boxPadding: 0,
-                                    fit: BoxFit.cover,
-                                    color: Colors.red,
+                                  documentIcon: Container(
+                                    width: 48,
+                                    height: 48,
+                                    decoration: ShapeDecoration(
+                                      color: theme.colorScheme.primaryContainer,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(4)),
+                                    ),
+                                    child: Center(
+                                      child: LMTextView(
+                                        text: 'PDF',
+                                        textStyle: theme.textTheme.titleLarge!
+                                            .copyWith(fontSize: 18),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),

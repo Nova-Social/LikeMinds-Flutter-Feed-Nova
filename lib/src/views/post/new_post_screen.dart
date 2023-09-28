@@ -357,9 +357,9 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                       backgroundColor:
                                           theme.colorScheme.surface,
                                       selectedTextColor:
-                                          theme.colorScheme.primaryContainer,
+                                          theme.colorScheme.onPrimary,
                                       unSelectedTextColor:
-                                          theme.colorScheme.primaryContainer,
+                                          theme.colorScheme.onPrimary,
                                       selectedColor: theme.colorScheme.primary,
                                       isEnabled: true,
                                       onTopicSelected:

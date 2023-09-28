@@ -9,6 +9,7 @@ import 'package:likeminds_feed_nova_fl/src/blocs/comment/toggle_like_comment/tog
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/ui_constants.dart';
+import 'package:likeminds_feed_nova_fl/src/utils/icons.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_action_id.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/delete_dialog.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
@@ -44,6 +45,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
   Map<String, User> users = {};
   List<Widget> repliesW = [];
   ThemeData? theme;
+  Size? screenSize;
 
   Reply? reply;
   late final User user;
@@ -82,119 +84,188 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
     return replies.mapIndexed((index, element) {
       User user = users[element.userId]!;
       return StatefulBuilder(builder: (context, setReplyState) {
-        return LMReplyTile(
-            comment: element,
-            backgroundColor: theme!.colorScheme.surface,
-            borderRadius: BorderRadius.circular(10.0),
-            margin: const EdgeInsets.only(bottom: 6.0, right: 16.0),
-            onTagTap: (String userId) {
-              locator<LikeMindsService>().routeToProfile(userId);
-            },
-            user: user,
-            profilePicture: LMProfilePicture(
-              imageUrl: user.imageUrl,
-              fallbackText: user.name,
-              onTap: () {
-                if (user.sdkClientInfo != null) {
-                  locator<LikeMindsService>()
-                      .routeToProfile(user.sdkClientInfo!.userUniqueId);
-                }
+        return Align(
+          alignment: Alignment.topRight,
+          child: LMReplyTile(
+              comment: element,
+              width: screenSize!.width * 0.8,
+              backgroundColor: theme!.colorScheme.surface,
+              borderRadius: BorderRadius.circular(10.0),
+              margin: const EdgeInsets.only(bottom: 6.0, right: 16.0),
+              onTagTap: (String userId) {
+                locator<LikeMindsService>().routeToProfile(userId);
               },
-              size: 32,
-            ),
-            subtitleText: LMTextView(
-              text: "${timeago.format(element.createdAt)}",
-              textStyle: theme!.textTheme.labelSmall,
-            ),
-            onMenuTap: (value) async {
-              if (value == 6) {
-                addCommentReplyBloc!.add(EditCommentCancel());
-                addCommentReplyBloc!.add(ReplyCommentCancel());
-                showDialog(
+              user: user,
+              menu: LMIconButton(
+                icon: LMIcon(
+                  type: LMIconType.icon,
+                  icon: Icons.more_vert,
+                  color: theme!.colorScheme.onPrimary,
+                ),
+                onTap: (bool value) {
+                  showModalBottomSheet(
                     context: context,
-                    builder: (childContext) => deleteConfirmationDialog(
-                            childContext,
-                            title: 'Delete Comment',
-                            userId: element.userId,
-                            content:
-                                'Are you sure you want to delete this comment. This action can not be reversed.',
-                            action: (String reason) async {
-                          Navigator.of(childContext).pop();
-                          //Implement delete post analytics tracking
-                          LMAnalytics.get().track(
-                            AnalyticsKeys.commentDeleted,
-                            {
-                              "post_id": postId,
-                              "comment_id": element.id,
-                            },
-                          );
-                          addCommentReplyBloc!.add(DeleteCommentReply(
-                              (DeleteCommentRequestBuilder()
-                                    ..postId(postId)
-                                    ..commentId(element.id)
-                                    ..reason(reason.isEmpty
-                                        ? "Reason for deletion"
-                                        : reason))
-                                  .build()));
-                        }, actionText: 'Delete'));
-              } else if (value == 8) {
-                addCommentReplyBloc!.add(EditReplyCancel());
-                addCommentReplyBloc!.add(
-                  EditingReply(
-                    commentId: reply!.id,
-                    text: element.text,
-                    replyId: element.id,
-                  ),
-                );
-              }
-            },
-            commentActions: [
-              const SizedBox(
-                width: 50.0,
-              ),
-              LMTextButton(
-                text: LMTextView(
-                  text: "${element.likesCount}",
-                  textStyle: theme!.textTheme.labelSmall,
-                ),
-                activeText: LMTextView(
-                  text: "${element.likesCount}",
-                  textStyle: theme!.textTheme.labelSmall,
-                ),
-                onTap: () {
-                  toggleLikeCommentBloc.add(
-                    ToggleLikeComment(
-                      toggleLikeCommentRequest:
-                          (ToggleLikeCommentRequestBuilder()
-                                ..commentId(element.id)
-                                ..postId(widget.postId))
-                              .build(),
+                    elevation: 5,
+                    isDismissible: true,
+                    useRootNavigator: true,
+                    clipBehavior: Clip.hardEdge,
+                    backgroundColor: Colors.transparent,
+                    enableDrag: false,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(32),
+                        topRight: Radius.circular(32),
+                      ),
+                    ),
+                    builder: (context) => LMBottomSheet(
+                      margin: const EdgeInsets.only(top: 30),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(32),
+                        topRight: Radius.circular(32),
+                      ),
+                      dragBarColor: theme!.colorScheme.onSurface,
+                      backgroundColor: theme!.colorScheme.surface,
+                      children: element.menuItems
+                          .map(
+                            (e) => GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pop();
+
+                                if (e.id == 6) {
+                                  addCommentReplyBloc!.add(EditCommentCancel());
+                                  addCommentReplyBloc!
+                                      .add(ReplyCommentCancel());
+                                  showDialog(
+                                      context: context,
+                                      builder: (childContext) =>
+                                          deleteConfirmationDialog(childContext,
+                                              title: 'Delete Comment',
+                                              userId: element.userId,
+                                              content:
+                                                  'Are you sure you want to delete this comment. This action can not be reversed.',
+                                              action: (String reason) async {
+                                            Navigator.of(childContext).pop();
+                                            //Implement delete post analytics tracking
+                                            LMAnalytics.get().track(
+                                              AnalyticsKeys.commentDeleted,
+                                              {
+                                                "post_id": postId,
+                                                "comment_id": element.id,
+                                              },
+                                            );
+                                            addCommentReplyBloc!.add(
+                                                DeleteCommentReply(
+                                                    (DeleteCommentRequestBuilder()
+                                                          ..postId(postId)
+                                                          ..commentId(
+                                                              element.id)
+                                                          ..reason(reason
+                                                                  .isEmpty
+                                                              ? "Reason for deletion"
+                                                              : reason))
+                                                        .build()));
+                                          }, actionText: 'Delete'));
+                                } else if (e.id == 8) {
+                                  addCommentReplyBloc!.add(EditReplyCancel());
+                                  addCommentReplyBloc!.add(
+                                    EditingReply(
+                                      commentId: reply!.id,
+                                      text: element.text,
+                                      replyId: element.id,
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Container(
+                                color: Colors.transparent,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 2.0, horizontal: 16.0),
+                                margin: const EdgeInsets.only(bottom: 24.09),
+                                width: screenSize!.width - 32.0,
+                                child: Row(children: [
+                                  getIconFromDropDownItemId(
+                                    e.id,
+                                    20,
+                                    theme!.colorScheme.onPrimary,
+                                  ),
+                                  kHorizontalPaddingLarge,
+                                  LMTextView(
+                                    text: e.title,
+                                    textStyle: theme!.textTheme.headlineLarge,
+                                  ),
+                                ]),
+                              ),
+                            ),
+                          )
+                          .toList(),
                     ),
                   );
-                  setReplyState(() {
-                    if (element.isLiked) {
-                      element.likesCount -= 1;
-                    } else {
-                      element.likesCount += 1;
-                    }
-                    element.isLiked = !element.isLiked;
-                  });
                 },
-                icon: const LMIcon(
-                  type: LMIconType.svg,
-                  assetPath: kAssetLikeIcon,
-                  size: 20,
-                ),
-                activeIcon: LMIcon(
-                  type: LMIconType.svg,
-                  assetPath: kAssetLikeFilledIcon,
-                  size: 20,
-                  color: theme!.colorScheme.error,
-                ),
-                isActive: element.isLiked,
               ),
-              const SizedBox(width: 8),
-            ]);
+              profilePicture: LMProfilePicture(
+                imageUrl: user.imageUrl,
+                fallbackText: user.name,
+                onTap: () {
+                  if (user.sdkClientInfo != null) {
+                    locator<LikeMindsService>()
+                        .routeToProfile(user.sdkClientInfo!.userUniqueId);
+                  }
+                },
+                size: 32,
+              ),
+              subtitleText: LMTextView(
+                text: "${timeago.format(element.createdAt)}",
+                textStyle: theme!.textTheme.labelSmall,
+              ),
+              onMenuTap: (value) async {},
+              commentActions: [
+                const SizedBox(
+                  width: 50.0,
+                ),
+                LMTextButton(
+                  text: LMTextView(
+                    text: "${element.likesCount}",
+                    textStyle: theme!.textTheme.labelSmall,
+                  ),
+                  activeText: LMTextView(
+                    text: "${element.likesCount}",
+                    textStyle: theme!.textTheme.labelSmall,
+                  ),
+                  onTap: () {
+                    toggleLikeCommentBloc.add(
+                      ToggleLikeComment(
+                        toggleLikeCommentRequest:
+                            (ToggleLikeCommentRequestBuilder()
+                                  ..commentId(element.id)
+                                  ..postId(widget.postId))
+                                .build(),
+                      ),
+                    );
+                    setReplyState(() {
+                      if (element.isLiked) {
+                        element.likesCount -= 1;
+                      } else {
+                        element.likesCount += 1;
+                      }
+                      element.isLiked = !element.isLiked;
+                    });
+                  },
+                  icon: const LMIcon(
+                    type: LMIconType.svg,
+                    assetPath: kAssetLikeIcon,
+                    size: 20,
+                  ),
+                  activeIcon: LMIcon(
+                    type: LMIconType.svg,
+                    assetPath: kAssetLikeFilledIcon,
+                    size: 20,
+                    color: theme!.colorScheme.error,
+                  ),
+                  isActive: element.isLiked,
+                ),
+                const SizedBox(width: 8),
+              ]),
+        );
       });
     }).toList();
   }
@@ -205,6 +276,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
     _commentRepliesBloc = BlocProvider.of<CommentRepliesBloc>(context);
     initialiseReply();
     theme = Theme.of(context);
+    screenSize = MediaQuery.of(context).size;
     return ValueListenableBuilder(
       valueListenable: rebuildReplyList,
       builder: (context, _, __) {

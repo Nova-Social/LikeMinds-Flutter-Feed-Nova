@@ -852,7 +852,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                       type: LMIconType.icon,
                                       icon: Icons.add,
                                       size: 18,
-                                      color: theme.colorScheme.primaryContainer,
+                                      color: theme.colorScheme.onPrimary,
                                     ),
                                     onTap: right
                                         ? () {
@@ -959,18 +959,22 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                           postId: item.id,
                                           isPinned: !item.isPinned));
                                     } else if (id == postEditId) {
-                                      String? postType;
-                                      postType = getPostType(item.attachments
-                                              ?.first.attachmentType ??
-                                          0);
-                                      LMAnalytics.get().track(
-                                        AnalyticsKeys.postEdited,
-                                        {
-                                          "created_by_id": item.userId,
-                                          "post_id": item.id,
-                                          "post_type": postType,
-                                        },
-                                      );
+                                      try {
+                                        String? postType;
+                                        postType = getPostType(item.attachments
+                                                ?.first.attachmentType ??
+                                            0);
+                                        LMAnalytics.get().track(
+                                          AnalyticsKeys.postEdited,
+                                          {
+                                            "created_by_id": item.userId,
+                                            "post_id": item.id,
+                                            "post_type": postType,
+                                          },
+                                        );
+                                      } catch (err) {
+                                        debugPrint(err.toString());
+                                      }
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (context) => EditPostScreen(
@@ -1010,7 +1014,10 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                           firstPageProgressIndicatorBuilder: (context) =>
                               const LMFeedShimmer(),
                           newPageProgressIndicatorBuilder: (context) =>
-                              const LMFeedShimmer(),
+                              const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          ),
                         ),
                       );
                     },
@@ -1047,7 +1054,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                     icon: Icons.add,
                     fit: BoxFit.cover,
                     size: 18,
-                    color: theme.colorScheme.primaryContainer,
+                    color: theme.colorScheme.onPrimary,
                   ),
                   onTap: right
                       ? () {

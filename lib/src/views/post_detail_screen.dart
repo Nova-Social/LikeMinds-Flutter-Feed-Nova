@@ -485,8 +485,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                         icon: LMIcon(
                                           type: LMIconType.svg,
                                           assetPath: kAssetMentionIcon,
-                                          color: theme
-                                              .colorScheme.primaryContainer,
+                                          color: theme.colorScheme.onPrimary,
                                           boxPadding: 0,
                                           size: 19,
                                         ),
@@ -1049,7 +1048,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                           icon: Icons.more_vert,
                                                           color: theme
                                                               .colorScheme
-                                                              .primaryContainer,
+                                                              .onPrimary,
                                                         ),
                                                         onTap: (bool value) {
                                                           showModalBottomSheet(
@@ -1168,7 +1167,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                               getIconFromDropDownItemId(
                                                                                 e.id,
                                                                                 20,
-                                                                                theme.colorScheme.primaryContainer,
+                                                                                theme.colorScheme.onPrimary,
                                                                               ),
                                                                               kHorizontalPaddingLarge,
                                                                               LMTextView(
