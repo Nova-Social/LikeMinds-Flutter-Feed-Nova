@@ -190,6 +190,12 @@ class _MediaPreviewState extends State<MediaPreview> {
                               expandText: '',
                               maxLines: 2,
                               onTagTap: (value) {},
+                              hashtagStyle: theme.textTheme.bodyMedium!
+                                  .copyWith(color: theme.colorScheme.primary),
+                              linkStyle: theme.textTheme.bodyMedium!
+                                  .copyWith(color: theme.colorScheme.primary),
+                              textAlign: TextAlign.left,
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ),
                         ),
