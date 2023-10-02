@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ColorTheme {
   static const backgroundColor = Color.fromRGBO(24, 23, 25, 1);
-  static const primaryColor = Color.fromRGBO(180, 134, 255, 1);
+  static const primaryColor = Color.fromRGBO(150, 94, 255, 1);
   static const darkBlack300 = Color.fromRGBO(49, 49, 50, 1);
   static const darkBlack500 = Color.fromRGBO(36, 35, 37, 1);
   static const lightWhite300 = Color.fromRGBO(241, 241, 241, 0.694);

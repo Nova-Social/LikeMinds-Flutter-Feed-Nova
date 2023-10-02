@@ -69,10 +69,23 @@ class _SSPostMediaState extends State<SSPostMedia> {
               Uri fileUrl = Uri.parse(e.attachmentMeta.url!);
               launchUrl(fileUrl, mode: LaunchMode.platformDefault);
             },
-            documentIcon: const LMIcon(
-              type: LMIconType.svg,
-              assetPath: kAssetPDFIcon,
-              size: 20,
+            documentIcon: Container(
+              width: 48,
+              height: 48,
+              decoration: ShapeDecoration(
+                color: Theme.of(context).colorScheme.primaryContainer,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4)),
+              ),
+              child: Center(
+                child: LMTextView(
+                  text: 'PDF',
+                  textStyle: Theme.of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(fontSize: 18),
+                ),
+              ),
             ),
             showBorder: false,
             backgroundColor: Theme.of(context).colorScheme.surface,

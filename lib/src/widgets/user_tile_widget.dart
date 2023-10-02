@@ -42,11 +42,7 @@ class LMUserTile extends StatelessWidget {
               titleText ??
                   LMTextView(
                     text: user.name,
-                    textStyle: const TextStyle(
-                      fontSize: kFontMedium,
-                      color: kGrey1Color,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    textStyle: Theme.of(context).textTheme.bodyLarge,
                   ),
               kVerticalPaddingMedium,
               subText ?? const SizedBox(),

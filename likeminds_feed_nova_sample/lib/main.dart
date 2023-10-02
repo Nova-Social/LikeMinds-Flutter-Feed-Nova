@@ -32,8 +32,9 @@ void main() async {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
   await setupNotifications();
   LMFeed.setupFeed(
-      apiKey: debug ? CredsDev.apiKey : CredsProd.apiKey,
-      lmCallBack: LikeMindsCallback());
+    apiKey: debug ? CredsDev.apiKey : CredsProd.apiKey,
+    lmCallBack: LikeMindsCallback(),
+  );
   runApp(const MyApp());
 }
 

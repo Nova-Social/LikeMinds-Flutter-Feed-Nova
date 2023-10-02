@@ -48,6 +48,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
   final FocusNode _focusNode = FocusNode();
   Future<GetTopicsResponse>? getTopicsResponse;
   ValueNotifier<bool> rebuildLinkPreview = ValueNotifier(false);
+  ValueNotifier<bool> rebuildPostButton = ValueNotifier(false);
   List<TopicUI> selectedTopic = [];
   ValueNotifier<bool> rebuildTopicFloatingButton = ValueNotifier(false);
   final CustomPopupMenuController _controllerPopUp =
@@ -151,6 +152,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
         isUploading = false;
       });
     }
+    rebuildPostButton.value = !rebuildPostButton.value;
   }
 
   void onUploadedDocument(bool uploadResponse) {
@@ -170,6 +172,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
         isUploading = false;
       });
     }
+    rebuildPostButton.value = !rebuildPostButton.value;
   }
 
   /*
@@ -190,14 +193,28 @@ class _NewPostScreenState extends State<NewPostScreen> {
         type: postMedia[index].format!,
         showBorder: false,
         backgroundColor: theme!.colorScheme.surface,
-        documentIcon: const LMIcon(
-          type: LMIconType.svg,
-          assetPath: kAssetDocPDFIcon,
-          color: Colors.red,
-          size: 45,
-          boxPadding: 0,
+        documentIcon: Container(
+          width: 48,
+          height: 48,
+          decoration: ShapeDecoration(
+            color: theme!.colorScheme.primaryContainer,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          ),
+          child: Center(
+            child: LMTextView(
+              text: 'PDF',
+              textStyle: theme!.textTheme.titleLarge!.copyWith(fontSize: 18),
+            ),
+          ),
         ),
         documentFile: postMedia[index].mediaFile,
+        removeIcon: const LMIcon(
+          type: LMIconType.icon,
+          icon: Icons.close,
+          color: Colors.white,
+          size: 28,
+        ),
         onRemove: () => removeAttachmenetAtIndex(index),
       ),
     );
@@ -272,6 +289,11 @@ class _NewPostScreenState extends State<NewPostScreen> {
             shadowColor: Colors.transparent,
             backgroundColor: theme!.colorScheme.background,
             elevation: 0,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(
+                Radius.circular(18),
+              ),
+            ),
             content: LMTextView(
               text: 'Are you sure you want to discard your changes?',
               maxLines: 3,
@@ -316,7 +338,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
         return Future.value(false);
       },
       child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark,
+        value: SystemUiOverlayStyle.light,
         child: Scaffold(
           backgroundColor: theme!.colorScheme.background,
           floatingActionButton: Padding(
@@ -720,85 +742,100 @@ class _NewPostScreenState extends State<NewPostScreen> {
                   ),
                 ),
                 // const Spacer(),
-                PostComposerHeader(
-                  onPressedBack: () {
-                    showDialog(
-                      context: context,
-                      builder: (dialogContext) => AlertDialog(
-                        shadowColor: Colors.transparent,
-                        backgroundColor: theme!.colorScheme.background,
-                        elevation: 0,
-                        content: LMTextView(
-                          text:
-                              'Are you sure you want to discard your changes?',
-                          maxLines: 3,
-                          textStyle: theme!.textTheme.labelLarge,
-                        ),
-                        actions: <Widget>[
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(right: 4.0, bottom: 10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                LMTextButton(
-                                  text: LMTextView(
-                                    text: 'No thanks',
-                                    textStyle: theme!.textTheme.headlineMedium,
-                                  ),
-                                  onTap: () {
-                                    Navigator.of(dialogContext).pop();
-                                  },
-                                ),
-                                kHorizontalPaddingLarge,
-                                LMTextButton(
-                                  text: LMTextView(
-                                    text: 'Discard',
-                                    textStyle: theme!.textTheme.headlineMedium!
-                                        .copyWith(
-                                            color: theme!.colorScheme.error),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0, vertical: 4.0),
-                                  onTap: () {
-                                    Navigator.of(dialogContext).pop();
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
+                ValueListenableBuilder(
+                  valueListenable: rebuildPostButton,
+                  builder: (context, value, child) {
+                    return PostComposerHeader(
+                      active: _controller.value.text.isNotEmpty ||
+                          postMedia.isNotEmpty,
+                      onPressedBack: () {
+                        showDialog(
+                          context: context,
+                          builder: (dialogContext) => AlertDialog(
+                            shadowColor: Colors.transparent,
+                            backgroundColor: theme!.colorScheme.background,
+                            elevation: 0,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(18),
+                              ),
                             ),
+                            content: LMTextView(
+                              text:
+                                  'Are you sure you want to discard your changes?',
+                              maxLines: 3,
+                              textStyle: theme!.textTheme.labelLarge,
+                            ),
+                            actions: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    right: 4.0, bottom: 10.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    LMTextButton(
+                                      text: LMTextView(
+                                        text: 'No thanks',
+                                        textStyle:
+                                            theme!.textTheme.headlineMedium,
+                                      ),
+                                      onTap: () {
+                                        Navigator.of(dialogContext).pop();
+                                      },
+                                    ),
+                                    kHorizontalPaddingLarge,
+                                    LMTextButton(
+                                      text: LMTextView(
+                                        text: 'Discard',
+                                        textStyle: theme!
+                                            .textTheme.headlineMedium!
+                                            .copyWith(
+                                                color:
+                                                    theme!.colorScheme.error),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0, vertical: 4.0),
+                                      onTap: () {
+                                        Navigator.of(dialogContext).pop();
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        );
+                      },
+                      title: const LMTextView(text: ''),
+                      onTap: () {
+                        _focusNode.unfocus();
+
+                        String postText = _controller.text;
+                        postText = postText.trim();
+                        if (postText.isNotEmpty || postMedia.isNotEmpty) {
+                          checkTextLinks();
+                          userTags = TaggingHelper.matchTags(
+                              _controller.text, userTags);
+
+                          result = TaggingHelper.encodeString(
+                              _controller.text, userTags);
+                          newPostBloc!.add(
+                            CreateNewPost(
+                              postText: result!,
+                              postMedia: postMedia,
+                              selectedTopics: selectedTopic,
+                            ),
+                          );
+                          Navigator.pop(context);
+                        } else {
+                          toast(
+                            "Can't create a post without text or attachments",
+                            duration: Toast.LENGTH_LONG,
+                          );
+                        }
+                      },
                     );
-                  },
-                  title: const LMTextView(text: ''),
-                  onTap: () {
-                    _focusNode.unfocus();
-
-                    String postText = _controller.text;
-                    postText = postText.trim();
-                    if (postText.isNotEmpty || postMedia.isNotEmpty) {
-                      checkTextLinks();
-                      userTags =
-                          TaggingHelper.matchTags(_controller.text, userTags);
-
-                      result = TaggingHelper.encodeString(
-                          _controller.text, userTags);
-                      newPostBloc!.add(
-                        CreateNewPost(
-                          postText: result!,
-                          postMedia: postMedia,
-                          selectedTopics: selectedTopic,
-                        ),
-                      );
-                      Navigator.pop(context);
-                    } else {
-                      toast(
-                        "Can't create a post without text or attachments",
-                        duration: Toast.LENGTH_LONG,
-                      );
-                    }
                   },
                 ),
 
@@ -937,6 +974,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
   }
 
   void _onTextChanged(String p0) {
+    rebuildPostButton.value = !rebuildPostButton.value;
     if (_debounce?.isActive ?? false) {
       _debounce?.cancel();
     }

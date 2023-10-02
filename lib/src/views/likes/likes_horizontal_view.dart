@@ -80,7 +80,7 @@ class _LikesListWidgetState extends State<LikesListWidget> {
       _likesBloc!.add(
         GetCommentLikes(
           offset: 1,
-          pageSize: 10,
+          pageSize: 5,
           postId: widget.postId,
           commentId: widget.commentId!,
         ),
@@ -89,7 +89,7 @@ class _LikesListWidgetState extends State<LikesListWidget> {
       _likesBloc!.add(
         GetLikes(
           offset: 1,
-          pageSize: 10,
+          pageSize: 5,
           postId: widget.postId,
         ),
       );
@@ -219,8 +219,23 @@ class _LikesListWidgetState extends State<LikesListWidget> {
             scrollDirection: Axis.horizontal,
             pagingController: _pagingControllerLikes,
             builderDelegate: PagedChildBuilderDelegate<Like>(
-              noMoreItemsIndicatorBuilder: (context) => const SizedBox(
-                height: 20,
+              noMoreItemsIndicatorBuilder: (context) => SizedBox(
+                height: 48,
+                width: 48,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: ColorTheme.darkBlack500,
+                    border: Border.all(color: ColorTheme.darkBlack300),
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(24),
+                    ),
+                  ),
+                  child: const LMIcon(
+                    type: LMIconType.icon,
+                    icon: Icons.more_horiz,
+                    color: ColorTheme.lightWhite300,
+                  ),
+                ),
               ),
               noItemsFoundIndicatorBuilder: (context) => const SizedBox(),
               itemBuilder: (context, item, index) =>
@@ -250,7 +265,7 @@ class LikesTile extends StatelessWidget {
     ThemeData theme = Theme.of(context);
     if (user != null) {
       return Container(
-        margin: const EdgeInsets.only(right: 16.0),
+        margin: const EdgeInsets.only(right: 20.0),
         child: Stack(
           children: [
             user!.isDeleted != null && user!.isDeleted!

@@ -106,7 +106,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
             }
           },
           child: GestureDetector(
-            behavior: HitTestBehavior.deferToChild,
+            behavior: HitTestBehavior.opaque,
             onTap: () {
               // Navigate to LMPostPage using material route
               if (widget.isFeed) {
@@ -175,10 +175,14 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                               text: timeago.format(widget.post.createdAt),
                               textStyle: theme.textTheme.labelMedium,
                             ),
+                            editedText: LMTextView(
+                              text: "Edited",
+                              textStyle: theme.textTheme.labelMedium,
+                            ),
                             menu: LMIconButton(
                               icon: LMIcon(
                                 type: LMIconType.icon,
-                                icon: Icons.more_vert,
+                                icon: Icons.more_horiz,
                                 color: theme.colorScheme.onPrimary,
                               ),
                               onTap: (bool value) {
@@ -197,12 +201,23 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                     ),
                                   ),
                                   builder: (context) => LMBottomSheet(
+                                    height: screenSize.height * 0.3,
                                     margin: const EdgeInsets.only(top: 30),
                                     borderRadius: const BorderRadius.only(
                                       topLeft: Radius.circular(32),
                                       topRight: Radius.circular(32),
                                     ),
-                                    dragBarColor: theme.colorScheme.onSurface,
+                                    dragBar: Container(
+                                      width: 96,
+                                      height: 6,
+                                      decoration: ShapeDecoration(
+                                        color: theme.colorScheme.onSurface,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(99),
+                                        ),
+                                      ),
+                                    ),
                                     backgroundColor: theme.colorScheme.surface,
                                     children: widget.post.menuItems
                                         .map(
@@ -249,6 +264,8 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                       locator<LikeMindsService>().routeToProfile(userId);
                     },
                     textStyle: theme.textTheme.bodyMedium,
+                    expandTextStyle: theme.textTheme.bodyMedium!
+                        .copyWith(color: theme.colorScheme.onPrimary),
                   ),
                   postDetails!.attachments != null &&
                           postDetails!.attachments!.isNotEmpty &&
@@ -390,6 +407,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                   isLiked = !isLiked!;
                                   rebuildLikeWidget.value =
                                       !rebuildLikeWidget.value;
+                                  widget.refresh(false);
                                 } else {
                                   if (!widget.isFeed) {
                                     newPostBloc.add(
@@ -397,6 +415,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                         post: postDetails!,
                                       ),
                                     );
+                                    widget.refresh(false);
                                   }
                                 }
                               },

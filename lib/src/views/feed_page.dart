@@ -277,42 +277,43 @@ class _FeedScreenState extends State<FeedScreen> {
       floatingActionButton: Wrap(
         direction: Axis.horizontal,
         children: [
-          Container(
-            height: 25,
-            margin: const EdgeInsets.only(bottom: 12),
-            width: 25,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: kPrimaryColor,
-              boxShadow: [
-                BoxShadow(
-                  offset: const Offset(0, 4),
-                  blurRadius: 25,
-                  color: Colors.black.withOpacity(0.3),
-                )
-              ],
-            ),
-            child: Center(
-              child: LMIconButton(
-                onTap: (value) {
-                  _scrollToTop();
-                },
-                icon: const LMIcon(
-                  type: LMIconType.icon,
-                  icon: Icons.keyboard_arrow_up,
-                  color: Colors.white,
-                  size: 14,
-                ),
-              ),
-            ),
-          ),
+          // Container(
+          //   height: 25,
+          //   margin: const EdgeInsets.only(bottom: 12),
+          //   width: 25,
+          //   decoration: BoxDecoration(
+          //     shape: BoxShape.circle,
+          //     color: kPrimaryColor,
+          //     boxShadow: [
+          //       BoxShadow(
+          //         offset: const Offset(0, 4),
+          //         blurRadius: 25,
+          //         color: Colors.black.withOpacity(0.3),
+          //       )
+          //     ],
+          //   ),
+          //   child: Center(
+          //     child: LMIconButton(
+          //       onTap: (value) {
+          //         _scrollToTop();
+          //       },
+          //       icon: const LMIcon(
+          //         type: LMIconType.icon,
+          //         icon: Icons.keyboard_arrow_up,
+          //         color: Colors.white,
+          //         size: 14,
+          //       ),
+          //     ),
+          //   ),
+          // ),
           LMTextButton(
-            height: 48,
-            width: 142,
+            height: 56,
+            width: 140,
             borderRadius: 28,
+            placement: LMIconPlacement.start,
             backgroundColor: Theme.of(context).colorScheme.primary,
             text: LMTextView(
-              text: "Create Post",
+              text: "New Post",
               textStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,

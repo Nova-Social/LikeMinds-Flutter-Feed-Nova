@@ -71,10 +71,20 @@ class _EditPostScreenState extends State<EditPostScreen> {
         showBorder: false,
         type: attachments![index].attachmentMeta.format!,
         backgroundColor: theme!.colorScheme.surface,
-        documentIcon: const LMIcon(
-          type: LMIconType.svg,
-          assetPath: kAssetPDFIcon,
-          size: 20,
+        documentIcon: Container(
+          width: 48,
+          height: 48,
+          decoration: ShapeDecoration(
+            color: theme!.colorScheme.primaryContainer,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          ),
+          child: Center(
+            child: LMTextView(
+              text: 'PDF',
+              textStyle: theme!.textTheme.titleLarge!.copyWith(fontSize: 18),
+            ),
+          ),
         ),
         documentUrl: attachments![index].attachmentMeta.url,
         onTap: () {

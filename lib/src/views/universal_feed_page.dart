@@ -229,7 +229,6 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Size screenSize = MediaQuery.of(context).size;
     theme = Theme.of(context);
     return Scaffold(
       backgroundColor: ColorTheme.backgroundColor,
@@ -530,10 +529,23 @@ class _FeedRoomViewState extends State<FeedRoomView> {
           ),
         );
       } else if (media.mediaType == MediaType.document) {
-        return const LMIcon(
-          type: LMIconType.svg,
-          assetPath: kAssetPDFIcon,
-          size: 35,
+        return Container(
+          width: 48,
+          height: 48,
+          decoration: ShapeDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          ),
+          child: Center(
+            child: LMTextView(
+              text: 'PDF',
+              textStyle: Theme.of(context)
+                  .textTheme
+                  .titleLarge!
+                  .copyWith(fontSize: 18),
+            ),
+          ),
         );
       } else {
         return const SizedBox.shrink();
@@ -844,16 +856,18 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                   const SizedBox(height: 28),
                                   LMTextButton(
                                     borderRadius: 28,
-                                    height: 44,
-                                    width: 153,
+                                    height: 56,
+                                    width: 140,
                                     padding: const EdgeInsets.symmetric(
-                                        vertical: 12, horizontal: 20),
+                                      vertical: 12,
+                                      horizontal: 20,
+                                    ),
                                     backgroundColor: theme.colorScheme.primary,
                                     text: LMTextView(
-                                      text: "Create Post",
+                                      text: "New Post",
                                       textStyle: theme.textTheme.bodyMedium,
                                     ),
-                                    placement: LMIconPlacement.end,
+                                    placement: LMIconPlacement.start,
                                     icon: LMIcon(
                                       type: LMIconType.icon,
                                       icon: Icons.add,
@@ -895,7 +909,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                             }
                             return Column(
                               children: [
-                                const SizedBox(height: 4),
+                                const SizedBox(height: 2),
                                 NovaPostWidget(
                                   post: item,
                                   topics: widget.feedResponse.topics,
@@ -907,10 +921,10 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                           builder: (childContext) =>
                                               deleteConfirmationDialog(
                                                 childContext,
-                                                title: 'Delete Post',
+                                                title: 'Delete Post?',
                                                 userId: item.userId,
                                                 content:
-                                                    'Are you sure you want to delete this post. This action can not be reversed.',
+                                                    'Are you sure you want to permanently remove this post from Nova?',
                                                 action: (String reason) async {
                                                   Navigator.of(childContext)
                                                       .pop();
@@ -937,7 +951,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                                     ),
                                                   );
                                                 },
-                                                actionText: 'Delete',
+                                                actionText: 'Yes, delete',
                                               ));
                                     } else if (id == postPinId ||
                                         id == postUnpinId) {
@@ -1035,54 +1049,96 @@ class _FeedRoomViewState extends State<FeedRoomView> {
         ],
       ),
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-      floatingActionButton: ValueListenableBuilder(
-        valueListenable: rebuildPostWidget,
-        builder: (context, _, __) {
-          return widget.feedRoomPagingController.itemList == null ||
-                  widget.feedRoomPagingController.itemList!.isEmpty
-              ? const SizedBox()
-              : LMTextButton(
-                  height: 44,
-                  width: 153,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                  borderRadius: 28,
-                  backgroundColor:
-                      right ? theme.colorScheme.primary : kGrey3Color,
-                  placement: LMIconPlacement.end,
-                  text: LMTextView(
-                    text: "Create Post",
-                    textStyle: theme!.textTheme.bodyMedium,
-                  ),
-                  margin: 5,
-                  icon: LMIcon(
-                    type: LMIconType.icon,
-                    icon: Icons.add,
-                    fit: BoxFit.cover,
-                    size: 18,
-                    color: theme.colorScheme.onPrimary,
-                  ),
-                  onTap: right
-                      ? () {
-                          if (!postUploading.value) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const NewPostScreen(),
-                              ),
-                            );
-                          } else {
-                            toast(
-                              'A post is already uploading.',
-                              duration: Toast.LENGTH_LONG,
-                            );
-                          }
-                        }
-                      : () =>
-                          toast("You do not have permission to create a post"),
-                );
-        },
+      floatingActionButton: LMTextButton(
+        height: 56,
+        width: 140,
+        padding: const EdgeInsets.symmetric(
+          vertical: 12,
+          horizontal: 20,
+        ),
+        borderRadius: 28,
+        backgroundColor: right ? theme.colorScheme.primary : kGrey3Color,
+        placement: LMIconPlacement.start,
+        text: LMTextView(
+          text: "New Post",
+          textStyle: theme.textTheme.bodyMedium,
+        ),
+        margin: 5,
+        icon: LMIcon(
+          type: LMIconType.icon,
+          icon: Icons.add,
+          fit: BoxFit.cover,
+          size: 24,
+          color: theme.colorScheme.onPrimary,
+        ),
+        onTap: right
+            ? () {
+                if (!postUploading.value) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NewPostScreen(),
+                    ),
+                  );
+                } else {
+                  toast(
+                    'A post is already uploading.',
+                    duration: Toast.LENGTH_LONG,
+                  );
+                }
+              }
+            : () => toast("You do not have permission to create a post"),
       ),
+      // floatingActionButton: ValueListenableBuilder(
+      //   valueListenable: rebuildPostWidget,
+      //   builder: (context, _, __) {
+      //     return widget.feedRoomPagingController.itemList == null ||
+      //             widget.feedRoomPagingController.itemList!.isEmpty
+      //         ? const SizedBox()
+      //         : LMTextButton(
+      //             height: 56,
+      //             width: 140,
+      //             padding: const EdgeInsets.symmetric(
+      //               vertical: 12,
+      //               horizontal: 20,
+      //             ),
+      //             borderRadius: 28,
+      //             backgroundColor:
+      //                 right ? theme.colorScheme.primary : kGrey3Color,
+      //             placement: LMIconPlacement.start,
+      //             text: LMTextView(
+      //               text: "New Post",
+      //               textStyle: theme.textTheme.bodyMedium,
+      //             ),
+      //             margin: 5,
+      //             icon: LMIcon(
+      //               type: LMIconType.icon,
+      //               icon: Icons.add,
+      //               fit: BoxFit.cover,
+      //               size: 24,
+      //               color: theme.colorScheme.onPrimary,
+      //             ),
+      //             onTap: right
+      //                 ? () {
+      //                     if (!postUploading.value) {
+      //                       Navigator.push(
+      //                         context,
+      //                         MaterialPageRoute(
+      //                           builder: (context) => const NewPostScreen(),
+      //                         ),
+      //                       );
+      //                     } else {
+      //                       toast(
+      //                         'A post is already uploading.',
+      //                         duration: Toast.LENGTH_LONG,
+      //                       );
+      //                     }
+      //                   }
+      //                 : () =>
+      //                     toast("You do not have permission to create a post"),
+      //           );
+      //   },
+      // ),
     );
   }
 }
