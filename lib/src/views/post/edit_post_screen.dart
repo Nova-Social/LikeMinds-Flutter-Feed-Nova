@@ -587,6 +587,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                         LMProfilePicture(
                           fallbackText: user!.name,
                           imageUrl: user!.imageUrl,
+                          boxShape: BoxShape.circle,
                           onTap: () {
                             if (user!.sdkClientInfo != null) {
                               locator<LikeMindsService>().routeToProfile(

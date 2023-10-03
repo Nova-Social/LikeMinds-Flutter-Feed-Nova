@@ -165,6 +165,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                               size: 52,
                               fallbackText: widget.user.name,
                               imageUrl: widget.user.imageUrl,
+                              boxShape: BoxShape.circle,
                               onTap: () {
                                 if (widget.user.sdkClientInfo != null) {
                                   locator<LikeMindsService>().routeToProfile(

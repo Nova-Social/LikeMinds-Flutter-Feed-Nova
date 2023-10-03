@@ -448,6 +448,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                       LMProfilePicture(
                                         fallbackText: currentUser.name,
                                         imageUrl: currentUser.imageUrl,
+                                        boxShape: BoxShape.circle,
                                         onTap: () {
                                           if (currentUser.sdkClientInfo !=
                                               null) {

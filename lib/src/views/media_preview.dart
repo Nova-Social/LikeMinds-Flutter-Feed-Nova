@@ -104,6 +104,7 @@ class _MediaPreviewState extends State<MediaPreview> {
                     fallbackText: user.name,
                     imageUrl: user.imageUrl,
                     size: 36,
+                    boxShape: BoxShape.circle,
                   ),
                   kHorizontalPaddingLarge,
                   Expanded(

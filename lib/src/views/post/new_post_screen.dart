@@ -475,6 +475,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                   }
                                 },
                                 size: 48,
+                                boxShape: BoxShape.circle,
                               ),
                               kHorizontalPaddingLarge,
                               Expanded(

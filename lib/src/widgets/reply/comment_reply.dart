@@ -205,6 +205,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
               profilePicture: LMProfilePicture(
                 imageUrl: user.imageUrl,
                 fallbackText: user.name,
+                boxShape: BoxShape.circle,
                 onTap: () {
                   if (user.sdkClientInfo != null) {
                     locator<LikeMindsService>()
@@ -214,7 +215,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                 size: 32,
               ),
               subtitleText: LMTextView(
-                text: "${timeago.format(element.createdAt)}",
+                text: timeago.format(element.createdAt),
                 textStyle: theme!.textTheme.labelSmall,
               ),
               onMenuTap: (value) async {},
