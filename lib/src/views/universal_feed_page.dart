@@ -787,16 +787,10 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const LMTextView(
-                                      text:
-                                          "Looks like there are no posts for this topic yet.",
-                                      textStyle: TextStyle(
-                                        fontSize: 15,
-                                        color: onSurface500,
-                                        fontWeight: FontWeight.w600,
-                                        height: 0,
-                                      ),
-                                    ),
+                                    LMTextView(
+                                        text:
+                                            "Looks like there are no posts for this topic yet.",
+                                        textStyle: theme.textTheme.labelMedium),
                                     const SizedBox(height: 16),
                                     Row(
                                       mainAxisAlignment:
@@ -806,20 +800,19 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                           borderRadius: 48,
                                           height: 40,
                                           border: Border.all(
-                                            color: primary500,
+                                            color: theme.colorScheme.primary,
                                             width: 2,
                                           ),
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 8, horizontal: 12),
-                                          text: const LMTextView(
-                                            text: "Change Filter",
-                                            textAlign: TextAlign.center,
-                                            textStyle: TextStyle(
-                                              color: primary500,
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
+                                          text: LMTextView(
+                                              text: "Change Filter",
+                                              textAlign: TextAlign.center,
+                                              textStyle: theme
+                                                  .textTheme.labelMedium!
+                                                  .copyWith(
+                                                      color: theme.colorScheme
+                                                          .primary)),
                                           onTap: () =>
                                               widget.openTopicBottomSheet(),
                                         ),
@@ -833,71 +826,23 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const LMIcon(
+                                  LMIcon(
                                     type: LMIconType.icon,
                                     icon: Icons.post_add,
                                     size: 48,
+                                    color: theme.colorScheme.onPrimary,
                                   ),
                                   const SizedBox(height: 12),
-                                  const LMTextView(
-                                    text: 'No posts to show',
-                                    textStyle: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
+                                  Center(
+                                    child: Expanded(
+                                      child: LMTextView(
+                                        text:
+                                            'No posts to show, Be the first one to post here',
+                                        textStyle: theme.textTheme.labelMedium,
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(height: 12),
-                                  const LMTextView(
-                                      text: "Be the first one to post here",
-                                      textStyle: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w300,
-                                          color: kGrey2Color)),
                                   const SizedBox(height: 28),
-                                  LMTextButton(
-                                    borderRadius: 28,
-                                    height: 56,
-                                    width: 140,
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 12,
-                                      horizontal: 20,
-                                    ),
-                                    backgroundColor: theme.colorScheme.primary,
-                                    text: LMTextView(
-                                      text: "New Post",
-                                      textStyle: theme.textTheme.bodyMedium,
-                                    ),
-                                    placement: LMIconPlacement.start,
-                                    icon: LMIcon(
-                                      type: LMIconType.icon,
-                                      icon: Icons.add,
-                                      size: 18,
-                                      color: theme.colorScheme.onPrimary,
-                                    ),
-                                    onTap: right
-                                        ? () {
-                                            if (!postUploading.value) {
-                                              LMAnalytics.get().track(
-                                                  AnalyticsKeys
-                                                      .postCreationStarted,
-                                                  {});
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const NewPostScreen(),
-                                                ),
-                                              );
-                                            } else {
-                                              toast(
-                                                'A post is already uploading.',
-                                                duration: Toast.LENGTH_LONG,
-                                              );
-                                            }
-                                          }
-                                        : () => toast(
-                                            "You do not have permission to create a post"),
-                                  ),
                                 ],
                               ),
                             );

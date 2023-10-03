@@ -1310,6 +1310,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                     .userId]!
                                                                 .imageUrl,
                                                         size: 42,
+                                                        boxShape:
+                                                            BoxShape.circle,
                                                       ),
                                                       subtitleText: LMTextView(
                                                         text: timeago.format(
@@ -1331,6 +1333,24 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                           text: LMTextView(
                                                             text:
                                                                 "${item.likesCount}",
+                                                            onTap: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .push(
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          LikesScreen(
+                                                                    commentId:
+                                                                        item.id,
+                                                                    isCommentLikes:
+                                                                        true,
+                                                                    postId: widget
+                                                                        .postId,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
                                                             textStyle: TextStyle(
                                                                 color: theme
                                                                     .colorScheme

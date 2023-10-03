@@ -8,6 +8,7 @@ import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/icons.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_utils.dart';
+import 'package:likeminds_feed_nova_fl/src/views/likes/likes_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/views/media_preview.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post_detail_screen.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
@@ -158,15 +159,20 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                             user: widget.user,
                             isFeed: widget.isFeed,
                             showCustomTitle: false,
-                            fallbackTextStyle: theme.textTheme.titleLarge!
-                                .copyWith(fontSize: 28),
+                            profilePicture: LMProfilePicture(
+                              size: 52,
+                              fallbackText: widget.user.name,
+                              imageUrl: widget.user.imageUrl,
+                              onTap: () {
+                                if (widget.user.sdkClientInfo != null) {
+                                  locator<LikeMindsService>().routeToProfile(
+                                      widget.user.sdkClientInfo!.userUniqueId);
+                                }
+                              },
+                              fallbackTextStyle: theme.textTheme.titleLarge!
+                                  .copyWith(fontSize: 28),
+                            ),
                             imageSize: 52,
-                            onProfileTap: () {
-                              if (widget.user.sdkClientInfo != null) {
-                                locator<LikeMindsService>().routeToProfile(
-                                    widget.user.sdkClientInfo!.userUniqueId);
-                              }
-                            },
                             titleText: LMTextView(
                               text: widget.user.name,
                               textStyle: theme.textTheme.titleLarge,
@@ -367,6 +373,14 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                               text: LMTextView(
                                 text: "$postLikes",
                                 textStyle: theme.textTheme.labelMedium,
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          LikesScreen(postId: widget.post.id),
+                                    ),
+                                  );
+                                },
                               ),
                               margin: 0,
                               onTap: () async {

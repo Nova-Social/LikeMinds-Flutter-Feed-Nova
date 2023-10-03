@@ -1,13 +1,20 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:likeminds_feed/likeminds_feed.dart';
+import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
+import 'package:likeminds_feed_nova_fl/src/blocs/new_post/new_post_bloc.dart';
+import 'package:likeminds_feed_nova_fl/src/models/post_view_model.dart';
+import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/ui_constants.dart';
+import 'package:likeminds_feed_nova_fl/src/views/post_detail_screen.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 import 'package:likeminds_feed_ui_fl/packages/expandable_text/expandable_text.dart';
+import 'package:overlay_support/overlay_support.dart';
 
 class MediaPreview extends StatefulWidget {
   final List<Attachment> postAttachments;
@@ -29,10 +36,11 @@ class MediaPreview extends StatefulWidget {
 
 class _MediaPreviewState extends State<MediaPreview> {
   late List<Attachment> postAttachments;
-  late Post post;
+  PostViewModel? post;
   late User user;
   late int? position;
   bool showData = true;
+  ValueNotifier<bool> rebuildLikeButton = ValueNotifier<bool>(false);
 
   int currPosition = 0;
   CarouselController controller = CarouselController();
@@ -45,18 +53,29 @@ class _MediaPreviewState extends State<MediaPreview> {
   @override
   void initState() {
     postAttachments = widget.postAttachments;
-    post = widget.post;
+    post = PostViewModel.fromPost(post: widget.post);
     user = widget.user;
     position = widget.position;
     super.initState();
   }
 
   @override
+  void didUpdateWidget(covariant MediaPreview oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    postAttachments = widget.postAttachments;
+    post = PostViewModel.fromPost(post: widget.post);
+    user = widget.user;
+    position = widget.position;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final DateFormat formatter = DateFormat('MMMM d, hh:mm');
-    final String formatted = formatter.format(post.createdAt);
+    final String formatted = formatter.format(post!.createdAt);
     final ThemeData theme = Theme.of(context);
     final Size screenSize = MediaQuery.of(context).size;
+    final NewPostBloc newPostBloc = BlocProvider.of<NewPostBloc>(context);
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -207,49 +226,103 @@ class _MediaPreviewState extends State<MediaPreview> {
                   opacity: showData ? 1.0 : 0.0,
                   child: Column(
                     children: [
-                      Row(
-                        children: <Widget>[
-                          kHorizontalPaddingLarge,
-                          LMTextButton(
-                            text: LMTextView(
-                              text: "${post.likeCount}",
-                              textStyle: theme.textTheme.labelMedium,
-                            ),
-                            margin: 0,
-                            onTap: () {},
-                            icon: LMIcon(
-                              type: LMIconType.svg,
-                              assetPath: kAssetLikeIcon,
-                              color: theme.colorScheme.onPrimary,
-                              size: 20,
-                              boxPadding: 6,
-                            ),
-                            activeIcon: LMIcon(
-                              type: LMIconType.svg,
-                              assetPath: kAssetLikeFilledIcon,
-                              color: theme.colorScheme.error,
-                              size: 20,
-                              boxPadding: 6,
-                            ),
-                            isActive: post.isLiked,
-                          ),
-                          kHorizontalPaddingLarge,
-                          LMTextButton(
-                            text: LMTextView(
-                              text: "${post.commentCount}",
-                              textStyle: theme.textTheme.labelMedium,
-                            ),
-                            margin: 0,
-                            onTap: () {},
-                            icon: LMIcon(
-                              type: LMIconType.svg,
-                              assetPath: kAssetCommentIcon,
-                              color: theme.colorScheme.onPrimary,
-                              size: 20,
-                              boxPadding: 6,
-                            ),
-                          ),
-                        ],
+                      ValueListenableBuilder(
+                        valueListenable: rebuildLikeButton,
+                        builder: (context, _, __) {
+                          return Row(
+                            children: <Widget>[
+                              kHorizontalPaddingLarge,
+                              LMTextButton(
+                                text: LMTextView(
+                                  text: "${post!.likeCount}",
+                                  textStyle: theme.textTheme.labelMedium,
+                                ),
+                                margin: 0,
+                                onTap: () async {
+                                  if (post!.isLiked) {
+                                    post!.likeCount -= 1;
+                                    post!.isLiked = false;
+                                  } else {
+                                    post!.likeCount += 1;
+                                    post!.isLiked = true;
+                                  }
+
+                                  rebuildLikeButton.value =
+                                      !rebuildLikeButton.value;
+
+                                  final response =
+                                      await locator<LikeMindsService>()
+                                          .likePost((LikePostRequestBuilder()
+                                                ..postId(post!.id))
+                                              .build());
+                                  if (!response.success) {
+                                    toast(
+                                      response.errorMessage ??
+                                          "There was an error liking the post",
+                                      duration: Toast.LENGTH_LONG,
+                                    );
+
+                                    if (post!.isLiked) {
+                                      post!.likeCount -= 1;
+                                    } else {
+                                      post!.likeCount += 1;
+                                    }
+                                    post!.isLiked = !post!.isLiked;
+                                    rebuildLikeButton.value =
+                                        !rebuildLikeButton.value;
+                                  } else {
+                                    newPostBloc.add(
+                                      UpdatePost(
+                                        post: post!,
+                                      ),
+                                    );
+                                  }
+                                },
+                                icon: LMIcon(
+                                  type: LMIconType.svg,
+                                  assetPath: kAssetLikeIcon,
+                                  color: theme.colorScheme.onPrimary,
+                                  size: 20,
+                                  boxPadding: 6,
+                                ),
+                                activeIcon: LMIcon(
+                                  type: LMIconType.svg,
+                                  assetPath: kAssetLikeFilledIcon,
+                                  color: theme.colorScheme.error,
+                                  size: 20,
+                                  boxPadding: 6,
+                                ),
+                                isActive: post!.isLiked,
+                              ),
+                              kHorizontalPaddingLarge,
+                              LMTextButton(
+                                text: LMTextView(
+                                  text: "${post!.commentCount}",
+                                  textStyle: theme.textTheme.labelMedium,
+                                ),
+                                margin: 0,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => PostDetailScreen(
+                                        postId: post!.id,
+                                        fromCommentButton: true,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                icon: LMIcon(
+                                  type: LMIconType.svg,
+                                  assetPath: kAssetCommentIcon,
+                                  color: theme.colorScheme.onPrimary,
+                                  size: 20,
+                                  boxPadding: 6,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                       kVerticalPaddingMedium,
                       ValueListenableBuilder(
