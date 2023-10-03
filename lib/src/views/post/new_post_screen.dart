@@ -165,7 +165,8 @@ class _NewPostScreenState extends State<NewPostScreen> {
       });
     } else {
       if (postMedia.isEmpty) {
-        isDocumentPost = false;
+        isDocumentPost = true;
+        isMediaPost = true;
         showLinkPreview = true;
       }
       setState(() {
@@ -929,7 +930,8 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                     List<MediaModel>? pickedMediaFiles =
                                         await PostMediaPicker.pickDocuments(
                                             postMedia.length);
-                                    if (pickedMediaFiles != null) {
+                                    if (pickedMediaFiles != null &&
+                                        pickedMediaFiles.isNotEmpty) {
                                       setPickedMediaFiles(pickedMediaFiles);
                                       onUploadedDocument(true);
                                     } else {
