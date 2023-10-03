@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -847,6 +849,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                         )
                                       : NovaPostWidget(
                                           post: postData!,
+                                          expanded: true,
                                           topics:
                                               postDetailResponse!.topics ?? {},
                                           user: postDetailResponse!.users![
@@ -1188,9 +1191,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                   builder:
                                                                       (context) =>
                                                                           LMBottomSheet(
-                                                                    height:
+                                                                    height: max(
+                                                                        170,
                                                                         screenSize.height *
-                                                                            0.3,
+                                                                            0.25),
                                                                     margin: const EdgeInsets
                                                                         .only(
                                                                         top:
@@ -1381,21 +1385,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                 ),
                                                               );
                                                             },
-                                                            textStyle: TextStyle(
-                                                                color: theme
-                                                                    .colorScheme
-                                                                    .onPrimary,
-                                                                fontSize: 12),
+                                                            textStyle: theme
+                                                                .textTheme
+                                                                .labelMedium,
                                                           ),
                                                           activeText:
                                                               LMTextView(
                                                             text:
                                                                 "${item.likesCount}",
-                                                            textStyle: TextStyle(
-                                                                color: theme
-                                                                    .colorScheme
-                                                                    .onPrimary,
-                                                                fontSize: 12),
+                                                            textStyle: theme
+                                                                .textTheme
+                                                                .labelMedium,
                                                           ),
                                                           onTap: () {
                                                             _toggleLikeCommentBloc
@@ -1428,7 +1428,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                 LMIconType.svg,
                                                             assetPath:
                                                                 kAssetLikeIcon,
-                                                            size: 20,
+                                                            size: 14,
                                                             color: theme
                                                                 .colorScheme
                                                                 .onPrimary,
@@ -1438,7 +1438,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                 LMIconType.svg,
                                                             assetPath:
                                                                 kAssetLikeFilledIcon,
-                                                            size: 20,
+                                                            size: 14,
                                                             color: theme
                                                                 .colorScheme
                                                                 .error,

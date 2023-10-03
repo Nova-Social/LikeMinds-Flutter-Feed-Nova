@@ -640,7 +640,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                 PostViewModel item = curr.postData;
                 int index = widget.selectedTopicIds
                     .indexWhere((element) => element.id == item.topics.first);
-                if (index == -1) {
+                if (index == -1 && widget.selectedTopicIds.isNotEmpty) {
                   return;
                 }
                 int length =

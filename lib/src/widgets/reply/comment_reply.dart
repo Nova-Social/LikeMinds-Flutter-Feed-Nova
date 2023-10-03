@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -123,6 +125,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                         topLeft: Radius.circular(32),
                         topRight: Radius.circular(32),
                       ),
+                      height: max(170, screenSize!.height * 0.25),
                       dragBarColor: theme!.colorScheme.onSurface,
                       backgroundColor: theme!.colorScheme.surface,
                       children: element.menuItems
@@ -226,11 +229,11 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                 LMTextButton(
                   text: LMTextView(
                     text: "${element.likesCount}",
-                    textStyle: theme!.textTheme.labelSmall,
+                    textStyle: theme!.textTheme.labelMedium,
                   ),
                   activeText: LMTextView(
                     text: "${element.likesCount}",
-                    textStyle: theme!.textTheme.labelSmall,
+                    textStyle: theme!.textTheme.labelMedium,
                   ),
                   onTap: () {
                     toggleLikeCommentBloc.add(
@@ -254,12 +257,12 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                   icon: const LMIcon(
                     type: LMIconType.svg,
                     assetPath: kAssetLikeIcon,
-                    size: 20,
+                    size: 14,
                   ),
                   activeIcon: LMIcon(
                     type: LMIconType.svg,
                     assetPath: kAssetLikeFilledIcon,
-                    size: 20,
+                    size: 14,
                     color: theme!.colorScheme.error,
                   ),
                   isActive: element.isLiked,

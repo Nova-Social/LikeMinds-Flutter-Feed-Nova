@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:likeminds_feed/likeminds_feed.dart';
@@ -25,6 +27,7 @@ class NovaPostWidget extends StatefulWidget {
   final Function() onTap;
   final Function(bool isDeleted) refresh;
   final Function(int) onMenuTap;
+  final bool expanded;
 
   const NovaPostWidget({
     Key? key,
@@ -35,6 +38,7 @@ class NovaPostWidget extends StatefulWidget {
     required this.refresh,
     required this.isFeed,
     required this.onMenuTap,
+    this.expanded = false,
   }) : super(key: key);
 
   @override
@@ -210,7 +214,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                     ),
                                   ),
                                   builder: (context) => LMBottomSheet(
-                                    height: screenSize.height * 0.3,
+                                    height: max(170, screenSize.height * 0.25),
                                     margin: const EdgeInsets.only(top: 30),
                                     borderRadius: const BorderRadius.only(
                                       topLeft: Radius.circular(32),
@@ -255,7 +259,16 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                                 LMTextView(
                                                   text: e.title,
                                                   textStyle: theme
-                                                      .textTheme.headlineLarge,
+                                                      .textTheme.headlineLarge!
+                                                      .copyWith(
+                                                          color: e.id ==
+                                                                  postDeleteId
+                                                              ? theme
+                                                                  .colorScheme
+                                                                  .error
+                                                              : theme
+                                                                  .colorScheme
+                                                                  .onPrimaryContainer),
                                                 ),
                                               ]),
                                             ),
@@ -275,6 +288,8 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                     textStyle: theme.textTheme.bodyMedium,
                     expandTextStyle: theme.textTheme.bodyMedium!
                         .copyWith(color: theme.colorScheme.onPrimary),
+                    expanded: widget.expanded,
+                    expandText: widget.expanded ? '' : 'see more',
                   ),
                   postDetails!.attachments != null &&
                           postDetails!.attachments!.isNotEmpty &&
@@ -373,9 +388,11 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                           valueListenable: rebuildLikeWidget,
                           builder: (context, _, __) {
                             return LMTextButton(
+                              padding: EdgeInsets.zero,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               text: LMTextView(
                                 text: "$postLikes",
-                                textStyle: theme.textTheme.labelMedium,
+                                textStyle: theme.textTheme.labelLarge,
                                 onTap: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
@@ -385,7 +402,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                   );
                                 },
                               ),
-                              margin: 0,
+                              margin: 6,
                               onTap: () async {
                                 if (isLiked!) {
                                   postLikes--;
@@ -440,26 +457,24 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                 type: LMIconType.svg,
                                 assetPath: kAssetLikeIcon,
                                 color: theme.colorScheme.onPrimary,
-                                size: 20,
-                                boxPadding: 6,
+                                size: 16,
                               ),
                               activeIcon: LMIcon(
                                 type: LMIconType.svg,
                                 assetPath: kAssetLikeFilledIcon,
                                 color: theme.colorScheme.error,
-                                size: 20,
-                                boxPadding: 6,
+                                size: 16,
                               ),
                               isActive: isLiked!,
                             );
                           }),
-                      kHorizontalPaddingMedium,
+                      kHorizontalPaddingLarge,
                       LMTextButton(
                         text: LMTextView(
                           text: "$comments",
-                          textStyle: theme.textTheme.labelMedium,
+                          textStyle: theme.textTheme.labelLarge,
                         ),
-                        margin: 0,
+                        margin: 6,
                         onTap: () {
                           if (widget.isFeed) {
                             Navigator.push(
@@ -478,24 +493,8 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                           assetPath: kAssetCommentIcon,
                           color: theme.colorScheme.onPrimary,
                           size: 20,
-                          boxPadding: 6,
                         ),
                       ),
-
-                      // LMTextButton(
-                      //   text: const LMTextView(text: "Share"),
-                      //   margin: 0,
-                      //   onTap: () {
-                      //     SharePost().sharePost(widget.post.id);
-                      //   },
-                      //   icon: LMIcon(
-                      //     type: LMIconType.svg,
-                      //     assetPath: kAssetShareIcon,
-                      //     color: Theme.of(context).colorScheme.onSecondary,
-                      //     size: 20,
-                      //     boxPadding: 6,
-                      //   ),
-                      // ),
                     ],
                     // children: [
 

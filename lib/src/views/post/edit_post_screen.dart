@@ -838,29 +838,42 @@ class _EditPostScreenState extends State<EditPostScreen> {
           ],
         ),
         Positioned(
-          right: 16.0,
-          bottom: 16.0,
-          child: LMIconButton(
-            icon: LMIcon(
-              type: LMIconType.svg,
-              assetPath: kAssetMentionIcon,
-              color: theme!.colorScheme.primary,
-              boxPadding: 0,
-              size: 28,
+          bottom: 0,
+          child: Container(
+            color: theme!.colorScheme.background,
+            width: screenSize!.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                      right: 16.0, bottom: 16.0, top: 8.0),
+                  child: LMIconButton(
+                    icon: LMIcon(
+                      type: LMIconType.svg,
+                      assetPath: kAssetMentionIcon,
+                      color: theme!.colorScheme.primary,
+                      boxPadding: 0,
+                      size: 28,
+                    ),
+                    onTap: (active) {
+                      if (!_focusNode.hasFocus) {
+                        _focusNode.requestFocus();
+                      }
+                      String currentText = textEditingController!.text;
+                      if (currentText.isNotEmpty) {
+                        currentText = '$currentText @';
+                      } else {
+                        currentText = '@';
+                      }
+                      textEditingController!.value =
+                          TextEditingValue(text: currentText);
+                    },
+                  ),
+                ),
+              ],
             ),
-            onTap: (active) {
-              if (!_focusNode.hasFocus) {
-                _focusNode.requestFocus();
-              }
-              String currentText = textEditingController!.text;
-              if (currentText.isNotEmpty) {
-                currentText = '$currentText @';
-              } else {
-                currentText = '@';
-              }
-              textEditingController!.value =
-                  TextEditingValue(text: currentText);
-            },
           ),
         )
       ],
