@@ -60,6 +60,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   final PagingController<int, Reply> _pagingController =
       PagingController(firstPageKey: 1);
   PostViewModel? postData;
+  Map<String, Topic> topics = {};
   User currentUser = UserLocalPreference.instance.fetchUserData();
 
   List<UserTag> userTags = [];
@@ -193,6 +194,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
     if (postDetails.success) {
       postData = PostViewModel.fromPost(post: postDetails.post!);
+      topics = postDetails.topics ?? {};
       rebuildPostWidget.value = !rebuildPostWidget.value;
     } else {
       toast(
@@ -820,6 +822,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                             listener: (context, state) {
                               if (state is EditPostUploaded) {
                                 postData = state.postData;
+                                topics = state.topics;
                                 rebuildPostWidget.value =
                                     !rebuildPostWidget.value;
                               }
@@ -899,53 +902,75 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                       ));
                                             } else if (id == postPinId ||
                                                 id == postUnpinId) {
-                                              String? postType = getPostType(
-                                                  postData!.attachments?.first
-                                                          .attachmentType ??
-                                                      0);
-                                              if (postData!.isPinned) {
-                                                LMAnalytics.get().track(
-                                                    AnalyticsKeys.postUnpinned,
-                                                    {
-                                                      "created_by_id":
-                                                          postData!.userId,
-                                                      "post_id": postData!.id,
-                                                      "post_type": postType,
-                                                    });
-                                              } else {
-                                                LMAnalytics.get().track(
-                                                    AnalyticsKeys.postPinned, {
-                                                  "created_by_id":
-                                                      postData!.userId,
-                                                  "post_id": postData!.id,
-                                                  "post_type": postType,
-                                                });
+                                              try {
+                                                String? postType = getPostType(
+                                                    postData!.attachments?.first
+                                                            .attachmentType ??
+                                                        0);
+                                                if (postData!.isPinned) {
+                                                  LMAnalytics.get().track(
+                                                      AnalyticsKeys
+                                                          .postUnpinned,
+                                                      {
+                                                        "created_by_id":
+                                                            postData!.userId,
+                                                        "post_id": postData!.id,
+                                                        "post_type": postType,
+                                                      });
+                                                } else {
+                                                  LMAnalytics.get().track(
+                                                      AnalyticsKeys.postPinned,
+                                                      {
+                                                        "created_by_id":
+                                                            postData!.userId,
+                                                        "post_id": postData!.id,
+                                                        "post_type": postType,
+                                                      });
+                                                }
+                                              } catch (err) {
+                                                debugPrint(err.toString());
                                               }
                                               newPostBloc.add(TogglePinPost(
                                                   postId: postData!.id,
                                                   isPinned:
                                                       !postData!.isPinned));
                                             } else if (id == postEditId) {
-                                              String? postType;
-                                              postType = getPostType(postData!
-                                                      .attachments
-                                                      ?.first
-                                                      .attachmentType ??
-                                                  0);
-                                              LMAnalytics.get().track(
-                                                AnalyticsKeys.postEdited,
-                                                {
-                                                  "created_by_id":
-                                                      postData!.userId,
-                                                  "post_id": postData!.id,
-                                                  "post_type": postType,
-                                                },
-                                              );
+                                              try {
+                                                String? postType;
+                                                postType = getPostType(postData!
+                                                        .attachments
+                                                        ?.first
+                                                        .attachmentType ??
+                                                    0);
+                                                LMAnalytics.get().track(
+                                                  AnalyticsKeys.postEdited,
+                                                  {
+                                                    "created_by_id":
+                                                        postData!.userId,
+                                                    "post_id": postData!.id,
+                                                    "post_type": postType,
+                                                  },
+                                                );
+                                              } catch (err) {
+                                                debugPrint(err.toString());
+                                              }
+                                              List<TopicUI> postTopics = [];
+
+                                              if (postData!.topics.isNotEmpty &&
+                                                  topics.containsKey(
+                                                      postData!.topics.first)) {
+                                                postTopics.add(
+                                                    TopicUI.fromTopic(topics[
+                                                        postData!
+                                                            .topics.first]!));
+                                              }
+
                                               Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       EditPostScreen(
                                                     postId: postData!.id,
+                                                    selectedTopics: postTopics,
                                                   ),
                                                 ),
                                               );

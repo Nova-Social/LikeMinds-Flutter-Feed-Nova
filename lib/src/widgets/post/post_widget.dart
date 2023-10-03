@@ -7,6 +7,7 @@ import 'package:likeminds_feed_nova_fl/src/models/post_view_model.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/icons.dart';
+import 'package:likeminds_feed_nova_fl/src/utils/post/post_action_id.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_utils.dart';
 import 'package:likeminds_feed_nova_fl/src/views/likes/likes_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/views/media_preview.dart';
@@ -67,6 +68,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
     comments = postDetails!.commentCount;
     isLiked = postDetails!.isLiked;
     isPinned = postDetails!.isPinned;
+    postDetails!.menuItems.removeWhere((element) => element.id == postReportId);
   }
 
   @override
@@ -225,7 +227,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                       ),
                                     ),
                                     backgroundColor: theme.colorScheme.surface,
-                                    children: widget.post.menuItems
+                                    children: postDetails!.menuItems
                                         .map(
                                           (e) => GestureDetector(
                                             onTap: () {

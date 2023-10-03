@@ -453,6 +453,7 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
                       onRefresh: refresh,
                       scrollController: _controller,
                       openTopicBottomSheet: showTopicSelectSheet,
+                      selectedTopicIds: selectedTopics,
                     );
                   } else if (state is UniversalFeedError) {
                     return FeedRoomErrorView(message: state.message);
@@ -488,6 +489,7 @@ class FeedRoomView extends StatefulWidget {
   final ScrollController scrollController;
   final VoidCallback onRefresh;
   final VoidCallback openTopicBottomSheet;
+  final List<TopicUI> selectedTopicIds;
 
   const FeedRoomView({
     super.key,
@@ -499,6 +501,7 @@ class FeedRoomView extends StatefulWidget {
     required this.onRefresh,
     required this.scrollController,
     required this.openTopicBottomSheet,
+    required this.selectedTopicIds,
   });
 
   @override
@@ -623,7 +626,12 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                 postUploading.value = false;
               }
               if (curr is NewPostUploaded) {
-                PostViewModel? item = curr.postData;
+                PostViewModel item = curr.postData;
+                int index = widget.selectedTopicIds
+                    .indexWhere((element) => element.id == item.topics.first);
+                if (index == -1) {
+                  return;
+                }
                 int length =
                     widget.feedRoomPagingController.itemList?.length ?? 0;
                 List<PostViewModel> feedRoomItemList =
@@ -900,26 +908,28 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                               ));
                                     } else if (id == postPinId ||
                                         id == postUnpinId) {
-                                      String? postType = getPostType(item
-                                              .attachments
-                                              ?.first
-                                              .attachmentType ??
-                                          0);
-                                      if (item.isPinned) {
-                                        LMAnalytics.get()
-                                            .track(AnalyticsKeys.postUnpinned, {
-                                          "created_by_id": item.userId,
-                                          "post_id": item.id,
-                                          "post_type": postType,
-                                        });
-                                      } else {
-                                        LMAnalytics.get()
-                                            .track(AnalyticsKeys.postPinned, {
-                                          "created_by_id": item.userId,
-                                          "post_id": item.id,
-                                          "post_type": postType,
-                                        });
-                                      }
+                                      try {
+                                        String? postType = getPostType(item
+                                                .attachments
+                                                ?.first
+                                                .attachmentType ??
+                                            0);
+                                        if (item.isPinned) {
+                                          LMAnalytics.get().track(
+                                              AnalyticsKeys.postUnpinned, {
+                                            "created_by_id": item.userId,
+                                            "post_id": item.id,
+                                            "post_type": postType,
+                                          });
+                                        } else {
+                                          LMAnalytics.get()
+                                              .track(AnalyticsKeys.postPinned, {
+                                            "created_by_id": item.userId,
+                                            "post_id": item.id,
+                                            "post_type": postType,
+                                          });
+                                        }
+                                      } catch (_) {}
                                       newPostBloc.add(TogglePinPost(
                                           postId: item.id,
                                           isPinned: !item.isPinned));
@@ -940,10 +950,21 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                       } catch (err) {
                                         debugPrint(err.toString());
                                       }
+                                      List<TopicUI> postTopics = [];
+
+                                      if (item.topics.isNotEmpty &&
+                                          widget.feedResponse.topics
+                                              .containsKey(item.topics.first)) {
+                                        postTopics.add(TopicUI.fromTopic(widget
+                                            .feedResponse
+                                            .topics[item.topics.first]!));
+                                      }
+
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (context) => EditPostScreen(
                                             postId: item.id,
+                                            selectedTopics: postTopics,
                                           ),
                                         ),
                                       );
