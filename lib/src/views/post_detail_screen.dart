@@ -462,31 +462,36 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                       ),
                                       kHorizontalPaddingMedium,
                                       Expanded(
-                                        child: TaggingAheadTextField(
-                                          isDown: false,
-                                          maxLines: 5,
-                                          onTagSelected: (tag) {
-                                            userTags.add(tag);
-                                          },
-                                          controller: _commentController!,
-                                          decoration: InputDecoration(
-                                            enabled: right,
-                                            border: InputBorder.none,
-                                            hintText: right
-                                                ? 'Comment your thoughts'
-                                                : "You do not have permission to comment.",
-                                            hintStyle: theme
-                                                .textTheme.bodyMedium!
-                                                .copyWith(
-                                              color:
-                                                  theme.colorScheme.onPrimary,
-                                            ),
+                                        child: Container(
+                                          constraints: BoxConstraints(
+                                            maxWidth: screenSize.width * 0.6,
                                           ),
-                                          focusNode: focusNode,
-                                          onChange: (String p0) {
-                                            rebuildButton.value =
-                                                !rebuildButton.value;
-                                          },
+                                          child: TaggingAheadTextField(
+                                            isDown: false,
+                                            maxLines: 5,
+                                            onTagSelected: (tag) {
+                                              userTags.add(tag);
+                                            },
+                                            controller: _commentController!,
+                                            decoration: InputDecoration(
+                                              enabled: right,
+                                              border: InputBorder.none,
+                                              hintText: right
+                                                  ? 'Comment your thoughts'
+                                                  : "You do not have permission to comment.",
+                                              hintStyle: theme
+                                                  .textTheme.bodyMedium!
+                                                  .copyWith(
+                                                color:
+                                                    theme.colorScheme.onPrimary,
+                                              ),
+                                            ),
+                                            focusNode: focusNode,
+                                            onChange: (String p0) {
+                                              rebuildButton.value =
+                                                  !rebuildButton.value;
+                                            },
+                                          ),
                                         ),
                                       ),
                                       LMIconButton(
@@ -558,8 +563,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                               if (state
                                                                   is AddCommentReplyLoading) {
                                                                 return const SizedBox(
-                                                                  height: 18,
-                                                                  width: 18,
+                                                                  height: 15,
+                                                                  width: 15,
                                                                   child:
                                                                       CircularProgressIndicator(
                                                                     strokeWidth:
@@ -576,7 +581,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                     a,
                                                                   ) {
                                                                     return LMTextButton(
-                                                                      width: 24,
                                                                       height:
                                                                           18,
                                                                       text:
