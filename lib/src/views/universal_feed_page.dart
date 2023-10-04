@@ -531,7 +531,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
           ),
           child: LMImage(
             imageFile: media.mediaFile!,
-            boxFit: BoxFit.contain,
+            boxFit: BoxFit.cover,
           ),
         );
       } else if (media.mediaType == MediaType.document) {

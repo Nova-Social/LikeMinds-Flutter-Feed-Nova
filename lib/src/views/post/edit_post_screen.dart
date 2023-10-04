@@ -729,6 +729,9 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                         alignment: Alignment.center,
                                         child: ListView.builder(
                                           itemCount: mediaLength,
+                                          physics: mediaLength == 1
+                                              ? const NeverScrollableScrollPhysics()
+                                              : null,
                                           scrollDirection: Axis.horizontal,
                                           itemBuilder: (BuildContext context,
                                               int index) {
@@ -768,14 +771,22 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                                                           index]
                                                                       .attachmentMeta
                                                                       .url!,
-                                                                  // height:
-                                                                  //     180,
+                                                                  height: mediaLength ==
+                                                                          1
+                                                                      ? screenSize!
+                                                                              .width -
+                                                                          32
+                                                                      : 200,
+                                                                  width: mediaLength ==
+                                                                          1
+                                                                      ? screenSize!
+                                                                              .width -
+                                                                          32
+                                                                      : 200,
                                                                   boxFit: BoxFit
-                                                                      .contain,
+                                                                      .cover,
                                                                   showControls:
                                                                       false,
-                                                                  // width:
-                                                                  //     300,
                                                                   borderRadius:
                                                                       18,
                                                                 ),
@@ -803,12 +814,20 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                                                 color: Colors
                                                                     .black,
                                                                 child: LMImage(
-                                                                  // height:
-                                                                  //     180,
-                                                                  // width:
-                                                                  //     180,
+                                                                  height: mediaLength ==
+                                                                          1
+                                                                      ? screenSize!
+                                                                              .width -
+                                                                          32
+                                                                      : 200,
+                                                                  width: mediaLength ==
+                                                                          1
+                                                                      ? screenSize!
+                                                                              .width -
+                                                                          32
+                                                                      : 200,
                                                                   boxFit: BoxFit
-                                                                      .contain,
+                                                                      .cover,
                                                                   borderRadius:
                                                                       18,
                                                                   imageUrl: attachments![
