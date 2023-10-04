@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:custom_pop_up_menu/custom_pop_up_menu.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +15,7 @@ import 'package:likeminds_feed_nova_fl/src/utils/local_preference/user_local_pre
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_utils.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/tagging/tagging_textfield_ta.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post/post_composer_header.dart';
+import 'package:likeminds_feed_nova_fl/src/widgets/topic/topic_popup.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -20,9 +23,12 @@ import 'package:url_launcher/url_launcher.dart';
 class EditPostScreen extends StatefulWidget {
   static const String route = '/edit_post_screen';
   final String postId;
+  final List<TopicUI> selectedTopics;
+
   const EditPostScreen({
     super.key,
     required this.postId,
+    required this.selectedTopics,
   });
 
   @override
@@ -31,8 +37,11 @@ class EditPostScreen extends StatefulWidget {
 
 class _EditPostScreenState extends State<EditPostScreen> {
   late Future<GetPostResponse> postFuture;
+  ValueNotifier<bool> rebuildTopicFeed = ValueNotifier<bool>(false);
+  List<TopicUI> selectedTopics = [];
   final FocusNode _focusNode = FocusNode();
   TextEditingController? textEditingController;
+  Future<GetTopicsResponse>? getTopicsResponse;
   ValueNotifier<bool> rebuildAttachments = ValueNotifier(false);
   late String postId;
   Post? postDetails;
@@ -50,6 +59,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
   Timer? _debounce;
   Size? screenSize;
   ThemeData? theme;
+  final CustomPopupMenuController _controllerPopUp =
+      CustomPopupMenuController();
 
   void _onTextChanged(String p0) {
     if (_debounce?.isActive ?? false) {
@@ -71,10 +82,20 @@ class _EditPostScreenState extends State<EditPostScreen> {
         showBorder: false,
         type: attachments![index].attachmentMeta.format!,
         backgroundColor: theme!.colorScheme.surface,
-        documentIcon: const LMIcon(
-          type: LMIconType.svg,
-          assetPath: kAssetPDFIcon,
-          size: 20,
+        documentIcon: Container(
+          width: 48,
+          height: 48,
+          decoration: ShapeDecoration(
+            color: theme!.colorScheme.primaryContainer,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          ),
+          child: Center(
+            child: LMTextView(
+              text: 'PDF',
+              textStyle: theme!.textTheme.titleLarge!.copyWith(fontSize: 18),
+            ),
+          ),
         ),
         documentUrl: attachments![index].attachmentMeta.url,
         onTap: () {
@@ -83,6 +104,11 @@ class _EditPostScreenState extends State<EditPostScreen> {
         },
       ),
     );
+  }
+
+  void updateSelectedTopics(List<TopicUI> topics) {
+    selectedTopics = topics;
+    rebuildTopicFeed.value = !rebuildTopicFeed.value;
   }
 
   void handleTextLinks(String text) async {
@@ -125,9 +151,23 @@ class _EditPostScreenState extends State<EditPostScreen> {
           ..page(1)
           ..pageSize(10))
         .build());
+    getTopicsResponse =
+        locator<LikeMindsService>().getTopics((GetTopicsRequestBuilder()
+              ..page(1)
+              ..pageSize(20)
+              ..isEnabled(true))
+            .build());
     if (_focusNode.canRequestFocus) {
       _focusNode.requestFocus();
     }
+    selectedTopics = widget.selectedTopics;
+  }
+
+  @override
+  void didUpdateWidget(covariant EditPostScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    postId = widget.postId;
+    selectedTopics = widget.selectedTopics;
   }
 
   void checkTextLinks() {
@@ -248,30 +288,128 @@ class _EditPostScreenState extends State<EditPostScreen> {
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           backgroundColor: theme!.colorScheme.background,
-          body: SafeArea(
-            child: Scaffold(
-              resizeToAvoidBottomInset: false,
-              backgroundColor: theme!.colorScheme.background,
-              body: FutureBuilder(
-                  future: postFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.connectionState ==
-                        ConnectionState.done) {
-                      GetPostResponse response = snapshot.data!;
-                      if (response.success) {
-                        setPostData(response.post!);
-                        return postEditWidget();
-                      } else {
-                        return postErrorScreen(response.errorMessage!);
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(bottom: 64.0, left: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: Alignment.bottomLeft,
+                  child: FutureBuilder<GetTopicsResponse>(
+                    future: getTopicsResponse,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done &&
+                          snapshot.hasData &&
+                          snapshot.data!.success == true) {
+                        if (snapshot.data!.topics!.isNotEmpty) {
+                          return ValueListenableBuilder(
+                            valueListenable: rebuildTopicFeed,
+                            builder: (context, _, __) {
+                              return GestureDetector(
+                                onTap: () async {
+                                  if (_focusNode.hasFocus) {
+                                    FocusScopeNode currentFocus =
+                                        FocusScope.of(context);
+                                    currentFocus.unfocus();
+                                    await Future.delayed(
+                                        const Duration(milliseconds: 500));
+                                  }
+                                  _controllerPopUp.showMenu();
+                                },
+                                child: AbsorbPointer(
+                                  absorbing: true,
+                                  child: CustomPopupMenu(
+                                    controller: _controllerPopUp,
+                                    showArrow: false,
+                                    verticalMargin: 10,
+                                    horizontalMargin: 16.0,
+                                    pressType: PressType.singleClick,
+                                    menuBuilder: () => TopicPopUp(
+                                      selectedTopics: selectedTopics,
+                                      backgroundColor:
+                                          theme!.colorScheme.surface,
+                                      selectedTextColor:
+                                          theme!.colorScheme.onPrimary,
+                                      unSelectedTextColor:
+                                          theme!.colorScheme.onPrimary,
+                                      selectedColor: theme!.colorScheme.primary,
+                                      isEnabled: true,
+                                      onTopicSelected:
+                                          (updatedTopics, tappedTopic) {
+                                        if (selectedTopics.isEmpty) {
+                                          selectedTopics.add(tappedTopic);
+                                        } else {
+                                          if (selectedTopics.first.id ==
+                                              tappedTopic.id) {
+                                            selectedTopics.clear();
+                                          } else {
+                                            selectedTopics.clear();
+                                            selectedTopics.add(tappedTopic);
+                                          }
+                                        }
+                                        _controllerPopUp.hideMenu();
+                                        rebuildTopicFeed.value =
+                                            !rebuildTopicFeed.value;
+                                      },
+                                    ),
+                                    child: Container(
+                                      height: 36,
+                                      alignment: Alignment.bottomLeft,
+                                      margin: const EdgeInsets.only(left: 16.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(500),
+                                        color: theme!.colorScheme.primary,
+                                      ),
+                                      child: LMTopicChip(
+                                        topic: selectedTopics.isEmpty
+                                            ? (TopicUIBuilder()
+                                                  ..id("0")
+                                                  ..isEnabled(true)
+                                                  ..name("Topic"))
+                                                .build()
+                                            : selectedTopics.first,
+                                        textStyle: theme!.textTheme.bodyMedium,
+                                        icon: LMIcon(
+                                          type: LMIconType.icon,
+                                          icon: CupertinoIcons.chevron_down,
+                                          size: 16,
+                                          color: theme!.colorScheme.onPrimary,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }
                       }
-                    }
-                    return const SizedBox();
-                  }),
+                      return const SizedBox();
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
+          body: FutureBuilder(
+              future: postFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.connectionState == ConnectionState.done) {
+                  GetPostResponse response = snapshot.data!;
+                  if (response.success) {
+                    setPostData(response.post!);
+                    return postEditWidget();
+                  } else {
+                    return postErrorScreen(response.errorMessage!);
+                  }
+                }
+                return const SizedBox();
+              }),
         ),
       ),
     );
@@ -359,12 +497,68 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       textEditingController!.text, userTags);
                   String result = TaggingHelper.encodeString(
                       textEditingController!.text, userTags);
+
+                  List<String> disabledTopics = [];
+                  for (TopicUI topic in selectedTopics) {
+                    if (!topic.isEnabled) {
+                      disabledTopics.add(topic.name);
+                    }
+                  }
+
+                  if (disabledTopics.isNotEmpty) {
+                    showDialog(
+                      context: context,
+                      builder: (dialogContext) => AlertDialog(
+                        shadowColor: Colors.transparent,
+                        backgroundColor: theme!.colorScheme.background,
+                        elevation: 0,
+                        title: const Text(
+                          "Topic Disabled",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                          ),
+                        ),
+                        content: LMTextView(
+                          text:
+                              "The following topics have been disabled. Please remove them to save the post.\n${disabledTopics.join(', ')}.",
+                          textStyle: theme!.textTheme.labelLarge,
+                        ),
+                        actions: <Widget>[
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(right: 4.0, bottom: 10.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                LMTextButton(
+                                  text: LMTextView(
+                                    text: 'Okay',
+                                    textStyle: theme!.textTheme.headlineMedium!
+                                        .copyWith(
+                                            color: theme!.colorScheme.error),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0, vertical: 4.0),
+                                  onTap: () {
+                                    Navigator.of(dialogContext).pop();
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                    return;
+                  }
+
                   newPostBloc?.add(
                     EditPost(
                       postText: result,
                       attachments: attachments,
                       postId: postId,
-                      selectedTopics: [],
+                      selectedTopics: selectedTopics,
                     ),
                   );
                   Navigator.of(context).pop();

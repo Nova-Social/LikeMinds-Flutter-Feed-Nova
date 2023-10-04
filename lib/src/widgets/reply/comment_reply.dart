@@ -369,7 +369,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                   );
                                 },
                                 child: LMTextView(
-                                  text: 'View more replies',
+                                  text: 'Show more replies',
                                   textStyle: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.primary,
@@ -425,7 +425,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                     forLoadMore: true));
                               },
                               child: const Text(
-                                'View more replies',
+                                'Show more replies',
                                 style: TextStyle(
                                   color: kBlueGreyColor,
                                   fontSize: 14,
@@ -474,7 +474,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                       forLoadMore: true));
                                 },
                                 child: const Text(
-                                  'View more replies',
+                                  'Show more replies',
                                   style: TextStyle(
                                     color: kBlueGreyColor,
                                     fontSize: 14,
@@ -527,7 +527,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                       forLoadMore: true));
                                 },
                                 child: const Text(
-                                  'View more replies',
+                                  'Show more replies',
                                   style: TextStyle(
                                     color: kBlueGreyColor,
                                     fontSize: 14,

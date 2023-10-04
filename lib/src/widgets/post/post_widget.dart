@@ -7,7 +7,9 @@ import 'package:likeminds_feed_nova_fl/src/models/post_view_model.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/icons.dart';
+import 'package:likeminds_feed_nova_fl/src/utils/post/post_action_id.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_utils.dart';
+import 'package:likeminds_feed_nova_fl/src/views/likes/likes_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/views/media_preview.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post_detail_screen.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
@@ -66,6 +68,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
     comments = postDetails!.commentCount;
     isLiked = postDetails!.isLiked;
     isPinned = postDetails!.isPinned;
+    postDetails!.menuItems.removeWhere((element) => element.id == postReportId);
   }
 
   @override
@@ -106,7 +109,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
             }
           },
           child: GestureDetector(
-            behavior: HitTestBehavior.deferToChild,
+            behavior: HitTestBehavior.opaque,
             onTap: () {
               // Navigate to LMPostPage using material route
               if (widget.isFeed) {
@@ -158,15 +161,20 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                             user: widget.user,
                             isFeed: widget.isFeed,
                             showCustomTitle: false,
-                            fallbackTextStyle: theme.textTheme.titleLarge!
-                                .copyWith(fontSize: 28),
+                            profilePicture: LMProfilePicture(
+                              size: 52,
+                              fallbackText: widget.user.name,
+                              imageUrl: widget.user.imageUrl,
+                              onTap: () {
+                                if (widget.user.sdkClientInfo != null) {
+                                  locator<LikeMindsService>().routeToProfile(
+                                      widget.user.sdkClientInfo!.userUniqueId);
+                                }
+                              },
+                              fallbackTextStyle: theme.textTheme.titleLarge!
+                                  .copyWith(fontSize: 28),
+                            ),
                             imageSize: 52,
-                            onProfileTap: () {
-                              if (widget.user.sdkClientInfo != null) {
-                                locator<LikeMindsService>().routeToProfile(
-                                    widget.user.sdkClientInfo!.userUniqueId);
-                              }
-                            },
                             titleText: LMTextView(
                               text: widget.user.name,
                               textStyle: theme.textTheme.titleLarge,
@@ -175,10 +183,14 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                               text: timeago.format(widget.post.createdAt),
                               textStyle: theme.textTheme.labelMedium,
                             ),
+                            editedText: LMTextView(
+                              text: "Edited",
+                              textStyle: theme.textTheme.labelMedium,
+                            ),
                             menu: LMIconButton(
                               icon: LMIcon(
                                 type: LMIconType.icon,
-                                icon: Icons.more_vert,
+                                icon: Icons.more_horiz,
                                 color: theme.colorScheme.onPrimary,
                               ),
                               onTap: (bool value) {
@@ -197,14 +209,25 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                     ),
                                   ),
                                   builder: (context) => LMBottomSheet(
+                                    height: screenSize.height * 0.3,
                                     margin: const EdgeInsets.only(top: 30),
                                     borderRadius: const BorderRadius.only(
                                       topLeft: Radius.circular(32),
                                       topRight: Radius.circular(32),
                                     ),
-                                    dragBarColor: theme.colorScheme.onSurface,
+                                    dragBar: Container(
+                                      width: 96,
+                                      height: 6,
+                                      decoration: ShapeDecoration(
+                                        color: theme.colorScheme.onSurface,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(99),
+                                        ),
+                                      ),
+                                    ),
                                     backgroundColor: theme.colorScheme.surface,
-                                    children: widget.post.menuItems
+                                    children: postDetails!.menuItems
                                         .map(
                                           (e) => GestureDetector(
                                             onTap: () {
@@ -249,6 +272,8 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                       locator<LikeMindsService>().routeToProfile(userId);
                     },
                     textStyle: theme.textTheme.bodyMedium,
+                    expandTextStyle: theme.textTheme.bodyMedium!
+                        .copyWith(color: theme.colorScheme.onPrimary),
                   ),
                   postDetails!.attachments != null &&
                           postDetails!.attachments!.isNotEmpty &&
@@ -350,6 +375,14 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                               text: LMTextView(
                                 text: "$postLikes",
                                 textStyle: theme.textTheme.labelMedium,
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          LikesScreen(postId: widget.post.id),
+                                    ),
+                                  );
+                                },
                               ),
                               margin: 0,
                               onTap: () async {
@@ -390,6 +423,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                   isLiked = !isLiked!;
                                   rebuildLikeWidget.value =
                                       !rebuildLikeWidget.value;
+                                  widget.refresh(false);
                                 } else {
                                   if (!widget.isFeed) {
                                     newPostBloc.add(
@@ -397,6 +431,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                         post: postDetails!,
                                       ),
                                     );
+                                    widget.refresh(false);
                                   }
                                 }
                               },

@@ -229,7 +229,6 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Size screenSize = MediaQuery.of(context).size;
     theme = Theme.of(context);
     return Scaffold(
       backgroundColor: ColorTheme.backgroundColor,
@@ -454,6 +453,7 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
                       onRefresh: refresh,
                       scrollController: _controller,
                       openTopicBottomSheet: showTopicSelectSheet,
+                      selectedTopicIds: selectedTopics,
                     );
                   } else if (state is UniversalFeedError) {
                     return FeedRoomErrorView(message: state.message);
@@ -489,6 +489,7 @@ class FeedRoomView extends StatefulWidget {
   final ScrollController scrollController;
   final VoidCallback onRefresh;
   final VoidCallback openTopicBottomSheet;
+  final List<TopicUI> selectedTopicIds;
 
   const FeedRoomView({
     super.key,
@@ -500,6 +501,7 @@ class FeedRoomView extends StatefulWidget {
     required this.onRefresh,
     required this.scrollController,
     required this.openTopicBottomSheet,
+    required this.selectedTopicIds,
   });
 
   @override
@@ -530,10 +532,23 @@ class _FeedRoomViewState extends State<FeedRoomView> {
           ),
         );
       } else if (media.mediaType == MediaType.document) {
-        return const LMIcon(
-          type: LMIconType.svg,
-          assetPath: kAssetPDFIcon,
-          size: 35,
+        return Container(
+          width: 48,
+          height: 48,
+          decoration: ShapeDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+          ),
+          child: Center(
+            child: LMTextView(
+              text: 'PDF',
+              textStyle: Theme.of(context)
+                  .textTheme
+                  .titleLarge!
+                  .copyWith(fontSize: 18),
+            ),
+          ),
         );
       } else {
         return const SizedBox.shrink();
@@ -611,7 +626,12 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                 postUploading.value = false;
               }
               if (curr is NewPostUploaded) {
-                PostViewModel? item = curr.postData;
+                PostViewModel item = curr.postData;
+                int index = widget.selectedTopicIds
+                    .indexWhere((element) => element.id == item.topics.first);
+                if (index == -1) {
+                  return;
+                }
                 int length =
                     widget.feedRoomPagingController.itemList?.length ?? 0;
                 List<PostViewModel> feedRoomItemList =
@@ -775,16 +795,10 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const LMTextView(
-                                      text:
-                                          "Looks like there are no posts for this topic yet.",
-                                      textStyle: TextStyle(
-                                        fontSize: 15,
-                                        color: onSurface500,
-                                        fontWeight: FontWeight.w600,
-                                        height: 0,
-                                      ),
-                                    ),
+                                    LMTextView(
+                                        text:
+                                            "Looks like there are no posts for this topic yet.",
+                                        textStyle: theme.textTheme.labelMedium),
                                     const SizedBox(height: 16),
                                     Row(
                                       mainAxisAlignment:
@@ -794,20 +808,19 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                           borderRadius: 48,
                                           height: 40,
                                           border: Border.all(
-                                            color: primary500,
+                                            color: theme.colorScheme.primary,
                                             width: 2,
                                           ),
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 8, horizontal: 12),
-                                          text: const LMTextView(
-                                            text: "Change Filter",
-                                            textAlign: TextAlign.center,
-                                            textStyle: TextStyle(
-                                              color: primary500,
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
+                                          text: LMTextView(
+                                              text: "Change Filter",
+                                              textAlign: TextAlign.center,
+                                              textStyle: theme
+                                                  .textTheme.labelMedium!
+                                                  .copyWith(
+                                                      color: theme.colorScheme
+                                                          .primary)),
                                           onTap: () =>
                                               widget.openTopicBottomSheet(),
                                         ),
@@ -821,69 +834,23 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const LMIcon(
+                                  LMIcon(
                                     type: LMIconType.icon,
                                     icon: Icons.post_add,
                                     size: 48,
+                                    color: theme.colorScheme.onPrimary,
                                   ),
                                   const SizedBox(height: 12),
-                                  const LMTextView(
-                                    text: 'No posts to show',
-                                    textStyle: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
+                                  Center(
+                                    child: Expanded(
+                                      child: LMTextView(
+                                        text:
+                                            'No posts to show, Be the first one to post here',
+                                        textStyle: theme.textTheme.labelMedium,
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(height: 12),
-                                  const LMTextView(
-                                      text: "Be the first one to post here",
-                                      textStyle: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w300,
-                                          color: kGrey2Color)),
                                   const SizedBox(height: 28),
-                                  LMTextButton(
-                                    borderRadius: 28,
-                                    height: 44,
-                                    width: 153,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 12, horizontal: 20),
-                                    backgroundColor: theme.colorScheme.primary,
-                                    text: LMTextView(
-                                      text: "Create Post",
-                                      textStyle: theme.textTheme.bodyMedium,
-                                    ),
-                                    placement: LMIconPlacement.end,
-                                    icon: LMIcon(
-                                      type: LMIconType.icon,
-                                      icon: Icons.add,
-                                      size: 18,
-                                      color: theme.colorScheme.onPrimary,
-                                    ),
-                                    onTap: right
-                                        ? () {
-                                            if (!postUploading.value) {
-                                              LMAnalytics.get().track(
-                                                  AnalyticsKeys
-                                                      .postCreationStarted,
-                                                  {});
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const NewPostScreen(),
-                                                ),
-                                              );
-                                            } else {
-                                              toast(
-                                                'A post is already uploading.',
-                                                duration: Toast.LENGTH_LONG,
-                                              );
-                                            }
-                                          }
-                                        : () => toast(
-                                            "You do not have permission to create a post"),
-                                  ),
                                 ],
                               ),
                             );
@@ -895,7 +862,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                             }
                             return Column(
                               children: [
-                                const SizedBox(height: 4),
+                                const SizedBox(height: 2),
                                 NovaPostWidget(
                                   post: item,
                                   topics: widget.feedResponse.topics,
@@ -907,10 +874,10 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                           builder: (childContext) =>
                                               deleteConfirmationDialog(
                                                 childContext,
-                                                title: 'Delete Post',
+                                                title: 'Delete Post?',
                                                 userId: item.userId,
                                                 content:
-                                                    'Are you sure you want to delete this post. This action can not be reversed.',
+                                                    'Are you sure you want to permanently remove this post from Nova?',
                                                 action: (String reason) async {
                                                   Navigator.of(childContext)
                                                       .pop();
@@ -937,30 +904,32 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                                     ),
                                                   );
                                                 },
-                                                actionText: 'Delete',
+                                                actionText: 'Yes, delete',
                                               ));
                                     } else if (id == postPinId ||
                                         id == postUnpinId) {
-                                      String? postType = getPostType(item
-                                              .attachments
-                                              ?.first
-                                              .attachmentType ??
-                                          0);
-                                      if (item.isPinned) {
-                                        LMAnalytics.get()
-                                            .track(AnalyticsKeys.postUnpinned, {
-                                          "created_by_id": item.userId,
-                                          "post_id": item.id,
-                                          "post_type": postType,
-                                        });
-                                      } else {
-                                        LMAnalytics.get()
-                                            .track(AnalyticsKeys.postPinned, {
-                                          "created_by_id": item.userId,
-                                          "post_id": item.id,
-                                          "post_type": postType,
-                                        });
-                                      }
+                                      try {
+                                        String? postType = getPostType(item
+                                                .attachments
+                                                ?.first
+                                                .attachmentType ??
+                                            0);
+                                        if (item.isPinned) {
+                                          LMAnalytics.get().track(
+                                              AnalyticsKeys.postUnpinned, {
+                                            "created_by_id": item.userId,
+                                            "post_id": item.id,
+                                            "post_type": postType,
+                                          });
+                                        } else {
+                                          LMAnalytics.get()
+                                              .track(AnalyticsKeys.postPinned, {
+                                            "created_by_id": item.userId,
+                                            "post_id": item.id,
+                                            "post_type": postType,
+                                          });
+                                        }
+                                      } catch (_) {}
                                       newPostBloc.add(TogglePinPost(
                                           postId: item.id,
                                           isPinned: !item.isPinned));
@@ -981,10 +950,21 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                       } catch (err) {
                                         debugPrint(err.toString());
                                       }
+                                      List<TopicUI> postTopics = [];
+
+                                      if (item.topics.isNotEmpty &&
+                                          widget.feedResponse.topics
+                                              .containsKey(item.topics.first)) {
+                                        postTopics.add(TopicUI.fromTopic(widget
+                                            .feedResponse
+                                            .topics[item.topics.first]!));
+                                      }
+
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (context) => EditPostScreen(
                                             postId: item.id,
+                                            selectedTopics: postTopics,
                                           ),
                                         ),
                                       );
@@ -1035,54 +1015,96 @@ class _FeedRoomViewState extends State<FeedRoomView> {
         ],
       ),
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-      floatingActionButton: ValueListenableBuilder(
-        valueListenable: rebuildPostWidget,
-        builder: (context, _, __) {
-          return widget.feedRoomPagingController.itemList == null ||
-                  widget.feedRoomPagingController.itemList!.isEmpty
-              ? const SizedBox()
-              : LMTextButton(
-                  height: 44,
-                  width: 153,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                  borderRadius: 28,
-                  backgroundColor:
-                      right ? theme.colorScheme.primary : kGrey3Color,
-                  placement: LMIconPlacement.end,
-                  text: LMTextView(
-                    text: "Create Post",
-                    textStyle: theme!.textTheme.bodyMedium,
-                  ),
-                  margin: 5,
-                  icon: LMIcon(
-                    type: LMIconType.icon,
-                    icon: Icons.add,
-                    fit: BoxFit.cover,
-                    size: 18,
-                    color: theme.colorScheme.onPrimary,
-                  ),
-                  onTap: right
-                      ? () {
-                          if (!postUploading.value) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const NewPostScreen(),
-                              ),
-                            );
-                          } else {
-                            toast(
-                              'A post is already uploading.',
-                              duration: Toast.LENGTH_LONG,
-                            );
-                          }
-                        }
-                      : () =>
-                          toast("You do not have permission to create a post"),
-                );
-        },
+      floatingActionButton: LMTextButton(
+        height: 56,
+        width: 140,
+        padding: const EdgeInsets.symmetric(
+          vertical: 12,
+          horizontal: 20,
+        ),
+        borderRadius: 28,
+        backgroundColor: right ? theme.colorScheme.primary : kGrey3Color,
+        placement: LMIconPlacement.start,
+        text: LMTextView(
+          text: "New Post",
+          textStyle: theme.textTheme.bodyMedium,
+        ),
+        margin: 5,
+        icon: LMIcon(
+          type: LMIconType.icon,
+          icon: Icons.add,
+          fit: BoxFit.cover,
+          size: 24,
+          color: theme.colorScheme.onPrimary,
+        ),
+        onTap: right
+            ? () {
+                if (!postUploading.value) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NewPostScreen(),
+                    ),
+                  );
+                } else {
+                  toast(
+                    'A post is already uploading.',
+                    duration: Toast.LENGTH_LONG,
+                  );
+                }
+              }
+            : () => toast("You do not have permission to create a post"),
       ),
+      // floatingActionButton: ValueListenableBuilder(
+      //   valueListenable: rebuildPostWidget,
+      //   builder: (context, _, __) {
+      //     return widget.feedRoomPagingController.itemList == null ||
+      //             widget.feedRoomPagingController.itemList!.isEmpty
+      //         ? const SizedBox()
+      //         : LMTextButton(
+      //             height: 56,
+      //             width: 140,
+      //             padding: const EdgeInsets.symmetric(
+      //               vertical: 12,
+      //               horizontal: 20,
+      //             ),
+      //             borderRadius: 28,
+      //             backgroundColor:
+      //                 right ? theme.colorScheme.primary : kGrey3Color,
+      //             placement: LMIconPlacement.start,
+      //             text: LMTextView(
+      //               text: "New Post",
+      //               textStyle: theme.textTheme.bodyMedium,
+      //             ),
+      //             margin: 5,
+      //             icon: LMIcon(
+      //               type: LMIconType.icon,
+      //               icon: Icons.add,
+      //               fit: BoxFit.cover,
+      //               size: 24,
+      //               color: theme.colorScheme.onPrimary,
+      //             ),
+      //             onTap: right
+      //                 ? () {
+      //                     if (!postUploading.value) {
+      //                       Navigator.push(
+      //                         context,
+      //                         MaterialPageRoute(
+      //                           builder: (context) => const NewPostScreen(),
+      //                         ),
+      //                       );
+      //                     } else {
+      //                       toast(
+      //                         'A post is already uploading.',
+      //                         duration: Toast.LENGTH_LONG,
+      //                       );
+      //                     }
+      //                   }
+      //                 : () =>
+      //                     toast("You do not have permission to create a post"),
+      //           );
+      //   },
+      // ),
     );
   }
 }

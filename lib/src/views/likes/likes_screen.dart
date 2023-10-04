@@ -181,24 +181,37 @@ class _LikesScreenState extends State<LikesScreen> {
 
   Widget getAppBar(String text) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18.0),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 18.0,
+        vertical: 4,
+      ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          kHorizontalPaddingSmall,
-          IconButton(
-            onPressed: () {
+          LMIconButton(
+            containerSize: 56,
+            onTap: (active) {
               Navigator.of(context).pop();
             },
-            icon: Icon(
-              Icons.arrow_back_ios,
+            icon: LMIcon(
+              type: LMIconType.icon,
+              icon: Icons.arrow_back_ios,
               color: theme!.colorScheme.onPrimaryContainer,
             ),
           ),
-          kHorizontalPaddingSmall,
-          Text(
-            text,
-            style: theme!.textTheme.titleLarge!.copyWith(fontSize: 18),
-          )
+          LMTextView(
+            text: "Likes",
+            textStyle: theme!.textTheme.titleLarge!.copyWith(fontSize: 22),
+          ),
+          LMIconButton(
+            containerSize: 56,
+            onTap: (active) {},
+            icon: const LMIcon(
+              type: LMIconType.icon,
+              icon: Icons.arrow_back_ios,
+              color: Colors.transparent,
+            ),
+          ),
         ],
       ),
     );
@@ -260,6 +273,31 @@ class _LikesScreenState extends State<LikesScreen> {
         children: [
           getAppBar(
             "${state!.response.totalCount} Likes",
+          ),
+          const Divider(thickness: 1.5),
+          kVerticalPaddingXLarge,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                LMTextView(
+                  text: "Liked by",
+                  textStyle: theme!.textTheme.bodyLarge,
+                ),
+                LMTextView(
+                  text: "${state.response.totalCount} Likes",
+                  textStyle: theme!.textTheme.bodyLarge!.copyWith(
+                    color: theme!.colorScheme.onPrimary,
+                  ),
+                )
+              ],
+            ),
+          ),
+          const Divider(
+            thickness: 1,
+            indent: 18,
+            endIndent: 18,
           ),
           kVerticalPaddingLarge,
           Expanded(
@@ -337,10 +375,9 @@ class LikesTile extends StatelessWidget {
                 user: user!,
                 titleText: LMTextView(
                   text: user!.name,
-                  textStyle: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  textStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               ),
       );

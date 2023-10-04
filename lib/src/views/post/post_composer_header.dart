@@ -8,6 +8,7 @@ class PostComposerHeader extends StatelessWidget {
   final Function onTap;
   final Function? onPressedBack;
   final LMTextView? actionText;
+  final bool active;
 
   const PostComposerHeader({
     Key? key,
@@ -15,6 +16,7 @@ class PostComposerHeader extends StatelessWidget {
     this.onPressedBack,
     required this.onTap,
     this.actionText,
+    this.active = false,
   }) : super(key: key);
 
   @override
@@ -63,7 +65,9 @@ class PostComposerHeader extends StatelessWidget {
                     textStyle: theme.textTheme.bodyMedium,
                   ),
               borderRadius: 6,
-              backgroundColor: Theme.of(context).primaryColor,
+              backgroundColor: active
+                  ? Theme.of(context).primaryColor
+                  : ColorTheme.darkBlack300,
               onTap: () => onTap(),
             ),
           ],

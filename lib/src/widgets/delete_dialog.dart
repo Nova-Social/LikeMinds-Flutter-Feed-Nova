@@ -39,7 +39,7 @@ Dialog deleteConfirmationDialog(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           LMTextView(
             text: title,
@@ -49,6 +49,7 @@ Dialog deleteConfirmationDialog(
           LMTextView(
             text: content,
             maxLines: 3,
+            textAlign: TextAlign.center,
             textStyle: theme.textTheme.bodyMedium,
           ),
           user.userUniqueId == userId
@@ -232,48 +233,34 @@ Dialog deleteConfirmationDialog(
                           });
                     })
                   : const SizedBox.shrink(),
-          kVerticalPaddingSmall,
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              TextButton(
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                    EdgeInsets.zero,
-                  ),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  'Cancel',
-                  style: theme.textTheme.headlineMedium,
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  if (user.userUniqueId != userId && isCm) {
-                    if (reasonForDeletion == null) {
-                      toast('Please select a reason for deletion');
-                      return;
-                    }
-                  }
-                  action(
-                      reasonForDeletion == null ? '' : reasonForDeletion!.name);
-                },
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                    EdgeInsets.zero,
-                  ),
-                ),
-                child: Text(
-                  actionText,
-                  style: theme.textTheme.headlineMedium!
-                      .copyWith(color: theme.colorScheme.error),
-                ),
-              )
-            ],
-          )
+          kVerticalPaddingLarge,
+          const Divider(),
+          LMTextButton(
+            onTap: () {
+              if (user.userUniqueId != userId && isCm) {
+                if (reasonForDeletion == null) {
+                  toast('Please select a reason for deletion');
+                  return;
+                }
+              }
+              action(reasonForDeletion == null ? '' : reasonForDeletion!.name);
+            },
+            text: LMTextView(
+              text: actionText,
+              textStyle: theme.textTheme.headlineMedium!
+                  .copyWith(color: theme.colorScheme.error),
+            ),
+          ),
+          const Divider(),
+          LMTextButton(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            text: LMTextView(
+              text: 'Cancel',
+              textStyle: theme.textTheme.headlineMedium,
+            ),
+          ),
         ],
       ),
     ),

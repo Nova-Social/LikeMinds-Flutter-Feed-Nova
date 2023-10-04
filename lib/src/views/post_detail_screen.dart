@@ -52,6 +52,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   final FocusNode focusNode = FocusNode();
   TextEditingController? _commentController;
   ValueNotifier<bool> rebuildButton = ValueNotifier(false);
+  ValueNotifier<bool> rebuildLikesList = ValueNotifier(false);
   ValueNotifier<bool> rebuildPostWidget = ValueNotifier(false);
   ValueNotifier<bool> rebuildReplyWidget = ValueNotifier(false);
   bool right = true;
@@ -59,6 +60,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   final PagingController<int, Reply> _pagingController =
       PagingController(firstPageKey: 1);
   PostViewModel? postData;
+  Map<String, Topic> topics = {};
   User currentUser = UserLocalPreference.instance.fetchUserData();
 
   List<UserTag> userTags = [];
@@ -192,6 +194,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
     if (postDetails.success) {
       postData = PostViewModel.fromPost(post: postDetails.post!);
+      topics = postDetails.topics ?? {};
       rebuildPostWidget.value = !rebuildPostWidget.value;
     } else {
       toast(
@@ -469,16 +472,20 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                             enabled: right,
                                             border: InputBorder.none,
                                             hintText: right
-                                                ? 'Comment you thoughts'
+                                                ? 'Comment your thoughts'
                                                 : "You do not have permission to comment.",
                                             hintStyle: theme
                                                 .textTheme.bodyMedium!
                                                 .copyWith(
-                                                    color: ColorTheme
-                                                        .darkBlack300),
+                                              color:
+                                                  theme.colorScheme.onPrimary,
+                                            ),
                                           ),
                                           focusNode: focusNode,
-                                          onChange: (String p0) {},
+                                          onChange: (String p0) {
+                                            rebuildButton.value =
+                                                !rebuildButton.value;
+                                          },
                                         ),
                                       ),
                                       LMIconButton(
@@ -495,14 +502,16 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                           }
                                           String currentText =
                                               _commentController!.text;
-                                          if (currentText.isNotEmpty) {
+                                          if (currentText.lastIndexOf('@') <
+                                              currentText.length - 1) {
                                             currentText = '$currentText @';
+                                          } else if (currentText.isNotEmpty) {
+                                            currentText = currentText;
                                           } else {
                                             currentText = '@';
                                           }
-                                          _commentController!.value =
-                                              TextEditingValue(
-                                                  text: currentText);
+                                          _commentController!.text =
+                                              currentText;
                                         },
                                       ),
                                       Container(
@@ -548,8 +557,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                               if (state
                                                                   is AddCommentReplyLoading) {
                                                                 return const SizedBox(
-                                                                  height: 15,
-                                                                  width: 15,
+                                                                  height: 18,
+                                                                  width: 18,
                                                                   child:
                                                                       CircularProgressIndicator(
                                                                     strokeWidth:
@@ -566,6 +575,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                     a,
                                                                   ) {
                                                                     return LMTextButton(
+                                                                      width: 24,
+                                                                      height:
+                                                                          18,
                                                                       text:
                                                                           LMTextView(
                                                                         text:
@@ -573,10 +585,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                         textStyle:
                                                                             TextStyle(
                                                                           color: right
-                                                                              ? Theme.of(context).colorScheme.primary
+                                                                              ? _commentController!.value.text.isEmpty
+                                                                                  ? theme.colorScheme.onPrimary
+                                                                                  : Theme.of(context).colorScheme.primary
                                                                               : Colors.transparent,
                                                                           fontSize:
-                                                                              12.5,
+                                                                              14,
                                                                         ),
                                                                       ),
                                                                       onTap:
@@ -684,10 +698,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                         textStyle:
                                                                             TextStyle(
                                                                           fontSize:
-                                                                              12.5,
-                                                                          color: Theme.of(context)
-                                                                              .colorScheme
-                                                                              .primary,
+                                                                              14,
+                                                                          color: _commentController!.value.text.isEmpty
+                                                                              ? theme.colorScheme.onPrimary
+                                                                              : Theme.of(context).colorScheme.primary,
                                                                         ),
                                                                       ),
                                                                       onTap:
@@ -808,6 +822,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                             listener: (context, state) {
                               if (state is EditPostUploaded) {
                                 postData = state.postData;
+                                topics = state.topics;
                                 rebuildPostWidget.value =
                                     !rebuildPostWidget.value;
                               }
@@ -832,7 +847,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                           user: postDetailResponse!.users![
                                               postDetailResponse!
                                                   .postReplies!.userId]!,
-                                          onTap: () {},
+                                          onTap: () {
+                                            print("Tapped");
+                                          },
                                           onMenuTap: (int id) {
                                             if (id == postDeleteId) {
                                               showDialog(
@@ -885,60 +902,86 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                       ));
                                             } else if (id == postPinId ||
                                                 id == postUnpinId) {
-                                              String? postType = getPostType(
-                                                  postData!.attachments?.first
-                                                          .attachmentType ??
-                                                      0);
-                                              if (postData!.isPinned) {
-                                                LMAnalytics.get().track(
-                                                    AnalyticsKeys.postUnpinned,
-                                                    {
-                                                      "created_by_id":
-                                                          postData!.userId,
-                                                      "post_id": postData!.id,
-                                                      "post_type": postType,
-                                                    });
-                                              } else {
-                                                LMAnalytics.get().track(
-                                                    AnalyticsKeys.postPinned, {
-                                                  "created_by_id":
-                                                      postData!.userId,
-                                                  "post_id": postData!.id,
-                                                  "post_type": postType,
-                                                });
+                                              try {
+                                                String? postType = getPostType(
+                                                    postData!.attachments?.first
+                                                            .attachmentType ??
+                                                        0);
+                                                if (postData!.isPinned) {
+                                                  LMAnalytics.get().track(
+                                                      AnalyticsKeys
+                                                          .postUnpinned,
+                                                      {
+                                                        "created_by_id":
+                                                            postData!.userId,
+                                                        "post_id": postData!.id,
+                                                        "post_type": postType,
+                                                      });
+                                                } else {
+                                                  LMAnalytics.get().track(
+                                                      AnalyticsKeys.postPinned,
+                                                      {
+                                                        "created_by_id":
+                                                            postData!.userId,
+                                                        "post_id": postData!.id,
+                                                        "post_type": postType,
+                                                      });
+                                                }
+                                              } catch (err) {
+                                                debugPrint(err.toString());
                                               }
                                               newPostBloc.add(TogglePinPost(
                                                   postId: postData!.id,
                                                   isPinned:
                                                       !postData!.isPinned));
                                             } else if (id == postEditId) {
-                                              String? postType;
-                                              postType = getPostType(postData!
-                                                      .attachments
-                                                      ?.first
-                                                      .attachmentType ??
-                                                  0);
-                                              LMAnalytics.get().track(
-                                                AnalyticsKeys.postEdited,
-                                                {
-                                                  "created_by_id":
-                                                      postData!.userId,
-                                                  "post_id": postData!.id,
-                                                  "post_type": postType,
-                                                },
-                                              );
+                                              try {
+                                                String? postType;
+                                                postType = getPostType(postData!
+                                                        .attachments
+                                                        ?.first
+                                                        .attachmentType ??
+                                                    0);
+                                                LMAnalytics.get().track(
+                                                  AnalyticsKeys.postEdited,
+                                                  {
+                                                    "created_by_id":
+                                                        postData!.userId,
+                                                    "post_id": postData!.id,
+                                                    "post_type": postType,
+                                                  },
+                                                );
+                                              } catch (err) {
+                                                debugPrint(err.toString());
+                                              }
+                                              List<TopicUI> postTopics = [];
+
+                                              if (postData!.topics.isNotEmpty &&
+                                                  topics.containsKey(
+                                                      postData!.topics.first)) {
+                                                postTopics.add(
+                                                    TopicUI.fromTopic(topics[
+                                                        postData!
+                                                            .topics.first]!));
+                                              }
+
                                               Navigator.of(context).push(
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       EditPostScreen(
                                                     postId: postData!.id,
+                                                    selectedTopics: postTopics,
                                                   ),
                                                 ),
                                               );
                                             }
                                           },
                                           isFeed: false,
-                                          refresh: (bool isDeleted) async {},
+                                          refresh: (bool isDeleted) async {
+                                            print("Post interacted with");
+                                            rebuildLikesList.value =
+                                                !rebuildLikesList.value;
+                                          },
                                         ),
                                 ),
                                 SliverToBoxAdapter(
@@ -952,30 +995,70 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                     ),
                                   ),
                                 ),
-                                SliverToBoxAdapter(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => LikesScreen(
-                                              postId: widget.postId),
+                                postData != null && postData!.likeCount > 0
+                                    ? SliverToBoxAdapter(
+                                        child: ValueListenableBuilder(
+                                          valueListenable: rebuildLikesList,
+                                          builder: (
+                                            context,
+                                            value,
+                                            child,
+                                          ) {
+                                            return postData != null &&
+                                                    postData!.likeCount > 0
+                                                ? GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.of(context)
+                                                          .push(
+                                                        MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              LikesScreen(
+                                                                  postId: widget
+                                                                      .postId),
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: Container(
+                                                      color: Colors.transparent,
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                        horizontal: 16.0,
+                                                      ),
+                                                      child: AbsorbPointer(
+                                                        absorbing: false,
+                                                        child: LikesListWidget(
+                                                          postId: widget.postId,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : const SizedBox.shrink();
+                                          },
                                         ),
-                                      );
-                                    },
-                                    child: Container(
-                                      color: Colors.transparent,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0),
-                                      child: AbsorbPointer(
-                                        absorbing: true,
-                                        child: LikesListWidget(
-                                            postId: widget.postId),
+                                      )
+                                    : const SliverToBoxAdapter(
+                                        child: SizedBox(),
                                       ),
+                                const SliverPadding(
+                                  padding: EdgeInsets.only(bottom: 16.0),
+                                ),
+                                SliverToBoxAdapter(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        LMTextView(
+                                          text: "Comments",
+                                          textStyle: theme.textTheme.titleLarge!
+                                              .copyWith(
+                                                  fontWeight: FontWeight.w600),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                                const SliverPadding(
-                                    padding: EdgeInsets.only(bottom: 16.0)),
                                 postData == null
                                     ? const SliverToBoxAdapter(
                                         child: SizedBox(),
@@ -1035,154 +1118,186 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                       backgroundColor: theme
                                                           .colorScheme.surface,
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              10.0),
+                                                          const BorderRadius
+                                                              .only(
+                                                        topRight:
+                                                            Radius.circular(10),
+                                                        bottomLeft:
+                                                            Radius.circular(10),
+                                                        bottomRight:
+                                                            Radius.circular(10),
+                                                      ),
                                                       margin: const EdgeInsets
                                                           .symmetric(
                                                         horizontal: 12.0,
                                                         vertical: 6.0,
                                                       ),
-                                                      menu: LMIconButton(
-                                                        icon: LMIcon(
-                                                          type: LMIconType.icon,
-                                                          icon: Icons.more_vert,
-                                                          color: theme
-                                                              .colorScheme
-                                                              .onPrimary,
-                                                        ),
-                                                        onTap: (bool value) {
-                                                          showModalBottomSheet(
-                                                            context: context,
-                                                            elevation: 5,
-                                                            isDismissible: true,
-                                                            useRootNavigator:
-                                                                true,
-                                                            clipBehavior:
-                                                                Clip.hardEdge,
-                                                            backgroundColor:
-                                                                Colors
-                                                                    .transparent,
-                                                            enableDrag: false,
-                                                            shape:
-                                                                const RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        32),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        32),
+                                                      menu: item.userId ==
+                                                                  UserLocalPreference
+                                                                      .instance
+                                                                      .fetchUserData()
+                                                                      .userUniqueId ||
+                                                              UserLocalPreference
+                                                                  .instance
+                                                                  .fetchMemberState()
+                                                          ? LMIconButton(
+                                                              icon: LMIcon(
+                                                                type: LMIconType
+                                                                    .icon,
+                                                                icon: Icons
+                                                                    .more_vert,
+                                                                color: theme
+                                                                    .colorScheme
+                                                                    .onPrimary,
                                                               ),
-                                                            ),
-                                                            builder: (context) =>
-                                                                LMBottomSheet(
-                                                              margin:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      top: 30),
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        32),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        32),
-                                                              ),
-                                                              dragBarColor: theme
-                                                                  .colorScheme
-                                                                  .onSurface,
-                                                              backgroundColor:
-                                                                  theme
-                                                                      .colorScheme
-                                                                      .surface,
-                                                              children:
-                                                                  item.menuItems
-                                                                      .map(
-                                                                        (e) =>
-                                                                            GestureDetector(
-                                                                          onTap:
-                                                                              () {
-                                                                            Navigator.of(context).pop();
-                                                                            if (e.id ==
-                                                                                6) {
-                                                                              deselectCommentToEdit();
-                                                                              deselectCommentToReply();
-                                                                              // Delete post
-                                                                              showDialog(
-                                                                                  context: context,
-                                                                                  builder: (childContext) => deleteConfirmationDialog(
-                                                                                        childContext,
-                                                                                        title: 'Delete Comment',
-                                                                                        userId: item.userId,
-                                                                                        content: 'Are you sure you want to delete this post. This action can not be reversed.',
-                                                                                        action: (String reason) async {
-                                                                                          Navigator.of(childContext).pop();
-                                                                                          //Implement delete post analytics tracking
-                                                                                          LMAnalytics.get().track(
-                                                                                            AnalyticsKeys.commentDeleted,
-                                                                                            {
-                                                                                              "post_id": widget.postId,
-                                                                                              "comment_id": item.id,
-                                                                                            },
-                                                                                          );
-                                                                                          if (postDetailResponse != null) {
-                                                                                            postDetailResponse!.users?.putIfAbsent(currentUser.userUniqueId, () => currentUser);
-                                                                                          }
-                                                                                          _addCommentReplyBloc.add(DeleteComment((DeleteCommentRequestBuilder()
-                                                                                                ..postId(widget.postId)
-                                                                                                ..commentId(item.id)
-                                                                                                ..reason(reason.isEmpty ? "Reason for deletion" : reason))
-                                                                                              .build()));
-                                                                                        },
-                                                                                        actionText: 'Delete',
-                                                                                      ));
-                                                                            } else if (e.id ==
-                                                                                8) {
-                                                                              debugPrint('Editing functionality');
-                                                                              _addCommentReplyBloc.add(EditCommentCancel());
-                                                                              _addCommentReplyBloc.add(
-                                                                                EditingComment(
-                                                                                  commentId: item.id,
-                                                                                  text: item.text,
-                                                                                ),
-                                                                              );
-                                                                            }
-                                                                          },
-                                                                          child:
-                                                                              Container(
-                                                                            color:
-                                                                                Colors.transparent,
-                                                                            padding:
-                                                                                const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16.0),
-                                                                            margin:
-                                                                                const EdgeInsets.only(bottom: 24.09),
-                                                                            width:
-                                                                                screenSize.width - 32.0,
-                                                                            child:
-                                                                                Row(children: [
-                                                                              getIconFromDropDownItemId(
-                                                                                e.id,
-                                                                                20,
-                                                                                theme.colorScheme.onPrimary,
-                                                                              ),
-                                                                              kHorizontalPaddingLarge,
-                                                                              LMTextView(
-                                                                                text: e.title,
-                                                                                textStyle: theme.textTheme.headlineLarge,
-                                                                              ),
-                                                                            ]),
-                                                                          ),
+                                                              onTap:
+                                                                  (bool value) {
+                                                                showModalBottomSheet(
+                                                                  context:
+                                                                      context,
+                                                                  elevation: 5,
+                                                                  isDismissible:
+                                                                      true,
+                                                                  useRootNavigator:
+                                                                      true,
+                                                                  clipBehavior:
+                                                                      Clip.hardEdge,
+                                                                  backgroundColor:
+                                                                      Colors
+                                                                          .transparent,
+                                                                  enableDrag:
+                                                                      false,
+                                                                  shape:
+                                                                      const RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              32),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              32),
+                                                                    ),
+                                                                  ),
+                                                                  builder:
+                                                                      (context) =>
+                                                                          LMBottomSheet(
+                                                                    height:
+                                                                        screenSize.height *
+                                                                            0.3,
+                                                                    margin: const EdgeInsets
+                                                                        .only(
+                                                                        top:
+                                                                            30),
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .only(
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              32),
+                                                                      topRight:
+                                                                          Radius.circular(
+                                                                              32),
+                                                                    ),
+                                                                    dragBar:
+                                                                        Container(
+                                                                      width: 96,
+                                                                      height: 6,
+                                                                      decoration:
+                                                                          ShapeDecoration(
+                                                                        color: theme
+                                                                            .colorScheme
+                                                                            .onSurface,
+                                                                        shape:
+                                                                            RoundedRectangleBorder(
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(99),
                                                                         ),
-                                                                      )
-                                                                      .toList(),
-                                                            ),
-                                                          );
-                                                        },
-                                                      ),
+                                                                      ),
+                                                                    ),
+                                                                    backgroundColor: theme
+                                                                        .colorScheme
+                                                                        .surface,
+                                                                    children: item
+                                                                        .menuItems
+                                                                        .map(
+                                                                          (e) =>
+                                                                              GestureDetector(
+                                                                            onTap:
+                                                                                () {
+                                                                              Navigator.of(context).pop();
+                                                                              if (e.id == 6) {
+                                                                                deselectCommentToEdit();
+                                                                                deselectCommentToReply();
+                                                                                // Delete post
+                                                                                showDialog(
+                                                                                    context: context,
+                                                                                    builder: (childContext) => deleteConfirmationDialog(
+                                                                                          childContext,
+                                                                                          title: 'Delete Comment',
+                                                                                          userId: item.userId,
+                                                                                          content: 'Are you sure you want to delete this post. This action can not be reversed.',
+                                                                                          action: (String reason) async {
+                                                                                            Navigator.of(childContext).pop();
+                                                                                            //Implement delete post analytics tracking
+                                                                                            LMAnalytics.get().track(
+                                                                                              AnalyticsKeys.commentDeleted,
+                                                                                              {
+                                                                                                "post_id": widget.postId,
+                                                                                                "comment_id": item.id,
+                                                                                              },
+                                                                                            );
+                                                                                            if (postDetailResponse != null) {
+                                                                                              postDetailResponse!.users?.putIfAbsent(currentUser.userUniqueId, () => currentUser);
+                                                                                            }
+                                                                                            _addCommentReplyBloc.add(DeleteComment((DeleteCommentRequestBuilder()
+                                                                                                  ..postId(widget.postId)
+                                                                                                  ..commentId(item.id)
+                                                                                                  ..reason(reason.isEmpty ? "Reason for deletion" : reason))
+                                                                                                .build()));
+                                                                                          },
+                                                                                          actionText: 'Delete',
+                                                                                        ));
+                                                                              } else if (e.id == 8) {
+                                                                                debugPrint('Editing functionality');
+                                                                                _addCommentReplyBloc.add(EditCommentCancel());
+                                                                                _addCommentReplyBloc.add(
+                                                                                  EditingComment(
+                                                                                    commentId: item.id,
+                                                                                    text: item.text,
+                                                                                  ),
+                                                                                );
+                                                                              }
+                                                                            },
+                                                                            child:
+                                                                                Container(
+                                                                              color: Colors.transparent,
+                                                                              padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16.0),
+                                                                              margin: const EdgeInsets.only(bottom: 24.09),
+                                                                              width: screenSize.width - 32.0,
+                                                                              child: Row(children: [
+                                                                                getIconFromDropDownItemId(
+                                                                                  e.id,
+                                                                                  20,
+                                                                                  theme.colorScheme.onPrimary,
+                                                                                ),
+                                                                                kHorizontalPaddingLarge,
+                                                                                LMTextView(
+                                                                                  text: e.title,
+                                                                                  textStyle: theme.textTheme.headlineLarge,
+                                                                                ),
+                                                                              ]),
+                                                                            ),
+                                                                          ),
+                                                                        )
+                                                                        .toList(),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            )
+                                                          : const SizedBox
+                                                              .shrink(),
                                                       onTagTap:
                                                           (String userId) {
                                                         locator<LikeMindsService>()
@@ -1220,23 +1335,47 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                     .userId]!
                                                                 .imageUrl,
                                                         size: 42,
+                                                        boxShape:
+                                                            BoxShape.circle,
                                                       ),
                                                       subtitleText: LMTextView(
-                                                        text:
-                                                            "${timeago.format(item.createdAt)}",
+                                                        text: timeago.format(
+                                                            item.createdAt),
                                                         textStyle: theme
                                                             .textTheme
-                                                            .labelSmall,
+                                                            .bodySmall!
+                                                            .copyWith(
+                                                                color: ColorTheme
+                                                                    .lightWhite300),
                                                       ),
                                                       actionsPadding:
                                                           const EdgeInsets.only(
-                                                              left: 56),
+                                                        left: 56,
+                                                      ),
                                                       commentActions: [
                                                         LMTextButton(
                                                           margin: 10,
                                                           text: LMTextView(
                                                             text:
                                                                 "${item.likesCount}",
+                                                            onTap: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .push(
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          LikesScreen(
+                                                                    commentId:
+                                                                        item.id,
+                                                                    isCommentLikes:
+                                                                        true,
+                                                                    postId: widget
+                                                                        .postId,
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
                                                             textStyle: TextStyle(
                                                                 color: theme
                                                                     .colorScheme
@@ -1302,8 +1441,18 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                           isActive:
                                                               item.isLiked,
                                                         ),
-                                                        const SizedBox(
-                                                            width: 12),
+                                                        kHorizontalPaddingSmall,
+                                                        LMTextView(
+                                                          text: '·',
+                                                          textStyle: TextStyle(
+                                                            fontSize:
+                                                                kFontSmall,
+                                                            color: theme
+                                                                .colorScheme
+                                                                .onPrimary,
+                                                          ),
+                                                        ),
+                                                        kHorizontalPaddingSmall,
                                                         Row(
                                                           children: [
                                                             LMTextButton(
@@ -1324,7 +1473,22 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                 );
                                                               },
                                                             ),
-                                                            kHorizontalPaddingMedium,
+                                                            kHorizontalPaddingSmall,
+                                                            item.repliesCount >
+                                                                    0
+                                                                ? LMTextView(
+                                                                    text: '·',
+                                                                    textStyle:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          kFontSmall,
+                                                                      color: theme
+                                                                          .colorScheme
+                                                                          .onPrimary,
+                                                                    ),
+                                                                  )
+                                                                : const SizedBox(),
+                                                            kHorizontalPaddingSmall,
                                                             item.repliesCount >
                                                                     0
                                                                 ? LMTextButton(
