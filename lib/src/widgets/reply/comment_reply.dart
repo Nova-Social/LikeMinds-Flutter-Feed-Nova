@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -123,6 +125,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                         topLeft: Radius.circular(32),
                         topRight: Radius.circular(32),
                       ),
+                      height: max(170, screenSize!.height * 0.25),
                       dragBarColor: theme!.colorScheme.onSurface,
                       backgroundColor: theme!.colorScheme.surface,
                       children: element.menuItems
@@ -164,7 +167,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                                               ? "Reason for deletion"
                                                               : reason))
                                                         .build()));
-                                          }, actionText: 'Delete'));
+                                          }, actionText: 'Yes, delete'));
                                 } else if (e.id == 8) {
                                   addCommentReplyBloc!.add(EditReplyCancel());
                                   addCommentReplyBloc!.add(
@@ -191,7 +194,11 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                   kHorizontalPaddingLarge,
                                   LMTextView(
                                     text: e.title,
-                                    textStyle: theme!.textTheme.headlineLarge,
+                                    textStyle: theme!.textTheme.headlineLarge!
+                                        .copyWith(
+                                            color: e.id == commentDeleteId
+                                                ? theme!.colorScheme.error
+                                                : null),
                                   ),
                                 ]),
                               ),
@@ -205,6 +212,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
               profilePicture: LMProfilePicture(
                 imageUrl: user.imageUrl,
                 fallbackText: user.name,
+                boxShape: BoxShape.circle,
                 onTap: () {
                   if (user.sdkClientInfo != null) {
                     locator<LikeMindsService>()
@@ -214,7 +222,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                 size: 32,
               ),
               subtitleText: LMTextView(
-                text: "${timeago.format(element.createdAt)}",
+                text: timeago.format(element.createdAt),
                 textStyle: theme!.textTheme.labelSmall,
               ),
               onMenuTap: (value) async {},
@@ -225,11 +233,11 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                 LMTextButton(
                   text: LMTextView(
                     text: "${element.likesCount}",
-                    textStyle: theme!.textTheme.labelSmall,
+                    textStyle: theme!.textTheme.labelMedium,
                   ),
                   activeText: LMTextView(
                     text: "${element.likesCount}",
-                    textStyle: theme!.textTheme.labelSmall,
+                    textStyle: theme!.textTheme.labelMedium,
                   ),
                   onTap: () {
                     toggleLikeCommentBloc.add(
@@ -253,12 +261,12 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                   icon: const LMIcon(
                     type: LMIconType.svg,
                     assetPath: kAssetLikeIcon,
-                    size: 20,
+                    size: 14,
                   ),
                   activeIcon: LMIcon(
                     type: LMIconType.svg,
                     assetPath: kAssetLikeFilledIcon,
-                    size: 20,
+                    size: 14,
                     color: theme!.colorScheme.error,
                   ),
                   isActive: element.isLiked,

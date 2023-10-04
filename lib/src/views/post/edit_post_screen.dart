@@ -394,22 +394,24 @@ class _EditPostScreenState extends State<EditPostScreen> {
               ],
             ),
           ),
-          body: FutureBuilder(
-              future: postFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.connectionState == ConnectionState.done) {
-                  GetPostResponse response = snapshot.data!;
-                  if (response.success) {
-                    setPostData(response.post!);
-                    return postEditWidget();
-                  } else {
-                    return postErrorScreen(response.errorMessage!);
+          body: SafeArea(
+            child: FutureBuilder(
+                future: postFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.connectionState == ConnectionState.done) {
+                    GetPostResponse response = snapshot.data!;
+                    if (response.success) {
+                      setPostData(response.post!);
+                      return postEditWidget();
+                    } else {
+                      return postErrorScreen(response.errorMessage!);
+                    }
                   }
-                }
-                return const SizedBox();
-              }),
+                  return const SizedBox();
+                }),
+          ),
         ),
       ),
     );
@@ -587,6 +589,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                         LMProfilePicture(
                           fallbackText: user!.name,
                           imageUrl: user!.imageUrl,
+                          boxShape: BoxShape.circle,
                           onTap: () {
                             if (user!.sdkClientInfo != null) {
                               locator<LikeMindsService>().routeToProfile(
@@ -726,6 +729,9 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                         alignment: Alignment.center,
                                         child: ListView.builder(
                                           itemCount: mediaLength,
+                                          physics: mediaLength == 1
+                                              ? const NeverScrollableScrollPhysics()
+                                              : null,
                                           scrollDirection: Axis.horizontal,
                                           itemBuilder: (BuildContext context,
                                               int index) {
@@ -765,14 +771,22 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                                                           index]
                                                                       .attachmentMeta
                                                                       .url!,
-                                                                  // height:
-                                                                  //     180,
+                                                                  height: mediaLength ==
+                                                                          1
+                                                                      ? screenSize!
+                                                                              .width -
+                                                                          32
+                                                                      : 200,
+                                                                  width: mediaLength ==
+                                                                          1
+                                                                      ? screenSize!
+                                                                              .width -
+                                                                          32
+                                                                      : 200,
                                                                   boxFit: BoxFit
-                                                                      .contain,
+                                                                      .cover,
                                                                   showControls:
                                                                       false,
-                                                                  // width:
-                                                                  //     300,
                                                                   borderRadius:
                                                                       18,
                                                                 ),
@@ -800,12 +814,20 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                                                 color: Colors
                                                                     .black,
                                                                 child: LMImage(
-                                                                  // height:
-                                                                  //     180,
-                                                                  // width:
-                                                                  //     180,
+                                                                  height: mediaLength ==
+                                                                          1
+                                                                      ? screenSize!
+                                                                              .width -
+                                                                          32
+                                                                      : 200,
+                                                                  width: mediaLength ==
+                                                                          1
+                                                                      ? screenSize!
+                                                                              .width -
+                                                                          32
+                                                                      : 200,
                                                                   boxFit: BoxFit
-                                                                      .contain,
+                                                                      .cover,
                                                                   borderRadius:
                                                                       18,
                                                                   imageUrl: attachments![
@@ -837,29 +859,42 @@ class _EditPostScreenState extends State<EditPostScreen> {
           ],
         ),
         Positioned(
-          right: 16.0,
-          bottom: 16.0,
-          child: LMIconButton(
-            icon: LMIcon(
-              type: LMIconType.svg,
-              assetPath: kAssetMentionIcon,
-              color: theme!.colorScheme.primary,
-              boxPadding: 0,
-              size: 28,
+          bottom: 0,
+          child: Container(
+            color: theme!.colorScheme.background,
+            width: screenSize!.width,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                      right: 16.0, bottom: 16.0, top: 8.0),
+                  child: LMIconButton(
+                    icon: LMIcon(
+                      type: LMIconType.svg,
+                      assetPath: kAssetMentionIcon,
+                      color: theme!.colorScheme.primary,
+                      boxPadding: 0,
+                      size: 28,
+                    ),
+                    onTap: (active) {
+                      if (!_focusNode.hasFocus) {
+                        _focusNode.requestFocus();
+                      }
+                      String currentText = textEditingController!.text;
+                      if (currentText.isNotEmpty) {
+                        currentText = '$currentText @';
+                      } else {
+                        currentText = '@';
+                      }
+                      textEditingController!.value =
+                          TextEditingValue(text: currentText);
+                    },
+                  ),
+                ),
+              ],
             ),
-            onTap: (active) {
-              if (!_focusNode.hasFocus) {
-                _focusNode.requestFocus();
-              }
-              String currentText = textEditingController!.text;
-              if (currentText.isNotEmpty) {
-                currentText = '$currentText @';
-              } else {
-                currentText = '@';
-              }
-              textEditingController!.value =
-                  TextEditingValue(text: currentText);
-            },
           ),
         )
       ],

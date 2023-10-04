@@ -165,7 +165,8 @@ class _NewPostScreenState extends State<NewPostScreen> {
       });
     } else {
       if (postMedia.isEmpty) {
-        isDocumentPost = false;
+        isDocumentPost = true;
+        isMediaPost = true;
         showLinkPreview = true;
       }
       setState(() {
@@ -475,6 +476,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                   }
                                 },
                                 size: 48,
+                                boxShape: BoxShape.circle,
                               ),
                               kHorizontalPaddingLarge,
                               Expanded(
@@ -608,6 +610,9 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                               alignment: Alignment.center,
                                               child: ListView.builder(
                                                 itemCount: mediaLength,
+                                                physics: mediaLength == 1
+                                                    ? const NeverScrollableScrollPhysics()
+                                                    : null,
                                                 scrollDirection:
                                                     Axis.horizontal,
                                                 itemBuilder:
@@ -646,10 +651,14 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                                                             LMVideo(
                                                                           videoFile:
                                                                               postMedia[index].mediaFile!,
-                                                                          // height:
-                                                                          //     180,
+                                                                          height: mediaLength == 1
+                                                                              ? screenSize.width - 32
+                                                                              : 200,
+                                                                          width: mediaLength == 1
+                                                                              ? screenSize.width - 32
+                                                                              : 200,
                                                                           boxFit:
-                                                                              BoxFit.contain,
+                                                                              BoxFit.cover,
                                                                           showControls:
                                                                               false,
                                                                           // width:
@@ -680,12 +689,14 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                                                             .black,
                                                                         child:
                                                                             LMImage(
-                                                                          // height:
-                                                                          //     180,
-                                                                          // width:
-                                                                          //     180,
+                                                                          height: mediaLength == 1
+                                                                              ? screenSize.width - 32
+                                                                              : 200,
+                                                                          width: mediaLength == 1
+                                                                              ? screenSize.width - 32
+                                                                              : 200,
                                                                           boxFit:
-                                                                              BoxFit.contain,
+                                                                              BoxFit.cover,
                                                                           borderRadius:
                                                                               18,
                                                                           imageFile:
@@ -697,23 +708,40 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                                                 top: 4,
                                                                 right: 4,
                                                                 child:
-                                                                    LMIconButton(
-                                                                  onTap: (active) =>
-                                                                      removeAttachmenetAtIndex(
-                                                                          index),
-                                                                  icon: LMIcon(
-                                                                    type: LMIconType
-                                                                        .icon,
-                                                                    icon: CupertinoIcons
-                                                                        .xmark_circle_fill,
-                                                                    backgroundColor: theme!
-                                                                        .colorScheme
-                                                                        .background
-                                                                        .withOpacity(
-                                                                            0.5),
-                                                                    color: theme!
-                                                                        .colorScheme
-                                                                        .onPrimary,
+                                                                    Container(
+                                                                  decoration:
+                                                                      const BoxDecoration(
+                                                                          boxShadow: [
+                                                                        BoxShadow(
+                                                                            offset: Offset(
+                                                                                0.0, 5.0),
+                                                                            blurRadius:
+                                                                                30.0,
+                                                                            spreadRadius:
+                                                                                -3.0,
+                                                                            color:
+                                                                                Colors.black38),
+                                                                      ]),
+                                                                  child:
+                                                                      LMIconButton(
+                                                                    onTap: (active) =>
+                                                                        removeAttachmenetAtIndex(
+                                                                            index),
+                                                                    icon:
+                                                                        LMIcon(
+                                                                      type: LMIconType
+                                                                          .icon,
+                                                                      icon: CupertinoIcons
+                                                                          .xmark_circle_fill,
+                                                                      backgroundColor: theme!
+                                                                          .colorScheme
+                                                                          .background
+                                                                          .withOpacity(
+                                                                              0.5),
+                                                                      color: theme!
+                                                                          .colorScheme
+                                                                          .onPrimary,
+                                                                    ),
                                                                   ),
                                                                 ),
                                                               )
@@ -928,7 +956,8 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                     List<MediaModel>? pickedMediaFiles =
                                         await PostMediaPicker.pickDocuments(
                                             postMedia.length);
-                                    if (pickedMediaFiles != null) {
+                                    if (pickedMediaFiles != null &&
+                                        pickedMediaFiles.isNotEmpty) {
                                       setPickedMediaFiles(pickedMediaFiles);
                                       onUploadedDocument(true);
                                     } else {

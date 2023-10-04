@@ -91,21 +91,23 @@ class _MediaPreviewState extends State<MediaPreview> {
                   color: kWhiteColor,
                   icon: CupertinoIcons.xmark,
                   size: 28,
-                  boxSize: 64,
-                  boxPadding: 12,
                 ),
               )
             : const SizedBox(),
+        leadingWidth: 40,
         elevation: 0,
         title: showData
             ? Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   LMProfilePicture(
                     fallbackText: user.name,
                     imageUrl: user.imageUrl,
                     size: 36,
+                    boxShape: BoxShape.circle,
                   ),
-                  kHorizontalPaddingLarge,
+                  kHorizontalPaddingMedium,
                   Expanded(
                     child: LMTextView(
                       text: user.name,
@@ -196,12 +198,25 @@ class _MediaPreviewState extends State<MediaPreview> {
                             alignment: Alignment.centerLeft,
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 12.0),
-                            decoration: const BoxDecoration(boxShadow: [
-                              BoxShadow(
-                                color: Colors.black38,
-                                blurRadius: 10.0,
-                              )
-                            ]),
+                            decoration: const BoxDecoration(
+                              boxShadow: <BoxShadow>[
+                                BoxShadow(
+                                    offset: Offset(0.0, 4.0),
+                                    blurRadius: 15.0,
+                                    spreadRadius: -7.0,
+                                    color: Colors.black87),
+                                BoxShadow(
+                                    offset: Offset(0.0, 18.0),
+                                    blurRadius: 38.0,
+                                    spreadRadius: 3.0,
+                                    color: Colors.black54),
+                                BoxShadow(
+                                    offset: Offset(0.0, 7.0),
+                                    blurRadius: 46.0,
+                                    spreadRadius: 8.0,
+                                    color: Colors.black45),
+                              ],
+                            ),
                             width: screenSize.width,
                             height: 50,
                             child: ExpandableText(

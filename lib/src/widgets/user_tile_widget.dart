@@ -33,6 +33,7 @@ class LMUserTile extends StatelessWidget {
             }
           },
           imageUrl: user.imageUrl,
+          boxShape: BoxShape.circle,
         ),
         kHorizontalPaddingLarge,
         Expanded(

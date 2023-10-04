@@ -511,6 +511,9 @@ class FeedRoomView extends StatefulWidget {
 class _FeedRoomViewState extends State<FeedRoomView> {
   ValueNotifier<bool> rebuildPostWidget = ValueNotifier(false);
   final ValueNotifier postUploading = ValueNotifier(false);
+  bool scrolledToTop = true;
+  final ValueNotifier rebuildNewPostFAB = ValueNotifier(true);
+
   ScrollController? _controller;
   final ValueNotifier postSomethingNotifier = ValueNotifier(false);
   bool right = true;
@@ -528,7 +531,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
           ),
           child: LMImage(
             imageFile: media.mediaFile!,
-            boxFit: BoxFit.contain,
+            boxFit: BoxFit.cover,
           ),
         );
       } else if (media.mediaType == MediaType.document) {
@@ -585,12 +588,20 @@ class _FeedRoomViewState extends State<FeedRoomView> {
         iconContainerHeight = 0;
         postSomethingNotifier.value = !postSomethingNotifier.value;
       }
+      if (scrolledToTop) {
+        scrolledToTop = false;
+        rebuildNewPostFAB.value = false;
+      }
     }
     if (_controller != null &&
         _controller!.position.userScrollDirection == ScrollDirection.forward) {
       if (iconContainerHeight == 0) {
         iconContainerHeight = 90.0;
         postSomethingNotifier.value = !postSomethingNotifier.value;
+      }
+      if (!scrolledToTop) {
+        scrolledToTop = true;
+        rebuildNewPostFAB.value = true;
       }
     }
   }
@@ -629,7 +640,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                 PostViewModel item = curr.postData;
                 int index = widget.selectedTopicIds
                     .indexWhere((element) => element.id == item.topics.first);
-                if (index == -1) {
+                if (index == -1 && widget.selectedTopicIds.isNotEmpty) {
                   return;
                 }
                 int length =
@@ -1015,46 +1026,98 @@ class _FeedRoomViewState extends State<FeedRoomView> {
         ],
       ),
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
-      floatingActionButton: LMTextButton(
-        height: 56,
-        width: 140,
-        padding: const EdgeInsets.symmetric(
-          vertical: 12,
-          horizontal: 20,
-        ),
-        borderRadius: 28,
-        backgroundColor: right ? theme.colorScheme.primary : kGrey3Color,
-        placement: LMIconPlacement.start,
-        text: LMTextView(
-          text: "New Post",
-          textStyle: theme.textTheme.bodyMedium,
-        ),
-        margin: 5,
-        icon: LMIcon(
-          type: LMIconType.icon,
-          icon: Icons.add,
-          fit: BoxFit.cover,
-          size: 24,
-          color: theme.colorScheme.onPrimary,
-        ),
-        onTap: right
-            ? () {
-                if (!postUploading.value) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const NewPostScreen(),
-                    ),
-                  );
-                } else {
-                  toast(
-                    'A post is already uploading.',
-                    duration: Toast.LENGTH_LONG,
-                  );
-                }
-              }
-            : () => toast("You do not have permission to create a post"),
-      ),
+      floatingActionButton: ValueListenableBuilder(
+          valueListenable: rebuildNewPostFAB,
+          builder: (context, value, __) {
+            return AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                width: value ? 140 : 56,
+                child: !value
+                    ? LMIconButton(
+                        containerSize: 56,
+                        padding: const EdgeInsets.all(12),
+                        borderRadius: 28,
+                        backgroundColor:
+                            right ? theme.colorScheme.primary : kGrey3Color,
+                        icon: LMIcon(
+                          type: LMIconType.icon,
+                          icon: Icons.add,
+                          fit: BoxFit.cover,
+                          size: 24,
+                          color: theme.colorScheme.onPrimaryContainer,
+                        ),
+                        onTap: right
+                            ? (_) {
+                                if (!postUploading.value) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const NewPostScreen(),
+                                    ),
+                                  );
+                                } else {
+                                  toast(
+                                    'A post is already uploading.',
+                                    duration: Toast.LENGTH_LONG,
+                                  );
+                                }
+                              }
+                            : (value) => toast(
+                                "You do not have permission to create a post"),
+                      )
+                    : AnimatedContainer(
+                        duration: const Duration(milliseconds: 500),
+                        width: value ? 140 : 56,
+                        clipBehavior: Clip.hardEdge,
+                        decoration: const BoxDecoration(),
+                        child: LMTextButton(
+                          height: 56,
+                          width: 140,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 20,
+                          ),
+                          borderRadius: 28,
+                          backgroundColor:
+                              right ? theme.colorScheme.primary : kGrey3Color,
+                          placement: LMIconPlacement.start,
+                          text: LMTextView(
+                            text: "New Post",
+                            textStyle: theme.textTheme.bodyMedium,
+                            maxLines: 1,
+                            overflow: TextOverflow.fade,
+                          ),
+                          margin: 5,
+                          icon: LMIcon(
+                            type: LMIconType.icon,
+                            icon: Icons.add,
+                            fit: BoxFit.cover,
+                            size: 24,
+                            color: theme.colorScheme.onPrimaryContainer,
+                          ),
+                          onTap: right
+                              ? () {
+                                  if (!postUploading.value) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const NewPostScreen(),
+                                      ),
+                                    );
+                                  } else {
+                                    toast(
+                                      'A post is already uploading.',
+                                      duration: Toast.LENGTH_LONG,
+                                    );
+                                  }
+                                }
+                              : () => toast(
+                                  "You do not have permission to create a post"),
+                        ),
+                      ));
+          }),
       // floatingActionButton: ValueListenableBuilder(
       //   valueListenable: rebuildPostWidget,
       //   builder: (context, _, __) {

@@ -187,6 +187,7 @@ class _TaggingAheadTextFieldState extends State<TaggingAheadTextField> {
                         fallbackText: opt.name!,
                         imageUrl: opt.imageUrl!,
                         onTap: null,
+                        boxShape: BoxShape.circle,
                         size: 40,
                       ),
                     ),

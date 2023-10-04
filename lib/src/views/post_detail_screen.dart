@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -448,6 +450,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                       LMProfilePicture(
                                         fallbackText: currentUser.name,
                                         imageUrl: currentUser.imageUrl,
+                                        boxShape: BoxShape.circle,
                                         onTap: () {
                                           if (currentUser.sdkClientInfo !=
                                               null) {
@@ -461,31 +464,36 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                       ),
                                       kHorizontalPaddingMedium,
                                       Expanded(
-                                        child: TaggingAheadTextField(
-                                          isDown: false,
-                                          maxLines: 5,
-                                          onTagSelected: (tag) {
-                                            userTags.add(tag);
-                                          },
-                                          controller: _commentController!,
-                                          decoration: InputDecoration(
-                                            enabled: right,
-                                            border: InputBorder.none,
-                                            hintText: right
-                                                ? 'Comment your thoughts'
-                                                : "You do not have permission to comment.",
-                                            hintStyle: theme
-                                                .textTheme.bodyMedium!
-                                                .copyWith(
-                                              color:
-                                                  theme.colorScheme.onPrimary,
-                                            ),
+                                        child: Container(
+                                          constraints: BoxConstraints(
+                                            maxWidth: screenSize.width * 0.6,
                                           ),
-                                          focusNode: focusNode,
-                                          onChange: (String p0) {
-                                            rebuildButton.value =
-                                                !rebuildButton.value;
-                                          },
+                                          child: TaggingAheadTextField(
+                                            isDown: false,
+                                            maxLines: 5,
+                                            onTagSelected: (tag) {
+                                              userTags.add(tag);
+                                            },
+                                            controller: _commentController!,
+                                            decoration: InputDecoration(
+                                              enabled: right,
+                                              border: InputBorder.none,
+                                              hintText: right
+                                                  ? 'Comment your thoughts'
+                                                  : "You do not have permission to comment.",
+                                              hintStyle: theme
+                                                  .textTheme.bodyMedium!
+                                                  .copyWith(
+                                                color:
+                                                    theme.colorScheme.onPrimary,
+                                              ),
+                                            ),
+                                            focusNode: focusNode,
+                                            onChange: (String p0) {
+                                              rebuildButton.value =
+                                                  !rebuildButton.value;
+                                            },
+                                          ),
                                         ),
                                       ),
                                       LMIconButton(
@@ -557,8 +565,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                               if (state
                                                                   is AddCommentReplyLoading) {
                                                                 return const SizedBox(
-                                                                  height: 18,
-                                                                  width: 18,
+                                                                  height: 15,
+                                                                  width: 15,
                                                                   child:
                                                                       CircularProgressIndicator(
                                                                     strokeWidth:
@@ -575,7 +583,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                     a,
                                                                   ) {
                                                                     return LMTextButton(
-                                                                      width: 24,
                                                                       height:
                                                                           18,
                                                                       text:
@@ -842,6 +849,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                         )
                                       : NovaPostWidget(
                                           post: postData!,
+                                          expanded: true,
                                           topics:
                                               postDetailResponse!.topics ?? {},
                                           user: postDetailResponse!.users![
@@ -898,7 +906,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                           Navigator.of(context)
                                                               .pop();
                                                         },
-                                                        actionText: 'Delete',
+                                                        actionText:
+                                                            'Yes, delete',
                                                       ));
                                             } else if (id == postPinId ||
                                                 id == postUnpinId) {
@@ -1183,9 +1192,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                   builder:
                                                                       (context) =>
                                                                           LMBottomSheet(
-                                                                    height:
+                                                                    height: max(
+                                                                        170,
                                                                         screenSize.height *
-                                                                            0.3,
+                                                                            0.25),
                                                                     margin: const EdgeInsets
                                                                         .only(
                                                                         top:
@@ -1257,7 +1267,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                                                   ..reason(reason.isEmpty ? "Reason for deletion" : reason))
                                                                                                 .build()));
                                                                                           },
-                                                                                          actionText: 'Delete',
+                                                                                          actionText: 'Yes, delete',
                                                                                         ));
                                                                               } else if (e.id == 8) {
                                                                                 debugPrint('Editing functionality');
@@ -1285,7 +1295,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                                 kHorizontalPaddingLarge,
                                                                                 LMTextView(
                                                                                   text: e.title,
-                                                                                  textStyle: theme.textTheme.headlineLarge,
+                                                                                  textStyle: theme.textTheme.headlineLarge!.copyWith(color: e.id == commentDeleteId ? theme.colorScheme.error : null),
                                                                                 ),
                                                                               ]),
                                                                             ),
@@ -1376,21 +1386,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                 ),
                                                               );
                                                             },
-                                                            textStyle: TextStyle(
-                                                                color: theme
-                                                                    .colorScheme
-                                                                    .onPrimary,
-                                                                fontSize: 12),
+                                                            textStyle: theme
+                                                                .textTheme
+                                                                .labelMedium,
                                                           ),
                                                           activeText:
                                                               LMTextView(
                                                             text:
                                                                 "${item.likesCount}",
-                                                            textStyle: TextStyle(
-                                                                color: theme
-                                                                    .colorScheme
-                                                                    .onPrimary,
-                                                                fontSize: 12),
+                                                            textStyle: theme
+                                                                .textTheme
+                                                                .labelMedium,
                                                           ),
                                                           onTap: () {
                                                             _toggleLikeCommentBloc
@@ -1423,7 +1429,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                 LMIconType.svg,
                                                             assetPath:
                                                                 kAssetLikeIcon,
-                                                            size: 20,
+                                                            size: 14,
                                                             color: theme
                                                                 .colorScheme
                                                                 .onPrimary,
@@ -1433,7 +1439,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                 LMIconType.svg,
                                                             assetPath:
                                                                 kAssetLikeFilledIcon,
-                                                            size: 20,
+                                                            size: 14,
                                                             color: theme
                                                                 .colorScheme
                                                                 .error,
