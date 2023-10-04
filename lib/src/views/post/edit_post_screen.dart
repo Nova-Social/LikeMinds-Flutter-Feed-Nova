@@ -394,22 +394,24 @@ class _EditPostScreenState extends State<EditPostScreen> {
               ],
             ),
           ),
-          body: FutureBuilder(
-              future: postFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.connectionState == ConnectionState.done) {
-                  GetPostResponse response = snapshot.data!;
-                  if (response.success) {
-                    setPostData(response.post!);
-                    return postEditWidget();
-                  } else {
-                    return postErrorScreen(response.errorMessage!);
+          body: SafeArea(
+            child: FutureBuilder(
+                future: postFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.connectionState == ConnectionState.done) {
+                    GetPostResponse response = snapshot.data!;
+                    if (response.success) {
+                      setPostData(response.post!);
+                      return postEditWidget();
+                    } else {
+                      return postErrorScreen(response.errorMessage!);
+                    }
                   }
-                }
-                return const SizedBox();
-              }),
+                  return const SizedBox();
+                }),
+          ),
         ),
       ),
     );
