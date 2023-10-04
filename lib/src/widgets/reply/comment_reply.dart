@@ -167,7 +167,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                                               ? "Reason for deletion"
                                                               : reason))
                                                         .build()));
-                                          }, actionText: 'Delete'));
+                                          }, actionText: 'Yes, delete'));
                                 } else if (e.id == 8) {
                                   addCommentReplyBloc!.add(EditReplyCancel());
                                   addCommentReplyBloc!.add(
@@ -194,7 +194,11 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                   kHorizontalPaddingLarge,
                                   LMTextView(
                                     text: e.title,
-                                    textStyle: theme!.textTheme.headlineLarge,
+                                    textStyle: theme!.textTheme.headlineLarge!
+                                        .copyWith(
+                                            color: e.id == commentDeleteId
+                                                ? theme!.colorScheme.error
+                                                : null),
                                   ),
                                 ]),
                               ),

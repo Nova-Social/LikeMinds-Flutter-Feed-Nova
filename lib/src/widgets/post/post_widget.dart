@@ -303,6 +303,25 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                               attachment: postDetails!.attachments![0],
                               backgroundColor: theme.colorScheme.surface,
                               showLinkUrl: false,
+                              errorWidget: Container(
+                                color: theme.colorScheme.surface,
+                                width: double.infinity,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    LMIcon(
+                                      type: LMIconType.icon,
+                                      icon: Icons.error_outline,
+                                      size: 24,
+                                      color: theme.colorScheme.onPrimary,
+                                    ),
+                                    kVerticalPaddingMedium,
+                                    Text("An error occurred fetching media",
+                                        style: theme.textTheme.labelSmall)
+                                  ],
+                                ),
+                              ),
                               onTap: () {
                                 if (postDetails!.attachments!.first
                                         .attachmentMeta.url !=
@@ -351,7 +370,31 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                 child: LMPostMedia(
                                   attachments: postDetails!.attachments!,
                                   borderRadius: 16.0,
+                                  height: screenSize.width - 32,
+                                  width: screenSize.width - 32,
+                                  boxFit: BoxFit.cover,
                                   showLinkUrl: false,
+                                  errorWidget: Container(
+                                    color: theme.colorScheme.background,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        LMIcon(
+                                          type: LMIconType.icon,
+                                          icon: Icons.error_outline,
+                                          size: 24,
+                                          color: theme
+                                              .colorScheme.onPrimaryContainer,
+                                        ),
+                                        const SizedBox(height: 24),
+                                        Text("An error occurred fetching media",
+                                            style: theme.textTheme.bodyMedium)
+                                      ],
+                                    ),
+                                  ),
                                   backgroundColor: theme.colorScheme.surface,
                                   showBorder: false,
                                   carouselActiveIndicatorColor:

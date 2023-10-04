@@ -906,7 +906,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                           Navigator.of(context)
                                                               .pop();
                                                         },
-                                                        actionText: 'Delete',
+                                                        actionText:
+                                                            'Yes, delete',
                                                       ));
                                             } else if (id == postPinId ||
                                                 id == postUnpinId) {
@@ -1266,7 +1267,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                                                   ..reason(reason.isEmpty ? "Reason for deletion" : reason))
                                                                                                 .build()));
                                                                                           },
-                                                                                          actionText: 'Delete',
+                                                                                          actionText: 'Yes, delete',
                                                                                         ));
                                                                               } else if (e.id == 8) {
                                                                                 debugPrint('Editing functionality');
@@ -1294,7 +1295,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                                 kHorizontalPaddingLarge,
                                                                                 LMTextView(
                                                                                   text: e.title,
-                                                                                  textStyle: theme.textTheme.headlineLarge,
+                                                                                  textStyle: theme.textTheme.headlineLarge!.copyWith(color: e.id == commentDeleteId ? theme.colorScheme.error : null),
                                                                                 ),
                                                                               ]),
                                                                             ),
