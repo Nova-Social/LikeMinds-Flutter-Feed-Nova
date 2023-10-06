@@ -9,3 +9,6 @@ const int postEditId = 5;
 const int commentDeleteId = 6;
 const int commentReportId = 7;
 const int commentEditId = 8;
+
+// Post, Comment & Reply Report Type Id
+const int postCommentReplyReportTypeId = 3;
