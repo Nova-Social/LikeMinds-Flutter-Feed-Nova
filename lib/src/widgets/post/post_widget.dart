@@ -72,7 +72,6 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
     comments = postDetails!.commentCount;
     isLiked = postDetails!.isLiked;
     isPinned = postDetails!.isPinned;
-    postDetails!.menuItems.removeWhere((element) => element.id == postReportId);
   }
 
   @override

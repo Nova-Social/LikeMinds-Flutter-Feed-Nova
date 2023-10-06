@@ -4,11 +4,19 @@ import 'package:likeminds_feed/likeminds_feed.dart';
 import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
+import 'package:overlay_support/overlay_support.dart';
 
 class ReportScreen extends StatefulWidget {
-  final GetDeleteReasonRequest request;
+  final String entityId; // post, comment, reply id
+  final String entityCreatorId;
+  final int entityType;
 
-  const ReportScreen({Key? key, required this.request}) : super(key: key);
+  const ReportScreen({
+    Key? key,
+    required this.entityId,
+    required this.entityCreatorId,
+    required this.entityType,
+  }) : super(key: key);
 
   @override
   State<ReportScreen> createState() => _ReportScreenState();
@@ -16,14 +24,23 @@ class ReportScreen extends StatefulWidget {
 
 class _ReportScreenState extends State<ReportScreen> {
   Future<GetDeleteReasonResponse>? getReportTagsFuture;
+  TextEditingController reportReasonController = TextEditingController();
   Set<int> selectedTags = {};
+  DeleteReason? deleteReason;
 
   @override
   void initState() {
-    // TODO: implement initState
-    GetDeleteReasonRequest request = widget.request;
+    GetDeleteReasonRequest request =
+        (GetDeleteReasonRequestBuilder()..type(widget.entityType)).build();
     super.initState();
     getReportTagsFuture = locator<LikeMindsService>().getReportTags(request);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    reportReasonController.dispose();
   }
 
   @override
@@ -97,8 +114,10 @@ class _ReportScreenState extends State<ReportScreen> {
                                                   if (selectedTags
                                                       .contains(e.id)) {
                                                     selectedTags.remove(e.id);
+                                                    deleteReason = null;
                                                   } else {
                                                     selectedTags = {e.id};
+                                                    deleteReason = e;
                                                   }
                                                 },
                                               );
@@ -162,7 +181,38 @@ class _ReportScreenState extends State<ReportScreen> {
                   text: 'Submit',
                   textStyle: theme.textTheme.bodyLarge,
                 ),
-                onTap: () {},
+                onTap: () async {
+                  String? reason = reportReasonController.text;
+                  if (deleteReason != null &&
+                      (deleteReason!.name.toLowerCase() == 'others' ||
+                          deleteReason!.name.toLowerCase() == 'other')) {
+                    if (reason.isEmpty) {
+                      toast('Please specify a reason for reporting');
+                      return;
+                    }
+                  }
+                  if (selectedTags.isNotEmpty) {
+                    Navigator.of(context).pop();
+                    PostReportRequest postReportRequest =
+                        (PostReportRequestBuilder()
+                              ..entityCreatorId(widget.entityCreatorId)
+                              ..entityId(widget.entityId)
+                              ..entityType(widget.entityType)
+                              ..reason(
+                                  reason.isEmpty ? deleteReason!.name : reason)
+                              ..tagId(deleteReason!.id))
+                            .build();
+                    PostReportResponse response =
+                        await locator<LikeMindsService>()
+                            .postReport(postReportRequest);
+                    if (!response.success) {
+                      toast(response.errorMessage ?? 'An error occured');
+                    }
+                  } else {
+                    toast('Please select a reason');
+                    return;
+                  }
+                },
               ),
             ),
           ],
