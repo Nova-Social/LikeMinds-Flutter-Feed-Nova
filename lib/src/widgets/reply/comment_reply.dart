@@ -13,6 +13,7 @@ import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart
 import 'package:likeminds_feed_nova_fl/src/utils/constants/ui_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/icons.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_action_id.dart';
+import 'package:likeminds_feed_nova_fl/src/views/report_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/delete_dialog.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -79,10 +80,6 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
       List<CommentReply> replies, Map<String, User> users) {
     ToggleLikeCommentBloc toggleLikeCommentBloc =
         BlocProvider.of<ToggleLikeCommentBloc>(context);
-    replies = replies.map((e) {
-      e.menuItems.removeWhere((element) => element.id == commentReportId);
-      return e;
-    }).toList();
     return replies.mapIndexed((index, element) {
       User user = users[element.userId]!;
       return StatefulBuilder(builder: (context, setReplyState) {
@@ -134,7 +131,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                               onTap: () {
                                 Navigator.of(context).pop();
 
-                                if (e.id == 6) {
+                                if (e.id == commentDeleteId) {
                                   addCommentReplyBloc!.add(EditCommentCancel());
                                   addCommentReplyBloc!
                                       .add(ReplyCommentCancel());
@@ -168,13 +165,23 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                                               : reason))
                                                         .build()));
                                           }, actionText: 'Yes, delete'));
-                                } else if (e.id == 8) {
+                                } else if (e.id == commentEditId) {
                                   addCommentReplyBloc!.add(EditReplyCancel());
                                   addCommentReplyBloc!.add(
                                     EditingReply(
                                       commentId: reply!.id,
                                       text: element.text,
                                       replyId: element.id,
+                                    ),
+                                  );
+                                } else if (e.id == commentReportId) {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => ReportScreen(
+                                        entityCreatorId: reply!.userId,
+                                        entityId: reply!.id,
+                                        entityType: commentReportEntityType,
+                                      ),
                                     ),
                                   );
                                 }

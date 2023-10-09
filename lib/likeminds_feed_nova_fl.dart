@@ -8,7 +8,9 @@ import 'package:likeminds_feed/likeminds_feed.dart';
 import 'package:likeminds_feed_nova_fl/src/services/navigation_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/icons.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/network_handling.dart';
+
 import 'package:likeminds_feed_nova_fl/src/utils/utils.dart';
+
 import 'package:likeminds_feed_nova_fl/src/views/universal_feed_page.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 
@@ -17,7 +19,6 @@ import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/services/service_locator.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/ui_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/credentials/credentials.dart';
-import 'package:overlay_support/overlay_support.dart';
 
 export 'src/services/service_locator.dart';
 export 'src/utils/analytics/analytics.dart';
@@ -37,8 +38,6 @@ class LMFeed extends StatefulWidget {
   final String apiKey;
   final Function(BuildContext context)? openChatCallback;
   final LMSDKCallback? callback;
-
-  static LMFeed? _instance;
 
   /// INIT - Get the LMFeed instance and pass the credentials (if any)
   /// to the instance. This will be used to initialize the app.

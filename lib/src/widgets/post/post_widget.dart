@@ -72,7 +72,6 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
     comments = postDetails!.commentCount;
     isLiked = postDetails!.isLiked;
     isPinned = postDetails!.isPinned;
-    postDetails!.menuItems.removeWhere((element) => element.id == postReportId);
   }
 
   @override
@@ -164,6 +163,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                         return LMPostHeader(
                             user: widget.user,
                             isFeed: widget.isFeed,
+                            showReportButton: true,
                             showCustomTitle: false,
                             profilePicture: LMProfilePicture(
                               size: 52,

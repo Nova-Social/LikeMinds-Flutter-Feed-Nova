@@ -22,6 +22,7 @@ import 'package:likeminds_feed_nova_fl/src/utils/utils.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post/edit_post_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post/new_post_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post_detail_screen.dart';
+import 'package:likeminds_feed_nova_fl/src/views/report_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/delete_dialog.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/post/post_something.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/post/post_widget.dart';
@@ -976,6 +977,16 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                           builder: (context) => EditPostScreen(
                                             postId: item.id,
                                             selectedTopics: postTopics,
+                                          ),
+                                        ),
+                                      );
+                                    } else if (id == postReportId) {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => ReportScreen(
+                                            entityCreatorId: item.userId,
+                                            entityId: item.id,
+                                            entityType: postReportEntityType,
                                           ),
                                         ),
                                       );

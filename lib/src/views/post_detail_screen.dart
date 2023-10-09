@@ -23,6 +23,7 @@ import 'package:likeminds_feed_nova_fl/src/utils/tagging/tagging_textfield_ta.da
 import 'package:likeminds_feed_nova_fl/src/views/likes/likes_horizontal_view.dart';
 import 'package:likeminds_feed_nova_fl/src/views/likes/likes_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post/edit_post_screen.dart';
+import 'package:likeminds_feed_nova_fl/src/views/report_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/delete_dialog.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/post/post_widget.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/reply/comment_reply.dart';
@@ -80,7 +81,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     _addCommentBloc.close();
     _addCommentReplyBloc.close();
     _pagingController.dispose();
-    _commentController?.dispose();
     rebuildButton.dispose();
     rebuildPostWidget.dispose();
     rebuildReplyWidget.dispose();
@@ -983,6 +983,19 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                   ),
                                                 ),
                                               );
+                                            } else if (id == postReportId) {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ReportScreen(
+                                                    entityCreatorId:
+                                                        postData!.userId,
+                                                    entityId: postData!.id,
+                                                    entityType:
+                                                        postReportEntityType,
+                                                  ),
+                                                ),
+                                              );
                                             }
                                           },
                                           isFeed: false,
@@ -1117,10 +1130,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                   StatefulBuilder(builder:
                                                       (context,
                                                           setCommentState) {
-                                                    item.menuItems.removeWhere(
-                                                        (element) =>
-                                                            element.id ==
-                                                            commentReportId);
                                                     return LMCommentTile(
                                                       key: ValueKey(item.id),
                                                       width: screenSize.width,
@@ -1237,7 +1246,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                             onTap:
                                                                                 () {
                                                                               Navigator.of(context).pop();
-                                                                              if (e.id == 6) {
+                                                                              if (e.id == commentDeleteId) {
                                                                                 deselectCommentToEdit();
                                                                                 deselectCommentToReply();
                                                                                 // Delete post
@@ -1269,13 +1278,23 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                                           },
                                                                                           actionText: 'Yes, delete',
                                                                                         ));
-                                                                              } else if (e.id == 8) {
+                                                                              } else if (e.id == commentEditId) {
                                                                                 debugPrint('Editing functionality');
                                                                                 _addCommentReplyBloc.add(EditCommentCancel());
                                                                                 _addCommentReplyBloc.add(
                                                                                   EditingComment(
                                                                                     commentId: item.id,
                                                                                     text: item.text,
+                                                                                  ),
+                                                                                );
+                                                                              } else if (e.id == commentReportId) {
+                                                                                Navigator.of(context).push(
+                                                                                  MaterialPageRoute(
+                                                                                    builder: (context) => ReportScreen(
+                                                                                      entityCreatorId: item.userId,
+                                                                                      entityId: item.id,
+                                                                                      entityType: commentReportEntityType,
+                                                                                    ),
                                                                                   ),
                                                                                 );
                                                                               }
