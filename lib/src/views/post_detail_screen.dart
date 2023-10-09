@@ -81,7 +81,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     _addCommentBloc.close();
     _addCommentReplyBloc.close();
     _pagingController.dispose();
-    _commentController?.dispose();
     rebuildButton.dispose();
     rebuildPostWidget.dispose();
     rebuildReplyWidget.dispose();

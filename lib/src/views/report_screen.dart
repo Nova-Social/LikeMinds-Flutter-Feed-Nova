@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:likeminds_feed/likeminds_feed.dart';
 import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
+import 'package:likeminds_feed_nova_fl/src/utils/post/post_action_id.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 import 'package:overlay_support/overlay_support.dart';
 
@@ -30,8 +31,9 @@ class _ReportScreenState extends State<ReportScreen> {
 
   @override
   void initState() {
-    GetDeleteReasonRequest request =
-        (GetDeleteReasonRequestBuilder()..type(widget.entityType)).build();
+    GetDeleteReasonRequest request = (GetDeleteReasonRequestBuilder()
+          ..type(postCommentReplyReportTypeId))
+        .build();
     super.initState();
     getReportTagsFuture = locator<LikeMindsService>().getReportTags(request);
   }
