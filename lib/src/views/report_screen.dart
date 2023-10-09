@@ -83,7 +83,7 @@ class _ReportScreenState extends State<ReportScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 24.0),
                       child: LMTextView(
                         text:
-                            'Thank you for looking out for yourself and your fellow Nova users by reporting that violet the rules. Let us know what’s happening, and we’ll look into it.',
+                            'Thank you for looking out for yourself and your fellow Nova users by reporting what violates the rules. Let us know what’s happening, and we’ll look into it.',
                         textStyle: theme.textTheme.labelMedium,
                         overflow: TextOverflow.visible,
                       ),

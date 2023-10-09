@@ -129,8 +129,6 @@ class _CredScreenState extends State<CredScreen> {
       return lmFeed = LMFeed.instance(
           userId: userId,
           userName: 'Test User',
-          imageUrl:
-              'https://images.pexels.com/photos/5477855/pexels-photo-5477855.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
           callback: LikeMindsCallback(),
           apiKey: "",
           customWidgets: customWidgets(screenSize));
@@ -190,8 +188,6 @@ class _CredScreenState extends State<CredScreen> {
                       userName: _usernameController.text,
                       callback: LikeMindsCallback(),
                       apiKey: "",
-                      imageUrl:
-                          'https://images.pexels.com/photos/5477855/pexels-photo-5477855.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
                       customWidgets: customWidgets(screenSize));
 
                   // if (_userIdController.text.isNotEmpty) {
