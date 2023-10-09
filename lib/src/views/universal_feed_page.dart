@@ -31,9 +31,12 @@ import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 import 'package:overlay_support/overlay_support.dart';
 
 class UniversalFeedScreen extends StatefulWidget {
+  final Map<int, Widget>? customWidgets;
   final Function(BuildContext context)? openChatCallback;
+
   const UniversalFeedScreen({
     this.openChatCallback,
+    this.customWidgets,
     super.key,
   });
 
@@ -56,6 +59,7 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
   // list of selected topics by the user
   List<TopicUI> selectedTopics = [];
   bool topicVisible = true;
+  bool customWidgetAdded = false;
 
   // bloc to handle universal feed
   late final UniversalFeedBloc _feedBloc; // bloc to fetch the feedroom data
@@ -441,12 +445,27 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
                   }
                   return true;
                 },
-                listener: (context, state) => updatePagingControllers(state),
+                listener: (context, state) {
+                  updatePagingControllers(state);
+                  int numberOfPosts = _pagingController.itemList?.length ?? 0;
+                  if (widget.customWidgets != null &&
+                      widget.customWidgets!.isNotEmpty) {
+                    for (int key in widget.customWidgets!.keys) {
+                      if (key < numberOfPosts - 1) {
+                        if (_pagingController.itemList![key].id != '-9999') {
+                          _pagingController.itemList
+                              ?.insert(key, getEmptyPostViewModel());
+                        }
+                      }
+                    }
+                  }
+                },
                 builder: ((context, state) {
                   if (state is UniversalFeedLoaded) {
                     // Log the event in the analytics
                     return FeedRoomView(
                       isCm: isCm,
+                      customWidgets: widget.customWidgets,
                       universalFeedBloc: _feedBloc,
                       feedResponse: state.feed,
                       feedRoomPagingController: _pagingController,
@@ -491,6 +510,7 @@ class FeedRoomView extends StatefulWidget {
   final VoidCallback onRefresh;
   final VoidCallback openTopicBottomSheet;
   final List<TopicUI> selectedTopicIds;
+  final Map<int, Widget>? customWidgets;
 
   const FeedRoomView({
     super.key,
@@ -503,6 +523,7 @@ class FeedRoomView extends StatefulWidget {
     required this.scrollController,
     required this.openTopicBottomSheet,
     required this.selectedTopicIds,
+    this.customWidgets,
   });
 
   @override
@@ -868,10 +889,18 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                             );
                           },
                           itemBuilder: (context, item, index) {
+                            if (item.communityId == -9999) {
+                              if (widget.customWidgets != null &&
+                                  widget.customWidgets!.containsKey(index)) {
+                                return widget.customWidgets![index]!;
+                              }
+                              return const SizedBox.shrink();
+                            }
                             if (widget.feedResponse.users[item.userId] ==
                                 null) {
                               return const SizedBox();
                             }
+
                             return Column(
                               children: [
                                 const SizedBox(height: 2),
