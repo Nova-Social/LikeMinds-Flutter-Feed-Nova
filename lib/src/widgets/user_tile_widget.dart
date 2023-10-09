@@ -4,7 +4,6 @@ import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 
-// TODO: Customisation
 class LMUserTile extends StatelessWidget {
   final User user;
   final LMTextView? titleText;

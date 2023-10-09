@@ -79,16 +79,16 @@ class LMFeed extends StatefulWidget {
     locator<LikeMindsService>().logout(LogoutRequestBuilder().build());
   }
 
-  LMFeed._(
-      {Key? key,
-      this.userId,
-      this.userName,
-      this.imageUrl,
-      required this.callback,
-      required this.apiKey,
-      this.customWidgets,
-      this.openChatCallback})
-      : super(key: key);
+  const LMFeed._({
+    Key? key,
+    this.userId,
+    this.userName,
+    this.imageUrl,
+    required this.callback,
+    required this.apiKey,
+    this.customWidgets,
+    this.openChatCallback,
+  }) : super(key: key);
 
   @override
   _LMFeedState createState() => _LMFeedState();

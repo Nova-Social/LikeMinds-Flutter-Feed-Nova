@@ -4,20 +4,20 @@ import 'package:flutter/material.dart';
 Widget getDummyUserConnectionwidget(double width) {
   return Container(
     width: width,
-    padding: EdgeInsets.all(16.0),
+    padding: const EdgeInsets.all(16.0),
     child: Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
+        SizedBox(
           width: width - 32,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
+              const Text(
                 'Suggested for you',
                 style: TextStyle(
                   color: Colors.white,
@@ -29,7 +29,7 @@ Widget getDummyUserConnectionwidget(double width) {
               ),
               const Spacer(),
               Container(
-                child: Row(
+                child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -45,7 +45,7 @@ Widget getDummyUserConnectionwidget(double width) {
                         height: 0.08,
                       ),
                     ),
-                    const SizedBox(width: 6),
+                    SizedBox(width: 6),
                   ],
                 ),
               ),
@@ -53,7 +53,7 @@ Widget getDummyUserConnectionwidget(double width) {
           ),
         ),
         const SizedBox(height: 24),
-        Container(
+        SizedBox(
           width: width - 32,
           height: 237,
           child: ListView(
@@ -67,9 +67,9 @@ Widget getDummyUserConnectionwidget(double width) {
                   bottom: 16,
                 ),
                 decoration: ShapeDecoration(
-                  color: Color(0xFF242325),
+                  color: const Color(0xFF242325),
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Color(0xFF383739)),
+                    side: const BorderSide(width: 1, color: Color(0xFF383739)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
@@ -82,13 +82,13 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 16,
                       height: 16,
                       clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(),
-                      child: Stack(children: []),
+                      decoration: const BoxDecoration(),
+                      child: const Stack(children: []),
                     ),
                     Container(
                       width: 86,
                       height: 86,
-                      decoration: ShapeDecoration(
+                      decoration: const ShapeDecoration(
                         image: DecorationImage(
                           image:
                               NetworkImage("https://via.placeholder.com/86x86"),
@@ -97,7 +97,7 @@ Widget getDummyUserConnectionwidget(double width) {
                         shape: OvalBorder(),
                       ),
                     ),
-                    Container(
+                    const SizedBox(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -118,7 +118,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2),
                           SizedBox(
                             width: 131,
                             height: 34,
@@ -142,7 +142,7 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 131,
                       height: 32,
                       decoration: ShapeDecoration(
-                        color: Color(0xFF965EFF),
+                        color: const Color(0xFF965EFF),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
@@ -155,13 +155,13 @@ Widget getDummyUserConnectionwidget(double width) {
                             width: 13,
                             height: 13,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Stack(
                               children: [
-                                Positioned(
+                                const Positioned(
                                   left: 3.25,
                                   top: 1.08,
-                                  child: Container(
+                                  child: SizedBox(
                                     width: 8.82,
                                     height: 5.73,
                                     child: Stack(children: []),
@@ -173,7 +173,7 @@ Widget getDummyUserConnectionwidget(double width) {
                                   child: Container(
                                     width: 10.21,
                                     height: 6.50,
-                                    decoration: ShapeDecoration(
+                                    decoration: const ShapeDecoration(
                                       shape: OvalBorder(
                                         side: BorderSide(
                                             width: 1.18, color: Colors.white),
@@ -184,7 +184,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ],
                             ),
                           ),
-                          Text(
+                          const Text(
                             'Connect',
                             style: TextStyle(
                               color: Colors.white,
@@ -209,9 +209,9 @@ Widget getDummyUserConnectionwidget(double width) {
                   bottom: 16,
                 ),
                 decoration: ShapeDecoration(
-                  color: Color(0xFF242325),
+                  color: const Color(0xFF242325),
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Color(0xFF383739)),
+                    side: const BorderSide(width: 1, color: Color(0xFF383739)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
@@ -224,13 +224,13 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 16,
                       height: 16,
                       clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(),
-                      child: Stack(children: []),
+                      decoration: const BoxDecoration(),
+                      child: const Stack(children: []),
                     ),
                     Container(
                       width: 86,
                       height: 86,
-                      decoration: ShapeDecoration(
+                      decoration: const ShapeDecoration(
                         image: DecorationImage(
                           image:
                               NetworkImage("https://via.placeholder.com/86x86"),
@@ -239,7 +239,7 @@ Widget getDummyUserConnectionwidget(double width) {
                         shape: OvalBorder(),
                       ),
                     ),
-                    Container(
+                    const SizedBox(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -260,7 +260,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2),
                           SizedBox(
                             width: 131,
                             height: 34,
@@ -284,7 +284,7 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 131,
                       height: 32,
                       decoration: ShapeDecoration(
-                        color: Color(0xFF965EFF),
+                        color: const Color(0xFF965EFF),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
@@ -297,13 +297,13 @@ Widget getDummyUserConnectionwidget(double width) {
                             width: 13,
                             height: 13,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Stack(
                               children: [
-                                Positioned(
+                                const Positioned(
                                   left: 3.25,
                                   top: 1.08,
-                                  child: Container(
+                                  child: SizedBox(
                                     width: 8.82,
                                     height: 5.73,
                                     child: Stack(children: []),
@@ -315,7 +315,7 @@ Widget getDummyUserConnectionwidget(double width) {
                                   child: Container(
                                     width: 10.21,
                                     height: 6.50,
-                                    decoration: ShapeDecoration(
+                                    decoration: const ShapeDecoration(
                                       shape: OvalBorder(
                                         side: BorderSide(
                                             width: 1.18, color: Colors.white),
@@ -326,7 +326,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ],
                             ),
                           ),
-                          Text(
+                          const Text(
                             'Connect',
                             style: TextStyle(
                               color: Colors.white,
@@ -351,9 +351,9 @@ Widget getDummyUserConnectionwidget(double width) {
                   bottom: 16,
                 ),
                 decoration: ShapeDecoration(
-                  color: Color(0xFF242325),
+                  color: const Color(0xFF242325),
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Color(0xFF383739)),
+                    side: const BorderSide(width: 1, color: Color(0xFF383739)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
@@ -366,13 +366,13 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 16,
                       height: 16,
                       clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(),
-                      child: Stack(children: []),
+                      decoration: const BoxDecoration(),
+                      child: const Stack(children: []),
                     ),
                     Container(
                       width: 86,
                       height: 86,
-                      decoration: ShapeDecoration(
+                      decoration: const ShapeDecoration(
                         image: DecorationImage(
                           image:
                               NetworkImage("https://via.placeholder.com/86x86"),
@@ -381,7 +381,7 @@ Widget getDummyUserConnectionwidget(double width) {
                         shape: OvalBorder(),
                       ),
                     ),
-                    Container(
+                    const SizedBox(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
@@ -402,7 +402,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2),
                           SizedBox(
                             width: 131,
                             height: 34,
@@ -426,7 +426,7 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 131,
                       height: 32,
                       decoration: ShapeDecoration(
-                        color: Color(0xFF965EFF),
+                        color: const Color(0xFF965EFF),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
@@ -439,13 +439,13 @@ Widget getDummyUserConnectionwidget(double width) {
                             width: 13,
                             height: 13,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Stack(
                               children: [
-                                Positioned(
+                                const Positioned(
                                   left: 3.25,
                                   top: 1.08,
-                                  child: Container(
+                                  child: SizedBox(
                                     width: 8.82,
                                     height: 5.73,
                                     child: Stack(children: []),
@@ -457,7 +457,7 @@ Widget getDummyUserConnectionwidget(double width) {
                                   child: Container(
                                     width: 10.21,
                                     height: 6.50,
-                                    decoration: ShapeDecoration(
+                                    decoration: const ShapeDecoration(
                                       shape: OvalBorder(
                                         side: BorderSide(
                                             width: 1.18, color: Colors.white),
@@ -468,7 +468,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ],
                             ),
                           ),
-                          Text(
+                          const Text(
                             'Connect',
                             style: TextStyle(
                               color: Colors.white,
@@ -492,9 +492,9 @@ Widget getDummyUserConnectionwidget(double width) {
                   bottom: 16,
                 ),
                 decoration: ShapeDecoration(
-                  color: Color(0xFF242325),
+                  color: const Color(0xFF242325),
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Color(0xFF383739)),
+                    side: const BorderSide(width: 1, color: Color(0xFF383739)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
@@ -507,13 +507,13 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 16,
                       height: 16,
                       clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(),
-                      child: Stack(children: []),
+                      decoration: const BoxDecoration(),
+                      child: const Stack(children: []),
                     ),
                     Container(
                       width: 86,
                       height: 86,
-                      decoration: ShapeDecoration(
+                      decoration: const ShapeDecoration(
                         image: DecorationImage(
                           image:
                               NetworkImage("https://via.placeholder.com/86x86"),
@@ -523,7 +523,7 @@ Widget getDummyUserConnectionwidget(double width) {
                       ),
                     ),
                     Container(
-                      child: Column(
+                      child: const Column(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -543,7 +543,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2),
                           SizedBox(
                             width: 131,
                             height: 34,
@@ -567,7 +567,7 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 131,
                       height: 32,
                       decoration: ShapeDecoration(
-                        color: Color(0xFF965EFF),
+                        color: const Color(0xFF965EFF),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
@@ -580,13 +580,13 @@ Widget getDummyUserConnectionwidget(double width) {
                             width: 13,
                             height: 13,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Stack(
                               children: [
-                                Positioned(
+                                const Positioned(
                                   left: 3.25,
                                   top: 1.08,
-                                  child: Container(
+                                  child: SizedBox(
                                     width: 8.82,
                                     height: 5.73,
                                     child: Stack(children: []),
@@ -598,7 +598,7 @@ Widget getDummyUserConnectionwidget(double width) {
                                   child: Container(
                                     width: 10.21,
                                     height: 6.50,
-                                    decoration: ShapeDecoration(
+                                    decoration: const ShapeDecoration(
                                       shape: OvalBorder(
                                         side: BorderSide(
                                             width: 1.18, color: Colors.white),
@@ -609,7 +609,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ],
                             ),
                           ),
-                          Text(
+                          const Text(
                             'Connect',
                             style: TextStyle(
                               color: Colors.white,
@@ -634,9 +634,9 @@ Widget getDummyUserConnectionwidget(double width) {
                   bottom: 16,
                 ),
                 decoration: ShapeDecoration(
-                  color: Color(0xFF242325),
+                  color: const Color(0xFF242325),
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Color(0xFF383739)),
+                    side: const BorderSide(width: 1, color: Color(0xFF383739)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
@@ -649,13 +649,13 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 16,
                       height: 16,
                       clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(),
-                      child: Stack(children: []),
+                      decoration: const BoxDecoration(),
+                      child: const Stack(children: []),
                     ),
                     Container(
                       width: 86,
                       height: 86,
-                      decoration: ShapeDecoration(
+                      decoration: const ShapeDecoration(
                         image: DecorationImage(
                           image:
                               NetworkImage("https://via.placeholder.com/86x86"),
@@ -665,7 +665,7 @@ Widget getDummyUserConnectionwidget(double width) {
                       ),
                     ),
                     Container(
-                      child: Column(
+                      child: const Column(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -685,7 +685,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2),
                           SizedBox(
                             width: 131,
                             height: 34,
@@ -709,7 +709,7 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 131,
                       height: 32,
                       decoration: ShapeDecoration(
-                        color: Color(0xFF965EFF),
+                        color: const Color(0xFF965EFF),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
@@ -722,13 +722,13 @@ Widget getDummyUserConnectionwidget(double width) {
                             width: 13,
                             height: 13,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Stack(
                               children: [
-                                Positioned(
+                                const Positioned(
                                   left: 3.25,
                                   top: 1.08,
-                                  child: Container(
+                                  child: SizedBox(
                                     width: 8.82,
                                     height: 5.73,
                                     child: Stack(children: []),
@@ -740,7 +740,7 @@ Widget getDummyUserConnectionwidget(double width) {
                                   child: Container(
                                     width: 10.21,
                                     height: 6.50,
-                                    decoration: ShapeDecoration(
+                                    decoration: const ShapeDecoration(
                                       shape: OvalBorder(
                                         side: BorderSide(
                                             width: 1.18, color: Colors.white),
@@ -751,7 +751,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ],
                             ),
                           ),
-                          Text(
+                          const Text(
                             'Connect',
                             style: TextStyle(
                               color: Colors.white,
@@ -776,9 +776,9 @@ Widget getDummyUserConnectionwidget(double width) {
                   bottom: 16,
                 ),
                 decoration: ShapeDecoration(
-                  color: Color(0xFF242325),
+                  color: const Color(0xFF242325),
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Color(0xFF383739)),
+                    side: const BorderSide(width: 1, color: Color(0xFF383739)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
@@ -791,13 +791,13 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 16,
                       height: 16,
                       clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(),
-                      child: Stack(children: []),
+                      decoration: const BoxDecoration(),
+                      child: const Stack(children: []),
                     ),
                     Container(
                       width: 86,
                       height: 86,
-                      decoration: ShapeDecoration(
+                      decoration: const ShapeDecoration(
                         image: DecorationImage(
                           image:
                               NetworkImage("https://via.placeholder.com/86x86"),
@@ -807,7 +807,7 @@ Widget getDummyUserConnectionwidget(double width) {
                       ),
                     ),
                     Container(
-                      child: Column(
+                      child: const Column(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -827,7 +827,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2),
                           SizedBox(
                             width: 131,
                             height: 34,
@@ -851,7 +851,7 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 131,
                       height: 32,
                       decoration: ShapeDecoration(
-                        color: Color(0xFF965EFF),
+                        color: const Color(0xFF965EFF),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
@@ -864,13 +864,13 @@ Widget getDummyUserConnectionwidget(double width) {
                             width: 13,
                             height: 13,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Stack(
                               children: [
-                                Positioned(
+                                const Positioned(
                                   left: 3.25,
                                   top: 1.08,
-                                  child: Container(
+                                  child: SizedBox(
                                     width: 8.82,
                                     height: 5.73,
                                     child: Stack(children: []),
@@ -882,7 +882,7 @@ Widget getDummyUserConnectionwidget(double width) {
                                   child: Container(
                                     width: 10.21,
                                     height: 6.50,
-                                    decoration: ShapeDecoration(
+                                    decoration: const ShapeDecoration(
                                       shape: OvalBorder(
                                         side: BorderSide(
                                             width: 1.18, color: Colors.white),
@@ -893,7 +893,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ],
                             ),
                           ),
-                          Text(
+                          const Text(
                             'Connect',
                             style: TextStyle(
                               color: Colors.white,
@@ -917,9 +917,9 @@ Widget getDummyUserConnectionwidget(double width) {
                   bottom: 16,
                 ),
                 decoration: ShapeDecoration(
-                  color: Color(0xFF242325),
+                  color: const Color(0xFF242325),
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Color(0xFF383739)),
+                    side: const BorderSide(width: 1, color: Color(0xFF383739)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
@@ -932,13 +932,13 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 16,
                       height: 16,
                       clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(),
-                      child: Stack(children: []),
+                      decoration: const BoxDecoration(),
+                      child: const Stack(children: []),
                     ),
                     Container(
                       width: 86,
                       height: 86,
-                      decoration: ShapeDecoration(
+                      decoration: const ShapeDecoration(
                         image: DecorationImage(
                           image:
                               NetworkImage("https://via.placeholder.com/86x86"),
@@ -948,7 +948,7 @@ Widget getDummyUserConnectionwidget(double width) {
                       ),
                     ),
                     Container(
-                      child: Column(
+                      child: const Column(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -968,7 +968,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2),
                           SizedBox(
                             width: 131,
                             height: 34,
@@ -992,7 +992,7 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 131,
                       height: 32,
                       decoration: ShapeDecoration(
-                        color: Color(0xFF965EFF),
+                        color: const Color(0xFF965EFF),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
@@ -1005,13 +1005,13 @@ Widget getDummyUserConnectionwidget(double width) {
                             width: 13,
                             height: 13,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Stack(
                               children: [
-                                Positioned(
+                                const Positioned(
                                   left: 3.25,
                                   top: 1.08,
-                                  child: Container(
+                                  child: SizedBox(
                                     width: 8.82,
                                     height: 5.73,
                                     child: Stack(children: []),
@@ -1023,7 +1023,7 @@ Widget getDummyUserConnectionwidget(double width) {
                                   child: Container(
                                     width: 10.21,
                                     height: 6.50,
-                                    decoration: ShapeDecoration(
+                                    decoration: const ShapeDecoration(
                                       shape: OvalBorder(
                                         side: BorderSide(
                                             width: 1.18, color: Colors.white),
@@ -1034,7 +1034,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ],
                             ),
                           ),
-                          Text(
+                          const Text(
                             'Connect',
                             style: TextStyle(
                               color: Colors.white,
@@ -1059,9 +1059,9 @@ Widget getDummyUserConnectionwidget(double width) {
                   bottom: 16,
                 ),
                 decoration: ShapeDecoration(
-                  color: Color(0xFF242325),
+                  color: const Color(0xFF242325),
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Color(0xFF383739)),
+                    side: const BorderSide(width: 1, color: Color(0xFF383739)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
@@ -1074,13 +1074,13 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 16,
                       height: 16,
                       clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(),
-                      child: Stack(children: []),
+                      decoration: const BoxDecoration(),
+                      child: const Stack(children: []),
                     ),
                     Container(
                       width: 86,
                       height: 86,
-                      decoration: ShapeDecoration(
+                      decoration: const ShapeDecoration(
                         image: DecorationImage(
                           image:
                               NetworkImage("https://via.placeholder.com/86x86"),
@@ -1090,7 +1090,7 @@ Widget getDummyUserConnectionwidget(double width) {
                       ),
                     ),
                     Container(
-                      child: Column(
+                      child: const Column(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -1110,7 +1110,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2),
                           SizedBox(
                             width: 131,
                             height: 34,
@@ -1134,7 +1134,7 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 131,
                       height: 32,
                       decoration: ShapeDecoration(
-                        color: Color(0xFF965EFF),
+                        color: const Color(0xFF965EFF),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
@@ -1147,13 +1147,13 @@ Widget getDummyUserConnectionwidget(double width) {
                             width: 13,
                             height: 13,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Stack(
                               children: [
-                                Positioned(
+                                const Positioned(
                                   left: 3.25,
                                   top: 1.08,
-                                  child: Container(
+                                  child: SizedBox(
                                     width: 8.82,
                                     height: 5.73,
                                     child: Stack(children: []),
@@ -1165,7 +1165,7 @@ Widget getDummyUserConnectionwidget(double width) {
                                   child: Container(
                                     width: 10.21,
                                     height: 6.50,
-                                    decoration: ShapeDecoration(
+                                    decoration: const ShapeDecoration(
                                       shape: OvalBorder(
                                         side: BorderSide(
                                             width: 1.18, color: Colors.white),
@@ -1176,7 +1176,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ],
                             ),
                           ),
-                          Text(
+                          const Text(
                             'Connect',
                             style: TextStyle(
                               color: Colors.white,
@@ -1201,9 +1201,9 @@ Widget getDummyUserConnectionwidget(double width) {
                   bottom: 16,
                 ),
                 decoration: ShapeDecoration(
-                  color: Color(0xFF242325),
+                  color: const Color(0xFF242325),
                   shape: RoundedRectangleBorder(
-                    side: BorderSide(width: 1, color: Color(0xFF383739)),
+                    side: const BorderSide(width: 1, color: Color(0xFF383739)),
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
@@ -1216,13 +1216,13 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 16,
                       height: 16,
                       clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(),
-                      child: Stack(children: []),
+                      decoration: const BoxDecoration(),
+                      child: const Stack(children: []),
                     ),
                     Container(
                       width: 86,
                       height: 86,
-                      decoration: ShapeDecoration(
+                      decoration: const ShapeDecoration(
                         image: DecorationImage(
                           image:
                               NetworkImage("https://via.placeholder.com/86x86"),
@@ -1232,7 +1232,7 @@ Widget getDummyUserConnectionwidget(double width) {
                       ),
                     ),
                     Container(
-                      child: Column(
+                      child: const Column(
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -1252,7 +1252,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2),
                           SizedBox(
                             width: 131,
                             height: 34,
@@ -1276,7 +1276,7 @@ Widget getDummyUserConnectionwidget(double width) {
                       width: 131,
                       height: 32,
                       decoration: ShapeDecoration(
-                        color: Color(0xFF965EFF),
+                        color: const Color(0xFF965EFF),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
@@ -1289,13 +1289,13 @@ Widget getDummyUserConnectionwidget(double width) {
                             width: 13,
                             height: 13,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
+                            decoration: const BoxDecoration(),
                             child: Stack(
                               children: [
-                                Positioned(
+                                const Positioned(
                                   left: 3.25,
                                   top: 1.08,
-                                  child: Container(
+                                  child: SizedBox(
                                     width: 8.82,
                                     height: 5.73,
                                     child: Stack(children: []),
@@ -1307,7 +1307,7 @@ Widget getDummyUserConnectionwidget(double width) {
                                   child: Container(
                                     width: 10.21,
                                     height: 6.50,
-                                    decoration: ShapeDecoration(
+                                    decoration: const ShapeDecoration(
                                       shape: OvalBorder(
                                         side: BorderSide(
                                             width: 1.18, color: Colors.white),
@@ -1318,7 +1318,7 @@ Widget getDummyUserConnectionwidget(double width) {
                               ],
                             ),
                           ),
-                          Text(
+                          const Text(
                             'Connect',
                             style: TextStyle(
                               color: Colors.white,

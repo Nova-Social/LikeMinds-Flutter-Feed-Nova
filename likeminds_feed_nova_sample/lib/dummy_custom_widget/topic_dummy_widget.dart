@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 Widget getTopicDummyWidet(double width) {
   return Container(
     width: width,
-    padding: EdgeInsets.all(16.0),
+    padding: const EdgeInsets.all(16.0),
     child: Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
+        const SizedBox(
           child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -34,7 +34,7 @@ Widget getTopicDummyWidet(double width) {
           clipBehavior: Clip.hardEdge,
           width: width - 32,
           height: 118,
-          decoration: BoxDecoration(),
+          decoration: const BoxDecoration(),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -44,7 +44,7 @@ Widget getTopicDummyWidet(double width) {
                 clipBehavior: Clip.hardEdge,
                 width: width - 32,
                 height: 30,
-                decoration: BoxDecoration(),
+                decoration: const BoxDecoration(),
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
@@ -53,7 +53,7 @@ Widget getTopicDummyWidet(double width) {
                       padding: const EdgeInsets.only(
                           top: 8, left: 12, right: 16, bottom: 8),
                       decoration: ShapeDecoration(
-                        color: Color(0xFF965EFF),
+                        color: const Color(0xFF965EFF),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(83),
                         ),
@@ -67,10 +67,10 @@ Widget getTopicDummyWidet(double width) {
                             width: 14,
                             height: 14,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
-                            child: Stack(children: []),
+                            decoration: const BoxDecoration(),
+                            child: const Stack(children: []),
                           ),
-                          Text(
+                          const Text(
                             'Entrepreneur ',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -91,7 +91,7 @@ Widget getTopicDummyWidet(double width) {
                       padding: const EdgeInsets.only(
                           top: 8, left: 12, right: 16, bottom: 8),
                       decoration: ShapeDecoration(
-                        color: Color(0xFF2A2A2B),
+                        color: const Color(0xFF2A2A2B),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(83),
                         ),
@@ -105,10 +105,10 @@ Widget getTopicDummyWidet(double width) {
                             width: 14,
                             height: 14,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
-                            child: Stack(children: []),
+                            decoration: const BoxDecoration(),
+                            child: const Stack(children: []),
                           ),
-                          Text(
+                          const Text(
                             'Founder',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -129,7 +129,7 @@ Widget getTopicDummyWidet(double width) {
                       padding: const EdgeInsets.only(
                           top: 8, left: 12, right: 16, bottom: 8),
                       decoration: ShapeDecoration(
-                        color: Color(0xFF2A2A2B),
+                        color: const Color(0xFF2A2A2B),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(83),
                         ),
@@ -143,10 +143,10 @@ Widget getTopicDummyWidet(double width) {
                             width: 14,
                             height: 14,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
-                            child: Stack(children: []),
+                            decoration: const BoxDecoration(),
+                            child: const Stack(children: []),
                           ),
-                          Text(
+                          const Text(
                             'ChatGPT',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -167,7 +167,7 @@ Widget getTopicDummyWidet(double width) {
                       padding: const EdgeInsets.only(
                           top: 8, left: 12, right: 16, bottom: 8),
                       decoration: ShapeDecoration(
-                        color: Color(0xFF2A2A2B),
+                        color: const Color(0xFF2A2A2B),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(83),
                         ),
@@ -181,10 +181,10 @@ Widget getTopicDummyWidet(double width) {
                             width: 14,
                             height: 14,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
-                            child: Stack(children: []),
+                            decoration: const BoxDecoration(),
+                            child: const Stack(children: []),
                           ),
-                          Text(
+                          const Text(
                             'ChatGPT',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -207,7 +207,7 @@ Widget getTopicDummyWidet(double width) {
                 width: width - 32,
                 height: 30,
                 clipBehavior: Clip.hardEdge,
-                decoration: BoxDecoration(),
+                decoration: const BoxDecoration(),
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
@@ -216,7 +216,7 @@ Widget getTopicDummyWidet(double width) {
                       padding: const EdgeInsets.only(
                           top: 8, left: 12, right: 16, bottom: 8),
                       decoration: ShapeDecoration(
-                        color: Color(0xFF2A2A2B),
+                        color: const Color(0xFF2A2A2B),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(83),
                         ),
@@ -230,10 +230,10 @@ Widget getTopicDummyWidet(double width) {
                             width: 14,
                             height: 14,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
-                            child: Stack(children: []),
+                            decoration: const BoxDecoration(),
+                            child: const Stack(children: []),
                           ),
-                          Text(
+                          const Text(
                             'Movies',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -254,7 +254,7 @@ Widget getTopicDummyWidet(double width) {
                       padding: const EdgeInsets.only(
                           top: 8, left: 12, right: 16, bottom: 8),
                       decoration: ShapeDecoration(
-                        color: Color(0xFF2A2A2B),
+                        color: const Color(0xFF2A2A2B),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(83),
                         ),
@@ -268,10 +268,10 @@ Widget getTopicDummyWidet(double width) {
                             width: 14,
                             height: 14,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
-                            child: Stack(children: []),
+                            decoration: const BoxDecoration(),
+                            child: const Stack(children: []),
                           ),
-                          Text(
+                          const Text(
                             'UI/UX Design',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -292,7 +292,7 @@ Widget getTopicDummyWidet(double width) {
                       padding: const EdgeInsets.only(
                           top: 8, left: 12, right: 16, bottom: 8),
                       decoration: ShapeDecoration(
-                        color: Color(0xFF2A2A2B),
+                        color: const Color(0xFF2A2A2B),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(83),
                         ),
@@ -306,10 +306,10 @@ Widget getTopicDummyWidet(double width) {
                             width: 14,
                             height: 14,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
-                            child: Stack(children: []),
+                            decoration: const BoxDecoration(),
+                            child: const Stack(children: []),
                           ),
-                          Text(
+                          const Text(
                             'AI Tools',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -330,7 +330,7 @@ Widget getTopicDummyWidet(double width) {
                       padding: const EdgeInsets.only(
                           top: 8, left: 12, right: 16, bottom: 8),
                       decoration: ShapeDecoration(
-                        color: Color(0xFF2A2A2B),
+                        color: const Color(0xFF2A2A2B),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(83),
                         ),
@@ -344,10 +344,10 @@ Widget getTopicDummyWidet(double width) {
                             width: 14,
                             height: 14,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
-                            child: Stack(children: []),
+                            decoration: const BoxDecoration(),
+                            child: const Stack(children: []),
                           ),
-                          Text(
+                          const Text(
                             'GenZ',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -368,7 +368,7 @@ Widget getTopicDummyWidet(double width) {
                       padding: const EdgeInsets.only(
                           top: 8, left: 12, right: 16, bottom: 8),
                       decoration: ShapeDecoration(
-                        color: Color(0xFF2A2A2B),
+                        color: const Color(0xFF2A2A2B),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(83),
                         ),
@@ -382,10 +382,10 @@ Widget getTopicDummyWidet(double width) {
                             width: 14,
                             height: 14,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
-                            child: Stack(children: []),
+                            decoration: const BoxDecoration(),
+                            child: const Stack(children: []),
                           ),
-                          Text(
+                          const Text(
                             'Founder',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -408,7 +408,7 @@ Widget getTopicDummyWidet(double width) {
                 width: width - 32,
                 height: 30,
                 clipBehavior: Clip.hardEdge,
-                decoration: BoxDecoration(),
+                decoration: const BoxDecoration(),
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
@@ -417,7 +417,7 @@ Widget getTopicDummyWidet(double width) {
                       padding: const EdgeInsets.only(
                           top: 8, left: 12, right: 16, bottom: 8),
                       decoration: ShapeDecoration(
-                        color: Color(0xFF2A2A2B),
+                        color: const Color(0xFF2A2A2B),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(83),
                         ),
@@ -431,10 +431,10 @@ Widget getTopicDummyWidet(double width) {
                             width: 14,
                             height: 14,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
-                            child: Stack(children: []),
+                            decoration: const BoxDecoration(),
+                            child: const Stack(children: []),
                           ),
-                          Text(
+                          const Text(
                             'Coder',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -455,7 +455,7 @@ Widget getTopicDummyWidet(double width) {
                       padding: const EdgeInsets.only(
                           top: 8, left: 12, right: 16, bottom: 8),
                       decoration: ShapeDecoration(
-                        color: Color(0xFF2A2A2B),
+                        color: const Color(0xFF2A2A2B),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(83),
                         ),
@@ -469,10 +469,10 @@ Widget getTopicDummyWidet(double width) {
                             width: 14,
                             height: 14,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
-                            child: Stack(children: []),
+                            decoration: const BoxDecoration(),
+                            child: const Stack(children: []),
                           ),
-                          Text(
+                          const Text(
                             'Hip Hop',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -493,7 +493,7 @@ Widget getTopicDummyWidet(double width) {
                       padding: const EdgeInsets.only(
                           top: 8, left: 12, right: 16, bottom: 8),
                       decoration: ShapeDecoration(
-                        color: Color(0xFF2A2A2B),
+                        color: const Color(0xFF2A2A2B),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(83),
                         ),
@@ -507,10 +507,10 @@ Widget getTopicDummyWidet(double width) {
                             width: 14,
                             height: 14,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
-                            child: Stack(children: []),
+                            decoration: const BoxDecoration(),
+                            child: const Stack(children: []),
                           ),
-                          Text(
+                          const Text(
                             'Movies',
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -531,7 +531,7 @@ Widget getTopicDummyWidet(double width) {
                       padding: const EdgeInsets.only(
                           top: 8, left: 12, right: 16, bottom: 8),
                       decoration: ShapeDecoration(
-                        color: Color(0xFF2A2A2B),
+                        color: const Color(0xFF2A2A2B),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(83),
                         ),
@@ -545,10 +545,10 @@ Widget getTopicDummyWidet(double width) {
                             width: 14,
                             height: 14,
                             clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(),
-                            child: Stack(children: []),
+                            decoration: const BoxDecoration(),
+                            child: const Stack(children: []),
                           ),
-                          Text(
+                          const Text(
                             'Founder',
                             textAlign: TextAlign.center,
                             style: TextStyle(
