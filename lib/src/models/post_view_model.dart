@@ -77,3 +77,22 @@ class PostViewModel {
     );
   }
 }
+
+PostViewModel getEmptyPostViewModel() {
+  return PostViewModel(
+      id: '-9999',
+      text: 'Custom Widget',
+      attachments: null,
+      communityId: -9999,
+      isPinned: false,
+      userId: '-9999',
+      likeCount: 0,
+      isSaved: false,
+      topics: [],
+      menuItems: [],
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      isLiked: false,
+      commentCount: 0,
+      isEdited: false);
+}

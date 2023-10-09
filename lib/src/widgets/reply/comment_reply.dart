@@ -180,7 +180,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                       builder: (context) => ReportScreen(
                                         entityCreatorId: reply!.userId,
                                         entityId: reply!.id,
-                                        entityType: commentReportEntityType,
+                                        entityType: replyReportEntityType,
                                       ),
                                     ),
                                   );
