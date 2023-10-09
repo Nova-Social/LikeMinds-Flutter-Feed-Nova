@@ -35,9 +35,11 @@ final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
 class LMFeed extends StatefulWidget {
   final String? userId;
   final String? userName;
+  final String? imageUrl;
   final String apiKey;
   final Function(BuildContext context)? openChatCallback;
   final LMSDKCallback? callback;
+  final Map<int, Widget>? customWidgets;
 
   /// INIT - Get the LMFeed instance and pass the credentials (if any)
   /// to the instance. This will be used to initialize the app.
@@ -46,15 +48,19 @@ class LMFeed extends StatefulWidget {
   static LMFeed instance({
     String? userId,
     String? userName,
+    String? imageUrl,
     LMSDKCallback? callback,
     Function(BuildContext context)? openChatCallback,
     required String apiKey,
+    Map<int, Widget>? customWidgets,
   }) {
     return LMFeed._(
       userId: userId,
       userName: userName,
       callback: callback,
+      imageUrl: imageUrl,
       apiKey: apiKey,
+      customWidgets: customWidgets,
       openChatCallback: openChatCallback,
     );
   }
@@ -73,14 +79,16 @@ class LMFeed extends StatefulWidget {
     locator<LikeMindsService>().logout(LogoutRequestBuilder().build());
   }
 
-  const LMFeed._(
-      {Key? key,
-      this.userId,
-      this.userName,
-      required this.callback,
-      required this.apiKey,
-      this.openChatCallback})
-      : super(key: key);
+  const LMFeed._({
+    Key? key,
+    this.userId,
+    this.userName,
+    this.imageUrl,
+    required this.callback,
+    required this.apiKey,
+    this.customWidgets,
+    this.openChatCallback,
+  }) : super(key: key);
 
   @override
   _LMFeedState createState() => _LMFeedState();
@@ -90,9 +98,11 @@ class _LMFeedState extends State<LMFeed> {
   User? user;
   late final String userId;
   late final String userName;
+  String? imageUrl;
   late final bool isProd;
   late final NetworkConnectivity networkConnectivity;
   ValueNotifier<bool> rebuildOnConnectivityChange = ValueNotifier<bool>(false);
+  Map<int, Widget>? customWidgets;
 
   @override
   void initState() {
@@ -107,6 +117,8 @@ class _LMFeedState extends State<LMFeed> {
             : CredsDev.botId
         : widget.userId!;
     userName = widget.userName!.isEmpty ? "Test username" : widget.userName!;
+    imageUrl = widget.imageUrl;
+    customWidgets = widget.customWidgets;
     firebase();
   }
 
@@ -168,7 +180,8 @@ class _LMFeedState extends State<LMFeed> {
               future: locator<LikeMindsService>().initiateUser(
                 (InitiateUserRequestBuilder()
                       ..userId(userId)
-                      ..userName(userName))
+                      ..userName(userName)
+                      ..imageUrl(imageUrl ?? ''))
                     .build(),
               ),
               initialData: null,
@@ -195,8 +208,10 @@ class _LMFeedState extends State<LMFeed> {
                           builder:
                               (BuildContext context, AsyncSnapshot snapshot) {
                             if (snapshot.hasData) {
+                              //TODO: Add Custom widget here
                               return UniversalFeedScreen(
                                 openChatCallback: widget.openChatCallback,
+                                customWidgets: customWidgets,
                               );
                             }
 

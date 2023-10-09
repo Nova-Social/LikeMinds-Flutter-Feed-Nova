@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
+import 'package:likeminds_feed_nova_sample/dummy_custom_widget/custom_widget.dart';
 import 'package:likeminds_feed_nova_sample/likeminds_callback.dart';
 import 'package:likeminds_feed_nova_sample/network_handling.dart';
 import 'package:flutter/material.dart';
@@ -118,6 +119,7 @@ class _CredScreenState extends State<CredScreen> {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    Size screenSize = MediaQuery.of(context).size;
     // return lmFeed;
     userId = null; // UserLocalPreference.instance.fetchUserId();
     // If the local prefs have user id stored
@@ -125,11 +127,11 @@ class _CredScreenState extends State<CredScreen> {
     // otherwise show the cred screen for login
     if (userId != null && userId!.isNotEmpty) {
       return lmFeed = LMFeed.instance(
-        userId: userId,
-        userName: 'Test User',
-        callback: LikeMindsCallback(),
-        apiKey: "",
-      );
+          userId: userId,
+          userName: 'Test User',
+          callback: LikeMindsCallback(),
+          apiKey: "",
+          customWidgets: customWidgets(screenSize));
     } else {
       return Scaffold(
         backgroundColor: theme.colorScheme.background,
@@ -182,11 +184,11 @@ class _CredScreenState extends State<CredScreen> {
               GestureDetector(
                 onTap: () {
                   lmFeed = LMFeed.instance(
-                    userId: _userIdController.text,
-                    userName: _usernameController.text,
-                    callback: LikeMindsCallback(),
-                    apiKey: "",
-                  );
+                      userId: _userIdController.text,
+                      userName: _usernameController.text,
+                      callback: LikeMindsCallback(),
+                      apiKey: "",
+                      customWidgets: customWidgets(screenSize));
 
                   // if (_userIdController.text.isNotEmpty) {
                   //   UserLocalPreference.instance

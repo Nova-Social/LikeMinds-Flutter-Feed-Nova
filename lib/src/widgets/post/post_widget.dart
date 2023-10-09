@@ -163,7 +163,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                         return LMPostHeader(
                             user: widget.user,
                             isFeed: widget.isFeed,
-                            showReportButton: true,
+                            removeItemIds: const {},
                             showCustomTitle: false,
                             profilePicture: LMProfilePicture(
                               size: 52,
