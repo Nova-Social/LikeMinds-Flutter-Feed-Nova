@@ -166,7 +166,30 @@ class _ReportScreenState extends State<ReportScreen> {
                           } else {
                             return const SizedBox();
                           }
-                        })
+                        }),
+                    kVerticalPaddingLarge,
+                    deleteReason != null &&
+                            (deleteReason!.name.toLowerCase() == 'others' ||
+                                deleteReason!.name.toLowerCase() == 'other')
+                        ? Container(
+                            margin:
+                                const EdgeInsets.symmetric(horizontal: 24.0),
+                            child: TextField(
+                              cursorColor: Colors.white,
+                              style: const TextStyle(color: Colors.white),
+                              controller: reportReasonController,
+                              decoration: InputDecoration(
+                                fillColor: Colors.white,
+                                focusColor: Colors.white,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                labelText: 'Reason',
+                                labelStyle: theme.textTheme.labelMedium,
+                              ),
+                            ),
+                          )
+                        : const SizedBox()
                   ],
                 ),
               ),
@@ -209,6 +232,9 @@ class _ReportScreenState extends State<ReportScreen> {
                             .postReport(postReportRequest);
                     if (!response.success) {
                       toast(response.errorMessage ?? 'An error occured');
+                    } else {
+                      toast(
+                          '${widget.entityType == 5 ? 'Post' : widget.entityType == 6 ? 'Comment' : 'Reply'} reported');
                     }
                   } else {
                     toast('Please select a reason');
