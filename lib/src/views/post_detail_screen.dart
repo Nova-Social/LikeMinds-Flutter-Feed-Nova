@@ -23,6 +23,7 @@ import 'package:likeminds_feed_nova_fl/src/utils/tagging/tagging_textfield_ta.da
 import 'package:likeminds_feed_nova_fl/src/views/likes/likes_horizontal_view.dart';
 import 'package:likeminds_feed_nova_fl/src/views/likes/likes_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post/edit_post_screen.dart';
+import 'package:likeminds_feed_nova_fl/src/views/report_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/delete_dialog.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/post/post_widget.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/reply/comment_reply.dart';
@@ -80,7 +81,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     _addCommentBloc.close();
     _addCommentReplyBloc.close();
     _pagingController.dispose();
-    _commentController?.dispose();
     rebuildButton.dispose();
     rebuildPostWidget.dispose();
     rebuildReplyWidget.dispose();
@@ -983,6 +983,19 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                   ),
                                                 ),
                                               );
+                                            } else if (id == postReportId) {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ReportScreen(
+                                                    entityCreatorId:
+                                                        postData!.userId,
+                                                    entityId: postData!.id,
+                                                    entityType:
+                                                        postReportEntityType,
+                                                  ),
+                                                ),
+                                              );
                                             }
                                           },
                                           isFeed: false,
@@ -1117,10 +1130,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                   StatefulBuilder(builder:
                                                       (context,
                                                           setCommentState) {
-                                                    item.menuItems.removeWhere(
-                                                        (element) =>
-                                                            element.id ==
-                                                            commentReportId);
                                                     return LMCommentTile(
                                                       key: ValueKey(item.id),
                                                       width: screenSize.width,
@@ -1141,173 +1150,170 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                         horizontal: 12.0,
                                                         vertical: 6.0,
                                                       ),
-                                                      menu: item.userId ==
-                                                                  UserLocalPreference
-                                                                      .instance
-                                                                      .fetchUserData()
-                                                                      .userUniqueId ||
-                                                              UserLocalPreference
-                                                                  .instance
-                                                                  .fetchMemberState()
-                                                          ? LMIconButton(
-                                                              icon: LMIcon(
-                                                                type: LMIconType
-                                                                    .icon,
-                                                                icon: Icons
-                                                                    .more_vert,
-                                                                color: theme
-                                                                    .colorScheme
-                                                                    .onPrimary,
-                                                              ),
-                                                              onTap:
-                                                                  (bool value) {
-                                                                showModalBottomSheet(
-                                                                  context:
-                                                                      context,
-                                                                  elevation: 5,
-                                                                  isDismissible:
-                                                                      true,
-                                                                  useRootNavigator:
-                                                                      true,
-                                                                  clipBehavior:
-                                                                      Clip.hardEdge,
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .transparent,
-                                                                  enableDrag:
-                                                                      false,
-                                                                  shape:
-                                                                      const RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              32),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              32),
-                                                                    ),
+                                                      menu:
+                                                          item.menuItems
+                                                                  .isNotEmpty
+                                                              ? LMIconButton(
+                                                                  icon: LMIcon(
+                                                                    type: LMIconType
+                                                                        .icon,
+                                                                    icon: Icons
+                                                                        .more_vert,
+                                                                    color: theme
+                                                                        .colorScheme
+                                                                        .onPrimary,
                                                                   ),
-                                                                  builder:
-                                                                      (context) =>
-                                                                          LMBottomSheet(
-                                                                    height: max(
-                                                                        170,
-                                                                        screenSize.height *
-                                                                            0.25),
-                                                                    margin: const EdgeInsets
-                                                                        .only(
-                                                                        top:
-                                                                            30),
-                                                                    borderRadius:
-                                                                        const BorderRadius
-                                                                            .only(
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              32),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              32),
-                                                                    ),
-                                                                    dragBar:
-                                                                        Container(
-                                                                      width: 96,
-                                                                      height: 6,
-                                                                      decoration:
-                                                                          ShapeDecoration(
-                                                                        color: theme
-                                                                            .colorScheme
-                                                                            .onSurface,
-                                                                        shape:
-                                                                            RoundedRectangleBorder(
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(99),
+                                                                  onTap: (bool
+                                                                      value) {
+                                                                    showModalBottomSheet(
+                                                                      context:
+                                                                          context,
+                                                                      elevation:
+                                                                          5,
+                                                                      isDismissible:
+                                                                          true,
+                                                                      useRootNavigator:
+                                                                          true,
+                                                                      clipBehavior:
+                                                                          Clip.hardEdge,
+                                                                      backgroundColor:
+                                                                          Colors
+                                                                              .transparent,
+                                                                      enableDrag:
+                                                                          false,
+                                                                      shape:
+                                                                          const RoundedRectangleBorder(
+                                                                        borderRadius:
+                                                                            BorderRadius.only(
+                                                                          topLeft:
+                                                                              Radius.circular(32),
+                                                                          topRight:
+                                                                              Radius.circular(32),
                                                                         ),
                                                                       ),
-                                                                    ),
-                                                                    backgroundColor: theme
-                                                                        .colorScheme
-                                                                        .surface,
-                                                                    children: item
-                                                                        .menuItems
-                                                                        .map(
-                                                                          (e) =>
-                                                                              GestureDetector(
-                                                                            onTap:
-                                                                                () {
-                                                                              Navigator.of(context).pop();
-                                                                              if (e.id == 6) {
-                                                                                deselectCommentToEdit();
-                                                                                deselectCommentToReply();
-                                                                                // Delete post
-                                                                                showDialog(
-                                                                                    context: context,
-                                                                                    builder: (childContext) => deleteConfirmationDialog(
-                                                                                          childContext,
-                                                                                          title: 'Delete Comment',
-                                                                                          userId: item.userId,
-                                                                                          content: 'Are you sure you want to delete this post. This action can not be reversed.',
-                                                                                          action: (String reason) async {
-                                                                                            Navigator.of(childContext).pop();
-                                                                                            //Implement delete post analytics tracking
-                                                                                            LMAnalytics.get().track(
-                                                                                              AnalyticsKeys.commentDeleted,
-                                                                                              {
-                                                                                                "post_id": widget.postId,
-                                                                                                "comment_id": item.id,
-                                                                                              },
-                                                                                            );
-                                                                                            if (postDetailResponse != null) {
-                                                                                              postDetailResponse!.users?.putIfAbsent(currentUser.userUniqueId, () => currentUser);
-                                                                                            }
-                                                                                            _addCommentReplyBloc.add(DeleteComment((DeleteCommentRequestBuilder()
-                                                                                                  ..postId(widget.postId)
-                                                                                                  ..commentId(item.id)
-                                                                                                  ..reason(reason.isEmpty ? "Reason for deletion" : reason))
-                                                                                                .build()));
-                                                                                          },
-                                                                                          actionText: 'Yes, delete',
-                                                                                        ));
-                                                                              } else if (e.id == 8) {
-                                                                                debugPrint('Editing functionality');
-                                                                                _addCommentReplyBloc.add(EditCommentCancel());
-                                                                                _addCommentReplyBloc.add(
-                                                                                  EditingComment(
-                                                                                    commentId: item.id,
-                                                                                    text: item.text,
-                                                                                  ),
-                                                                                );
-                                                                              }
-                                                                            },
-                                                                            child:
-                                                                                Container(
-                                                                              color: Colors.transparent,
-                                                                              padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16.0),
-                                                                              margin: const EdgeInsets.only(bottom: 24.09),
-                                                                              width: screenSize.width - 32.0,
-                                                                              child: Row(children: [
-                                                                                getIconFromDropDownItemId(
-                                                                                  e.id,
-                                                                                  20,
-                                                                                  theme.colorScheme.onPrimary,
-                                                                                ),
-                                                                                kHorizontalPaddingLarge,
-                                                                                LMTextView(
-                                                                                  text: e.title,
-                                                                                  textStyle: theme.textTheme.headlineLarge!.copyWith(color: e.id == commentDeleteId ? theme.colorScheme.error : null),
-                                                                                ),
-                                                                              ]),
+                                                                      builder:
+                                                                          (context) =>
+                                                                              LMBottomSheet(
+                                                                        height: max(
+                                                                            170,
+                                                                            screenSize.height *
+                                                                                0.25),
+                                                                        margin: const EdgeInsets
+                                                                            .only(
+                                                                            top:
+                                                                                30),
+                                                                        borderRadius:
+                                                                            const BorderRadius.only(
+                                                                          topLeft:
+                                                                              Radius.circular(32),
+                                                                          topRight:
+                                                                              Radius.circular(32),
+                                                                        ),
+                                                                        dragBar:
+                                                                            Container(
+                                                                          width:
+                                                                              96,
+                                                                          height:
+                                                                              6,
+                                                                          decoration:
+                                                                              ShapeDecoration(
+                                                                            color:
+                                                                                theme.colorScheme.onSurface,
+                                                                            shape:
+                                                                                RoundedRectangleBorder(
+                                                                              borderRadius: BorderRadius.circular(99),
                                                                             ),
                                                                           ),
-                                                                        )
-                                                                        .toList(),
-                                                                  ),
-                                                                );
-                                                              },
-                                                            )
-                                                          : const SizedBox
-                                                              .shrink(),
+                                                                        ),
+                                                                        backgroundColor: theme
+                                                                            .colorScheme
+                                                                            .surface,
+                                                                        children: item
+                                                                            .menuItems
+                                                                            .map(
+                                                                              (e) => GestureDetector(
+                                                                                onTap: () {
+                                                                                  Navigator.of(context).pop();
+                                                                                  if (e.id == commentDeleteId) {
+                                                                                    deselectCommentToEdit();
+                                                                                    deselectCommentToReply();
+                                                                                    // Delete post
+                                                                                    showDialog(
+                                                                                        context: context,
+                                                                                        builder: (childContext) => deleteConfirmationDialog(
+                                                                                              childContext,
+                                                                                              title: 'Delete Comment',
+                                                                                              userId: item.userId,
+                                                                                              content: 'Are you sure you want to delete this post. This action can not be reversed.',
+                                                                                              action: (String reason) async {
+                                                                                                Navigator.of(childContext).pop();
+                                                                                                //Implement delete post analytics tracking
+                                                                                                LMAnalytics.get().track(
+                                                                                                  AnalyticsKeys.commentDeleted,
+                                                                                                  {
+                                                                                                    "post_id": widget.postId,
+                                                                                                    "comment_id": item.id,
+                                                                                                  },
+                                                                                                );
+                                                                                                if (postDetailResponse != null) {
+                                                                                                  postDetailResponse!.users?.putIfAbsent(currentUser.userUniqueId, () => currentUser);
+                                                                                                }
+                                                                                                _addCommentReplyBloc.add(DeleteComment((DeleteCommentRequestBuilder()
+                                                                                                      ..postId(widget.postId)
+                                                                                                      ..commentId(item.id)
+                                                                                                      ..reason(reason.isEmpty ? "Reason for deletion" : reason))
+                                                                                                    .build()));
+                                                                                              },
+                                                                                              actionText: 'Yes, delete',
+                                                                                            ));
+                                                                                  } else if (e.id == commentEditId) {
+                                                                                    debugPrint('Editing functionality');
+                                                                                    _addCommentReplyBloc.add(EditCommentCancel());
+                                                                                    _addCommentReplyBloc.add(
+                                                                                      EditingComment(
+                                                                                        commentId: item.id,
+                                                                                        text: item.text,
+                                                                                      ),
+                                                                                    );
+                                                                                  } else if (e.id == commentReportId) {
+                                                                                    Navigator.of(context).push(
+                                                                                      MaterialPageRoute(
+                                                                                        builder: (context) => ReportScreen(
+                                                                                          entityCreatorId: item.userId,
+                                                                                          entityId: item.id,
+                                                                                          entityType: commentReportEntityType,
+                                                                                        ),
+                                                                                      ),
+                                                                                    );
+                                                                                  }
+                                                                                },
+                                                                                child: Container(
+                                                                                  color: Colors.transparent,
+                                                                                  padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16.0),
+                                                                                  margin: const EdgeInsets.only(bottom: 24.09),
+                                                                                  width: screenSize.width - 32.0,
+                                                                                  child: Row(children: [
+                                                                                    getIconFromDropDownItemId(
+                                                                                      e.id,
+                                                                                      20,
+                                                                                      theme.colorScheme.onPrimary,
+                                                                                    ),
+                                                                                    kHorizontalPaddingLarge,
+                                                                                    LMTextView(
+                                                                                      text: e.title,
+                                                                                      textStyle: theme.textTheme.headlineLarge!.copyWith(color: e.id == commentDeleteId ? theme.colorScheme.error : null),
+                                                                                    ),
+                                                                                  ]),
+                                                                                ),
+                                                                              ),
+                                                                            )
+                                                                            .toList(),
+                                                                      ),
+                                                                    );
+                                                                  },
+                                                                )
+                                                              : const SizedBox
+                                                                  .shrink(),
                                                       onTagTap:
                                                           (String userId) {
                                                         locator<LikeMindsService>()

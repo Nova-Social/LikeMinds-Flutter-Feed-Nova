@@ -160,6 +160,12 @@ class LikeMindsService implements ILikeMindsService {
   }
 
   @override
+  Future<PostReportResponse> postReport(
+      PostReportRequest postReportRequest) async {
+    return await _sdkApplication.postReport(postReportRequest);
+  }
+
+  @override
   Future<AddCommentResponse> addComment(
       AddCommentRequest addCommentRequest) async {
     return await _sdkApplication.addComment(addCommentRequest);
