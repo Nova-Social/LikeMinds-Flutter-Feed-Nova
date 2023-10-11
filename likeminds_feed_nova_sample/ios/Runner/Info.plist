@@ -60,7 +60,7 @@
 			<string>com.likeminds.flutterfeed.ios</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>feedsx</string>
+				<string>feednova</string>
 			</array>
 		</dict>
 	</array>

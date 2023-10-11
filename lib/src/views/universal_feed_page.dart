@@ -13,6 +13,7 @@ import 'package:likeminds_feed_nova_fl/src/blocs/new_post/new_post_bloc.dart';
 import 'package:likeminds_feed_nova_fl/src/blocs/simple_bloc_observer.dart';
 import 'package:likeminds_feed_nova_fl/src/blocs/universal_feed/universal_feed_bloc.dart';
 import 'package:likeminds_feed_nova_fl/src/models/post_view_model.dart';
+import 'package:likeminds_feed_nova_fl/src/services/bloc_service.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/ui_constants.dart';
@@ -630,7 +631,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
 
   @override
   Widget build(BuildContext context) {
-    NewPostBloc newPostBloc = BlocProvider.of<NewPostBloc>(context);
+    NewPostBloc newPostBloc = locator<BlocService>().newPostBlocProvider;
     ThemeData theme = Theme.of(context);
     return Scaffold(
       backgroundColor: theme.colorScheme.onBackground,

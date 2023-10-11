@@ -49,6 +49,7 @@ abstract class ILikeMindsService {
   Future<MarkReadNotificationResponse> markReadNotification(
       MarkReadNotificationRequest request);
   Future<GetDeleteReasonResponse> getReportTags(GetDeleteReasonRequest request);
+  Future<PostReportResponse> postReport(PostReportRequest postReportRequest);
   Future<GetTopicsResponse> getTopics(GetTopicsRequest request);
   Future<GetCommunityConfigurationsResponse> getCommunityConfigurations();
   void routeToProfile(String userId);

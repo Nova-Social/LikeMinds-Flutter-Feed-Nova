@@ -1,16 +1,17 @@
+import 'package:flutter/material.dart';
 import 'package:likeminds_feed/likeminds_feed.dart';
 import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
+import 'package:likeminds_feed_nova_fl/src/services/navigation_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/credentials/credentials.dart';
+import 'package:likeminds_feed_nova_fl/src/views/post_detail_screen.dart';
 import 'package:share_plus/share_plus.dart';
 part 'deep_link_request.dart';
 part 'deep_link_response.dart';
 
 class SharePost {
-  static String userId = prodFlag ? CredsProd.botId : CredsDev.botId;
-  static String apiKey = prodFlag ? CredsProd.apiKey : CredsDev.apiKey;
   // TODO: Add domain to your application
-  String domain = 'feedss://www.feedss.com';
+  String domain = 'feednova://www.feednova.com';
   // fetches the domain given by client at time of initialization of Feed
 
   // below function creates a link from domain and post id
@@ -41,26 +42,25 @@ class SharePost {
     }
   }
 
-  Future<DeepLinkResponse> handlePostDeepLink(DeepLinkRequest request) async {
+  Future<DeepLinkResponse> handlePostDeepLink(DeepLinkRequest request, BuildContext context) async {
     List secondPathSegment = request.link.split('post_id=');
     if (secondPathSegment.length > 1 && secondPathSegment[1] != null) {
       String postId = secondPathSegment[1];
       setupLMFeed(request.callback, request.apiKey);
-      await locator<LikeMindsService>()
-          .initiateUser((InitiateUserRequestBuilder()
-                ..apiKey(request.apiKey)
-                ..userId(request.userUniqueId)
-                ..userName(request.userName))
-              .build());
+      await locator<LikeMindsService>().initiateUser((InitiateUserRequestBuilder()
+            ..apiKey(request.apiKey)
+            ..userId(request.userUniqueId)
+            ..userName(request.userName))
+          .build());
 
-      // locator<NavigationService>().navigateTo(
-      //   AllCommentsScreen.route,
-      //   arguments: AllCommentsScreenArguments(
-      //     postId: postId,
-      //     feedRoomId: request.feedRoomId,
-      //     fromComment: false,
-      //   ),
-      // );
+      locator<NavigationService>().navigatorKey.currentState!.push(
+            MaterialPageRoute(
+              builder: (context) => PostDetailScreen(
+                postId: postId,
+              ),
+            ),
+          );
+
       return DeepLinkResponse(
         success: true,
         postId: postId,
@@ -73,14 +73,13 @@ class SharePost {
     }
   }
 
-  Future<DeepLinkResponse> parseDeepLink(DeepLinkRequest request) async {
+  Future<DeepLinkResponse> parseDeepLink(DeepLinkRequest request, BuildContext context) async {
     if (Uri.parse(request.link).isAbsolute) {
       final firstPathSegment = getFirstPathSegment(request.link);
       if (firstPathSegment == "post") {
-        return handlePostDeepLink(request);
+        return handlePostDeepLink(request, context);
       }
-      return DeepLinkResponse(
-          success: false, errorMessage: 'URI not supported');
+      return DeepLinkResponse(success: false, errorMessage: 'URI not supported');
     } else {
       return DeepLinkResponse(
         success: false,

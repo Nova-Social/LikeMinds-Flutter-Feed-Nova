@@ -1,11 +1,15 @@
 import 'dart:async';
 
 import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
+import 'package:likeminds_feed_nova_sample/credentials/credentials.dart';
 import 'package:likeminds_feed_nova_sample/dummy_custom_widget/custom_widget.dart';
 import 'package:likeminds_feed_nova_sample/likeminds_callback.dart';
+import 'package:likeminds_feed_nova_sample/main.dart';
 import 'package:likeminds_feed_nova_sample/network_handling.dart';
 import 'package:flutter/material.dart';
+import 'package:likeminds_feed_nova_sample/user_local_preference.dart';
 import 'package:overlay_support/overlay_support.dart';
+import 'package:uni_links/uni_links.dart';
 
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -51,10 +55,9 @@ class _CredScreenState extends State<CredScreen> {
     super.initState();
     NetworkConnectivity networkConnectivity = NetworkConnectivity.instance;
     networkConnectivity.initialise();
-    // userId = UserLocalPreference.instance.fetchUserId();
-    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-    //   initUniLinks(context);
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      initUniLinks(context);
+    });
   }
 
   @override
@@ -65,63 +68,67 @@ class _CredScreenState extends State<CredScreen> {
     super.dispose();
   }
 
-  // Future initUniLinks(BuildContext context) async {
-  //   if (!initialURILinkHandled) {
-  //     initialURILinkHandled = true;
-  //     // Get the initial deep link if the app was launched with one
-  //     final initialLink = await getInitialLink();
+  Future initUniLinks(BuildContext context) async {
+    if (!initialURILinkHandled) {
+      initialURILinkHandled = true;
+      // Get the initial deep link if the app was launched with one
+      final initialLink = await getInitialLink();
 
-  //     // Handle the deep link
-  //     if (initialLink != null) {
-  //       // You can extract any parameters from the initialLink object here
-  //       // and use them to navigate to a specific screen in your app
-  //       debugPrint('Received initial deep link: $initialLink');
+      // Handle the deep link
+      if (initialLink != null) {
+        // You can extract any parameters from the initialLink object here
+        // and use them to navigate to a specific screen in your app
+        debugPrint('Received initial deep link: $initialLink');
 
-  //       // TODO: add api key to the DeepLinkRequest
-  //       // TODO: add user id and user name of logged in user
-  //       SharePost().parseDeepLink((DeepLinkRequestBuilder()
-  //             ..apiKey(SharePost.apiKey)
-  //             ..callback(LikeMindsCallback())
-  //             ..feedRoomId(debug ? 83301 : 2238799)
-  //             ..isGuest(false)
-  //             ..link(initialLink)
-  //             ..userName("Test User")
-  //             ..userUniqueId(userId ?? SharePost.userId))
-  //           .build());
-  //     }
+        // TODO: add api key to the DeepLinkRequest
+        // TODO: add user id and user name of logged in user
+        SharePost().parseDeepLink(
+            (DeepLinkRequestBuilder()
+                  ..apiKey(prodFlag ? CredsProd.apiKey : CredsDev.apiKey)
+                  ..callback(LikeMindsCallback())
+                  ..feedRoomId(debug ? 83301 : 2238799)
+                  ..isGuest(false)
+                  ..link(initialLink)
+                  ..userName("Test User")
+                  ..userUniqueId(userId ?? 'Test User Id'))
+                .build(),
+            context);
+      }
 
-  //     // Subscribe to link changes
-  //     _streamSubscription = linkStream.listen((String? link) async {
-  //       if (link != null) {
-  //         // Handle the deep link
-  //         // You can extract any parameters from the uri object here
-  //         // and use them to navigate to a specific screen in your app
-  //         debugPrint('Received deep link: $link');
-  //         // TODO: add api key to the DeepLinkRequest
-  //         // TODO: add user id and user name of logged in user
-  //         SharePost().parseDeepLink((DeepLinkRequestBuilder()
-  //               ..apiKey(SharePost.apiKey)
-  //               ..isGuest(false)
-  //               ..callback(LikeMindsCallback())
-  //               ..feedRoomId(debug ? 83301 : 2238799)
-  //               ..link(link)
-  //               ..userName("Test User")
-  //               ..userUniqueId(userId ?? SharePost.userId))
-  //             .build());
-  //       }
-  //     }, onError: (err) {
-  //       // Handle exception by warning the user their action did not succeed
-  //       toast('An error occurred');
-  //     });
-  //   }
-  // }
+      // Subscribe to link changes
+      _streamSubscription = linkStream.listen((String? link) async {
+        if (link != null) {
+          // Handle the deep link
+          // You can extract any parameters from the uri object here
+          // and use them to navigate to a specific screen in your app
+          debugPrint('Received deep link: $link');
+          // TODO: add api key to the DeepLinkRequest
+          // TODO: add user id and user name of logged in user
+          SharePost().parseDeepLink(
+              (DeepLinkRequestBuilder()
+                    ..apiKey(prodFlag ? CredsProd.apiKey : CredsDev.apiKey)
+                    ..isGuest(false)
+                    ..callback(LikeMindsCallback())
+                    ..feedRoomId(debug ? 83301 : 2238799)
+                    ..link(link)
+                    ..userName("Test User")
+                    ..userUniqueId(userId ?? 'Test User Id'))
+                  .build(),
+              context);
+        }
+      }, onError: (err) {
+        // Handle exception by warning the user their action did not succeed
+        toast('An error occurred');
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
     Size screenSize = MediaQuery.of(context).size;
     // return lmFeed;
-    userId = null; // UserLocalPreference.instance.fetchUserId();
+    userId = SampleUserLocalPreference.instance.fetchUserId();
     // If the local prefs have user id stored
     // Login using that user Id
     // otherwise show the cred screen for login
@@ -190,12 +197,10 @@ class _CredScreenState extends State<CredScreen> {
                       apiKey: "",
                       customWidgets: customWidgets(screenSize));
 
-                  // if (_userIdController.text.isNotEmpty) {
-                  //   UserLocalPreference.instance
-                  //       .storeUserId(_userIdController.text);
-                  // } else {
-                  //   UserLocalPreference.instance.storeUserId(SharePost.userId);
-                  // }
+                  if (_userIdController.text.isNotEmpty) {
+                    SampleUserLocalPreference.instance
+                        .storeUserId(_userIdController.text);
+                  }
                   MaterialPageRoute route = MaterialPageRoute(
                     // INIT - Get the LMFeed instance and pass the credentials (if any)
                     builder: (context) => lmFeed!,
