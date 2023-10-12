@@ -8,6 +8,7 @@ import 'package:likeminds_feed/likeminds_feed.dart';
 import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
 import 'package:likeminds_feed_nova_fl/src/blocs/new_post/new_post_bloc.dart';
 import 'package:likeminds_feed_nova_fl/src/models/post_view_model.dart';
+import 'package:likeminds_feed_nova_fl/src/services/bloc_service.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/ui_constants.dart';
@@ -75,7 +76,7 @@ class _MediaPreviewState extends State<MediaPreview> {
     final String formatted = formatter.format(post!.createdAt);
     final ThemeData theme = Theme.of(context);
     final Size screenSize = MediaQuery.of(context).size;
-    final NewPostBloc newPostBloc = BlocProvider.of<NewPostBloc>(context);
+    final NewPostBloc newPostBloc = locator<BlocService>().newPostBlocProvider;
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(

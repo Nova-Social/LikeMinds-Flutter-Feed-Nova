@@ -1,11 +1,11 @@
 name: likeminds_feed_nova_fl
 description: A new Flutter package project.
-version: 0.6.0
+version: 0.6.1
 publish_to: none
 homepage: "https://likeminds.community/"
 
 environment:
-  sdk: '>=3.1.0 <4.0.0'
+  sdk: ">=3.1.0 <4.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
@@ -37,6 +37,7 @@ dependencies:
   flutter_no_internet_widget: ^1.0.0+18-dev.1
   extended_image: 8.1.1
   http:
+  uni_links:
 
   flutter_typeahead_mm:
     path: lib/packages/flutter_typeahead-4.3.7
@@ -55,13 +56,11 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^2.0.0
 
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # To add assets to your package, add an assets section, like this:
   assets:
     - packages/likeminds_feed_nova_fl/assets/icons/document.svg
