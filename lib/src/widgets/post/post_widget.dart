@@ -6,6 +6,7 @@ import 'package:likeminds_feed/likeminds_feed.dart';
 import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
 import 'package:likeminds_feed_nova_fl/src/blocs/new_post/new_post_bloc.dart';
 import 'package:likeminds_feed_nova_fl/src/models/post_view_model.dart';
+import 'package:likeminds_feed_nova_fl/src/services/bloc_service.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/icons.dart';
@@ -16,6 +17,7 @@ import 'package:likeminds_feed_nova_fl/src/views/media_preview.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post_detail_screen.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 import 'package:overlay_support/overlay_support.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -77,7 +79,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    NewPostBloc newPostBloc = BlocProvider.of<NewPostBloc>(context);
+    NewPostBloc newPostBloc = locator<BlocService>().newPostBlocProvider;
     timeago.setLocaleMessages('en', SSCustomMessages());
     ThemeData theme = Theme.of(context);
     return InheritedPostProvider(
@@ -533,6 +535,18 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                         icon: LMIcon(
                           type: LMIconType.svg,
                           assetPath: kAssetCommentIcon,
+                          color: theme.colorScheme.onPrimary,
+                          size: 20,
+                        ),
+                      ),
+                      const Spacer(),
+                      LMIconButton(
+                        onTap: (value) {
+                          SharePost().sharePost(widget.post.id);
+                        },
+                        icon: LMIcon(
+                          type: LMIconType.svg,
+                          assetPath: kAssetShareIcon,
                           color: theme.colorScheme.onPrimary,
                           size: 20,
                         ),

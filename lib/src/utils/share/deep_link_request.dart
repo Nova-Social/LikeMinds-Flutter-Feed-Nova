@@ -4,9 +4,10 @@ class DeepLinkRequest {
   String link;
   String userName;
   String userUniqueId;
+  String? imageURL;
   bool isGuest;
   String apiKey;
-  int feedRoomId;
+  int? feedRoomId;
   LMSDKCallback? callback;
 
   DeepLinkRequest._({
@@ -15,8 +16,9 @@ class DeepLinkRequest {
     required this.userUniqueId,
     required this.apiKey,
     required this.link,
+    this.imageURL,
     this.callback,
-    required this.feedRoomId,
+    this.feedRoomId,
   });
 
   toJson() => {
@@ -25,6 +27,7 @@ class DeepLinkRequest {
         'user_unique_id': userUniqueId,
         'is_guest': isGuest,
         'x-api-key': apiKey,
+        'image_url': imageURL,
       };
 }
 
@@ -36,6 +39,7 @@ class DeepLinkRequestBuilder {
   String? _apiKey;
   LMSDKCallback? _callback;
   int? _feedRoomId;
+  String? _imageURL;
 
   void link(String link) => _link = link;
   void userName(String userName) => _userName = userName;
@@ -44,6 +48,7 @@ class DeepLinkRequestBuilder {
   void apiKey(String apiKey) => _apiKey = apiKey;
   void callback(LMSDKCallback? callback) => _callback = callback;
   void feedRoomId(int feedRoomId) => _feedRoomId = feedRoomId;
+  void imageURL(String? imageURL) => _imageURL = imageURL;
 
   DeepLinkRequest build() {
     return DeepLinkRequest._(
@@ -53,7 +58,8 @@ class DeepLinkRequestBuilder {
       userUniqueId: _userUniqueId!,
       apiKey: _apiKey!,
       callback: _callback,
-      feedRoomId: _feedRoomId!,
+      feedRoomId: _feedRoomId,
+      imageURL: _imageURL,
     );
   }
 }
