@@ -46,7 +46,6 @@ class CredScreen extends StatefulWidget {
 class _CredScreenState extends State<CredScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _userIdController = TextEditingController();
-  StreamSubscription? _streamSubscription;
   LMFeed? lmFeed;
   String? userId;
 
@@ -55,73 +54,14 @@ class _CredScreenState extends State<CredScreen> {
     super.initState();
     NetworkConnectivity networkConnectivity = NetworkConnectivity.instance;
     networkConnectivity.initialise();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      initUniLinks(context);
-    });
   }
 
   @override
   void dispose() {
     _usernameController.dispose();
     _userIdController.dispose();
-    _streamSubscription?.cancel();
     super.dispose();
-  }
-
-  Future initUniLinks(BuildContext context) async {
-    if (!initialURILinkHandled) {
-      initialURILinkHandled = true;
-      // Get the initial deep link if the app was launched with one
-      final initialLink = await getInitialLink();
-
-      // Handle the deep link
-      if (initialLink != null) {
-        // You can extract any parameters from the initialLink object here
-        // and use them to navigate to a specific screen in your app
-        debugPrint('Received initial deep link: $initialLink');
-
-        // TODO: add api key to the DeepLinkRequest
-        // TODO: add user id and user name of logged in user
-        SharePost().parseDeepLink(
-            (DeepLinkRequestBuilder()
-                  ..apiKey(prodFlag ? CredsProd.apiKey : CredsDev.apiKey)
-                  ..callback(LikeMindsCallback())
-                  ..feedRoomId(debug ? 83301 : 2238799)
-                  ..isGuest(false)
-                  ..link(initialLink)
-                  ..userName("Test User")
-                  ..userUniqueId(userId ?? 'Test User Id'))
-                .build(),
-            context);
-      }
-
-      // Subscribe to link changes
-      _streamSubscription = linkStream.listen((String? link) async {
-        if (link != null) {
-          // Handle the deep link
-          // You can extract any parameters from the uri object here
-          // and use them to navigate to a specific screen in your app
-          debugPrint('Received deep link: $link');
-          // TODO: add api key to the DeepLinkRequest
-          // TODO: add user id and user name of logged in user
-          SharePost().parseDeepLink(
-              (DeepLinkRequestBuilder()
-                    ..apiKey(prodFlag ? CredsProd.apiKey : CredsDev.apiKey)
-                    ..isGuest(false)
-                    ..callback(LikeMindsCallback())
-                    ..feedRoomId(debug ? 83301 : 2238799)
-                    ..link(link)
-                    ..userName("Test User")
-                    ..userUniqueId(userId ?? 'Test User Id'))
-                  .build(),
-              context);
-        }
-      }, onError: (err) {
-        // Handle exception by warning the user their action did not succeed
-        toast('An error occurred');
-      });
-    }
-  }
+  }s
 
   @override
   Widget build(BuildContext context) {

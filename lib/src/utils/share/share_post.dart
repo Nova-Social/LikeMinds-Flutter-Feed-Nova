@@ -18,7 +18,7 @@ class SharePost {
   String createLink(String postId) {
     int length = domain.length;
     if (domain[length - 1] == '/') {
-      return "$domain/post?post_id=$postId";
+      return "${domain}post?post_id=$postId";
     } else {
       return "$domain/post?post_id=$postId";
     }
@@ -42,16 +42,18 @@ class SharePost {
     }
   }
 
-  Future<DeepLinkResponse> handlePostDeepLink(DeepLinkRequest request, BuildContext context) async {
+  Future<DeepLinkResponse> handlePostDeepLink(
+      DeepLinkRequest request, BuildContext context) async {
     List secondPathSegment = request.link.split('post_id=');
     if (secondPathSegment.length > 1 && secondPathSegment[1] != null) {
       String postId = secondPathSegment[1];
       setupLMFeed(request.callback, request.apiKey);
-      await locator<LikeMindsService>().initiateUser((InitiateUserRequestBuilder()
-            ..apiKey(request.apiKey)
-            ..userId(request.userUniqueId)
-            ..userName(request.userName))
-          .build());
+      await locator<LikeMindsService>()
+          .initiateUser((InitiateUserRequestBuilder()
+                ..apiKey(request.apiKey)
+                ..userId(request.userUniqueId)
+                ..userName(request.userName))
+              .build());
 
       locator<NavigationService>().navigatorKey.currentState!.push(
             MaterialPageRoute(
@@ -73,13 +75,15 @@ class SharePost {
     }
   }
 
-  Future<DeepLinkResponse> parseDeepLink(DeepLinkRequest request, BuildContext context) async {
+  Future<DeepLinkResponse> parseDeepLink(
+      DeepLinkRequest request, BuildContext context) async {
     if (Uri.parse(request.link).isAbsolute) {
       final firstPathSegment = getFirstPathSegment(request.link);
       if (firstPathSegment == "post") {
         return handlePostDeepLink(request, context);
       }
-      return DeepLinkResponse(success: false, errorMessage: 'URI not supported');
+      return DeepLinkResponse(
+          success: false, errorMessage: 'URI not supported');
     } else {
       return DeepLinkResponse(
         success: false,
