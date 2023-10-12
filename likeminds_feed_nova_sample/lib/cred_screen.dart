@@ -61,7 +61,7 @@ class _CredScreenState extends State<CredScreen> {
     _usernameController.dispose();
     _userIdController.dispose();
     super.dispose();
-  }s
+  }
 
   @override
   Widget build(BuildContext context) {
