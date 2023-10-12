@@ -114,7 +114,7 @@ class _LMFeedState extends State<LMFeed> {
   StreamSubscription? _streamSubscription;
   // This widget is the root of your application.
 
-  Future initUniLinks(BuildContext context) async {
+  Future initLinkRouting(BuildContext context) async {
     if (!_initialURILinkHandled) {
       _initialURILinkHandled = true;
       // Get the initial deep link if the app was launched with one
@@ -128,15 +128,14 @@ class _LMFeedState extends State<LMFeed> {
 
         // TODO: add api key to the DeepLinkRequest
         // TODO: add user id and user name of logged in user
-        SharePost().parseDeepLink(
-            (DeepLinkRequestBuilder()
-                  ..apiKey(widget.apiKey)
-                  ..isGuest(false)
-                  ..link(initialLink)
-                  ..userName("Test User")
-                  ..userUniqueId('Test User Id'))
-                .build(),
-            context);
+        SharePost().parseDeepLink((DeepLinkRequestBuilder()
+              ..apiKey(widget.apiKey)
+              ..isGuest(false)
+              ..link(initialLink)
+              ..imageURL(widget.imageUrl)
+              ..userName(widget.userName ?? "Test User")
+              ..userUniqueId(widget.userId ?? 'Test User Id'))
+            .build());
       }
 
       // Subscribe to link changes
@@ -146,18 +145,15 @@ class _LMFeedState extends State<LMFeed> {
           // You can extract any parameters from the uri object here
           // and use them to navigate to a specific screen in your app
           debugPrint('Received deep link: $link');
-          // TODO: add api key to the DeepLinkRequest
-          // TODO: add user id and user name of logged in user
 
-          SharePost().parseDeepLink(
-              (DeepLinkRequestBuilder()
-                    ..apiKey(widget.apiKey)
-                    ..isGuest(false)
-                    ..link(link)
-                    ..userName("Test User")
-                    ..userUniqueId('Test User Id'))
-                  .build(),
-              context);
+          SharePost().parseDeepLink((DeepLinkRequestBuilder()
+                ..apiKey(widget.apiKey)
+                ..isGuest(false)
+                ..link(link)
+                ..imageURL(widget.imageUrl)
+                ..userName(widget.userName ?? "Test User")
+                ..userUniqueId(widget.userId ?? 'Test User Id'))
+              .build());
         }
       }, onError: (err) {
         // Handle exception by warning the user their action did not succeed
@@ -182,7 +178,7 @@ class _LMFeedState extends State<LMFeed> {
     imageUrl = widget.imageUrl;
     customWidgets = widget.customWidgets;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      initUniLinks(context);
+      initLinkRouting(context);
     });
     firebase();
   }

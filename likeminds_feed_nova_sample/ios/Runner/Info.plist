@@ -51,6 +51,7 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<!-- TODO NOVA: Change host and scheme as per your domain-->
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

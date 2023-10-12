@@ -10,9 +10,8 @@ part 'deep_link_request.dart';
 part 'deep_link_response.dart';
 
 class SharePost {
-  // TODO: Add domain to your application
+  // TODO NOVA: Add domain to your application
   String domain = 'feednova://www.feednova.com';
-  // fetches the domain given by client at time of initialization of Feed
 
   // below function creates a link from domain and post id
   String createLink(String postId) {
@@ -26,12 +25,13 @@ class SharePost {
 
   // Below functions takes the user outside of the application
   // using the domain provided at the time of initialization
-  // TODO: Add prefix text, image as per your requirements
+  // TODO NOVA: Add prefix text, image as per your requirements
   void sharePost(String postId) {
     String postUrl = createLink(postId);
     Share.share(postUrl);
   }
 
+  // Extracts the post id from the link
   String getFirstPathSegment(String url) {
     final uri = Uri.parse(url);
     final pathSegments = uri.pathSegments;
@@ -42,8 +42,7 @@ class SharePost {
     }
   }
 
-  Future<DeepLinkResponse> handlePostDeepLink(
-      DeepLinkRequest request, BuildContext context) async {
+  Future<DeepLinkResponse> handlePostDeepLink(DeepLinkRequest request) async {
     List secondPathSegment = request.link.split('post_id=');
     if (secondPathSegment.length > 1 && secondPathSegment[1] != null) {
       String postId = secondPathSegment[1];
@@ -52,6 +51,7 @@ class SharePost {
           .initiateUser((InitiateUserRequestBuilder()
                 ..apiKey(request.apiKey)
                 ..userId(request.userUniqueId)
+                ..imageUrl(request.imageURL ?? '')
                 ..userName(request.userName))
               .build());
 
@@ -75,12 +75,13 @@ class SharePost {
     }
   }
 
-  Future<DeepLinkResponse> parseDeepLink(
-      DeepLinkRequest request, BuildContext context) async {
+  // Checks if the URL provided is correct or not
+  // proceeds with the flow if the given url is correct
+  Future<DeepLinkResponse> parseDeepLink(DeepLinkRequest request) async {
     if (Uri.parse(request.link).isAbsolute) {
       final firstPathSegment = getFirstPathSegment(request.link);
       if (firstPathSegment == "post") {
-        return handlePostDeepLink(request, context);
+        return handlePostDeepLink(request);
       }
       return DeepLinkResponse(
           success: false, errorMessage: 'URI not supported');
