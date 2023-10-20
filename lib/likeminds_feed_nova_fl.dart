@@ -25,10 +25,13 @@ import 'package:likeminds_feed_nova_fl/src/utils/credentials/credentials.dart';
 import 'package:uni_links/uni_links.dart';
 
 export 'src/services/service_locator.dart';
+export 'src/services/bloc_service.dart';
 export 'src/utils/analytics/analytics.dart';
 export 'src/utils/notifications/notification_handler.dart';
 export 'src/utils/share/share_post.dart';
 export 'src/utils/constants/ui_constants.dart';
+export 'package:likeminds_feed_nova_fl/src/utils/utils.dart';
+export 'src/widgets/feed/user_feed_widget.dart';
 
 /// Flutter environment manager v0.0.1
 const prodFlag = !bool.fromEnvironment('DEBUG');

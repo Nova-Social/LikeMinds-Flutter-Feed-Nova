@@ -30,6 +30,7 @@ class NovaPostWidget extends StatefulWidget {
   final Function(bool isDeleted) refresh;
   final Function(int) onMenuTap;
   final bool expanded;
+  final bool showMenu;
 
   const NovaPostWidget({
     Key? key,
@@ -41,6 +42,7 @@ class NovaPostWidget extends StatefulWidget {
     required this.isFeed,
     required this.onMenuTap,
     this.expanded = false,
+    this.showMenu = true,
   }) : super(key: key);
 
   @override
@@ -193,93 +195,101 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                               text: "Edited",
                               textStyle: theme.textTheme.labelMedium,
                             ),
-                            menu: LMIconButton(
-                              icon: LMIcon(
-                                type: LMIconType.icon,
-                                icon: Icons.more_horiz,
-                                color: theme.colorScheme.onPrimary,
-                              ),
-                              onTap: (bool value) {
-                                showModalBottomSheet(
-                                  context: context,
-                                  elevation: 5,
-                                  isDismissible: true,
-                                  useRootNavigator: true,
-                                  clipBehavior: Clip.hardEdge,
-                                  backgroundColor: Colors.transparent,
-                                  enableDrag: false,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(32),
-                                      topRight: Radius.circular(32),
+                            menu: widget.showMenu
+                                ? LMIconButton(
+                                    icon: LMIcon(
+                                      type: LMIconType.icon,
+                                      icon: Icons.more_horiz,
+                                      color: theme.colorScheme.onPrimary,
                                     ),
-                                  ),
-                                  builder: (context) => LMBottomSheet(
-                                    height: max(170, screenSize.height * 0.25),
-                                    margin: const EdgeInsets.only(top: 30),
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(32),
-                                      topRight: Radius.circular(32),
-                                    ),
-                                    dragBar: Container(
-                                      width: 96,
-                                      height: 6,
-                                      decoration: ShapeDecoration(
-                                        color: theme.colorScheme.onSurface,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(99),
+                                    onTap: (bool value) {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        elevation: 5,
+                                        isDismissible: true,
+                                        useRootNavigator: true,
+                                        clipBehavior: Clip.hardEdge,
+                                        backgroundColor: Colors.transparent,
+                                        enableDrag: false,
+                                        shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(32),
+                                            topRight: Radius.circular(32),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                    backgroundColor: theme.colorScheme.surface,
-                                    children: postDetails!.menuItems
-                                        .map(
-                                          (e) => GestureDetector(
-                                            onTap: () {
-                                              Navigator.of(context).pop();
-                                              widget.onMenuTap(e.id);
-                                            },
-                                            child: Container(
-                                              color: Colors.transparent,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 2.0,
-                                                      horizontal: 16.0),
-                                              margin: const EdgeInsets.only(
-                                                  bottom: 24.09),
-                                              width: screenSize.width - 32.0,
-                                              child: Row(children: [
-                                                getIconFromDropDownItemId(
-                                                  e.id,
-                                                  20,
-                                                  theme.colorScheme
-                                                      .onPrimaryContainer,
-                                                ),
-                                                kHorizontalPaddingLarge,
-                                                LMTextView(
-                                                  text: e.title,
-                                                  textStyle: theme
-                                                      .textTheme.headlineLarge!
-                                                      .copyWith(
-                                                          color: e.id ==
-                                                                  postDeleteId
-                                                              ? theme
-                                                                  .colorScheme
-                                                                  .error
-                                                              : theme
-                                                                  .colorScheme
-                                                                  .onPrimaryContainer),
-                                                ),
-                                              ]),
+                                        builder: (context) => LMBottomSheet(
+                                          height: max(
+                                              170, screenSize.height * 0.25),
+                                          margin:
+                                              const EdgeInsets.only(top: 30),
+                                          borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(32),
+                                            topRight: Radius.circular(32),
+                                          ),
+                                          dragBar: Container(
+                                            width: 96,
+                                            height: 6,
+                                            decoration: ShapeDecoration(
+                                              color:
+                                                  theme.colorScheme.onSurface,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(99),
+                                              ),
                                             ),
                                           ),
-                                        )
-                                        .toList(),
-                                  ),
-                                );
-                              },
-                            ));
+                                          backgroundColor:
+                                              theme.colorScheme.surface,
+                                          children: postDetails!.menuItems
+                                              .map(
+                                                (e) => GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.of(context).pop();
+                                                    widget.onMenuTap(e.id);
+                                                  },
+                                                  child: Container(
+                                                    color: Colors.transparent,
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 2.0,
+                                                        horizontal: 16.0),
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            bottom: 24.09),
+                                                    width:
+                                                        screenSize.width - 32.0,
+                                                    child: Row(children: [
+                                                      getIconFromDropDownItemId(
+                                                        e.id,
+                                                        20,
+                                                        theme.colorScheme
+                                                            .onPrimaryContainer,
+                                                      ),
+                                                      kHorizontalPaddingLarge,
+                                                      LMTextView(
+                                                        text: e.title,
+                                                        textStyle: theme.textTheme
+                                                            .headlineLarge!
+                                                            .copyWith(
+                                                                color: e.id ==
+                                                                        postDeleteId
+                                                                    ? theme
+                                                                        .colorScheme
+                                                                        .error
+                                                                    : theme
+                                                                        .colorScheme
+                                                                        .onPrimaryContainer),
+                                                      ),
+                                                    ]),
+                                                  ),
+                                                ),
+                                              )
+                                              .toList(),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : const SizedBox());
                       }),
                   const SizedBox(height: 16),
                   LMPostContent(
