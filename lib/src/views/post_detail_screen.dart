@@ -65,6 +65,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       PagingController(firstPageKey: 1);
   PostViewModel? postData;
   Map<String, Topic> topics = {};
+  Map<String, WidgetModel> widgets = {};
   User currentUser = UserLocalPreference.instance.fetchUserData();
 
   List<UserTag> userTags = [];
@@ -198,6 +199,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     if (postDetails.success) {
       postData = PostViewModel.fromPost(post: postDetails.post!);
       topics = postDetails.topics ?? {};
+      widgets = postDetails.widgets ?? {};
       rebuildPostWidget.value = !rebuildPostWidget.value;
     } else {
       toast(
@@ -286,7 +288,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    ThemeData theme = Theme.of(context);
+    ThemeData theme = ColorTheme.novaTheme;
     return WillPopScope(
       onWillPop: () {
         if (Navigator.of(context).canPop()) {
@@ -451,6 +453,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                       LMProfilePicture(
                                         fallbackText: currentUser.name,
                                         imageUrl: currentUser.imageUrl,
+                                        backgroundColor: theme.primaryColor,
                                         boxShape: BoxShape.circle,
                                         onTap: () {
                                           if (currentUser.sdkClientInfo !=
@@ -595,7 +598,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                           color: right
                                                                               ? _commentController!.value.text.isEmpty
                                                                                   ? theme.colorScheme.onPrimary
-                                                                                  : Theme.of(context).colorScheme.primary
+                                                                                  : ColorTheme.novaTheme.colorScheme.primary
                                                                               : Colors.transparent,
                                                                           fontSize:
                                                                               14,
@@ -709,7 +712,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                               14,
                                                                           color: _commentController!.value.text.isEmpty
                                                                               ? theme.colorScheme.onPrimary
-                                                                              : Theme.of(context).colorScheme.primary,
+                                                                              : ColorTheme.novaTheme.colorScheme.primary,
                                                                         ),
                                                                       ),
                                                                       onTap:
@@ -831,6 +834,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                               if (state is EditPostUploaded) {
                                 postData = state.postData;
                                 topics = state.topics;
+                                widgets = state.widgets;
                                 rebuildPostWidget.value =
                                     !rebuildPostWidget.value;
                               }
@@ -844,15 +848,16 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   child: postData == null
                                       ? Center(
                                           child: CircularProgressIndicator(
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary),
+                                              color: ColorTheme.novaTheme
+                                                  .colorScheme.primary),
                                         )
                                       : NovaPostWidget(
                                           post: postData!,
                                           expanded: true,
                                           topics:
                                               postDetailResponse!.topics ?? {},
+                                          widgets:
+                                              postDetailResponse!.widgets ?? {},
                                           user: postDetailResponse!.users![
                                               postDetailResponse!
                                                   .postReplies!.userId]!,
@@ -1094,23 +1099,21 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                               (context) =>
                                                   const SizedBox(height: 75),
                                           noItemsFoundIndicatorBuilder:
-                                              (context) => const Column(
+                                              (context) => Column(
                                             children: <Widget>[
-                                              SizedBox(height: 42),
+                                              const SizedBox(height: 42),
                                               Text(
                                                 'No comment found',
-                                                style: TextStyle(
-                                                  fontSize: kFontMedium,
-                                                ),
+                                                style:
+                                                    theme.textTheme.labelMedium,
                                               ),
-                                              SizedBox(height: 12),
+                                              const SizedBox(height: 12),
                                               Text(
                                                 'Be the first one to comment',
-                                                style: TextStyle(
-                                                  fontSize: kFontSmall,
-                                                ),
+                                                style:
+                                                    theme.textTheme.labelMedium,
                                               ),
-                                              SizedBox(height: 180),
+                                              const SizedBox(height: 180),
                                             ],
                                           ),
                                           itemBuilder: (context, item, index) {
@@ -1133,6 +1136,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                           setCommentState) {
                                                     return LMCommentTile(
                                                       key: ValueKey(item.id),
+                                                      style: ColorTheme
+                                                          .novaTheme
+                                                          .textTheme
+                                                          .labelMedium,
                                                       width: screenSize.width,
                                                       backgroundColor: theme
                                                           .colorScheme.surface,
@@ -1332,6 +1339,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                 .users![item
                                                                     .userId]!
                                                                 .name,
+                                                        backgroundColor:
+                                                            theme.primaryColor,
                                                         onTap: () {
                                                           if (postDetailResponse!
                                                                   .users![item
@@ -1354,6 +1363,16 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                         size: 42,
                                                         boxShape:
                                                             BoxShape.circle,
+                                                      ),
+                                                      titleText: LMTextView(
+                                                        text:
+                                                            postDetailResponse!
+                                                                .users![item
+                                                                    .userId]!
+                                                                .name,
+                                                        textStyle: theme
+                                                            .textTheme
+                                                            .labelMedium!,
                                                       ),
                                                       subtitleText: LMTextView(
                                                         text: timeago.format(
@@ -1524,7 +1543,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                           "${item.repliesCount} ${item.repliesCount > 1 ? 'Replies' : 'Reply'}",
                                                                       textStyle:
                                                                           TextStyle(
-                                                                        color: Theme.of(context)
+                                                                        color: ColorTheme
+                                                                            .novaTheme
                                                                             .colorScheme
                                                                             .primary,
                                                                       ),

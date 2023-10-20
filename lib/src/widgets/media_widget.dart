@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:likeminds_feed/likeminds_feed.dart';
+import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -42,7 +43,7 @@ class _SSPostMediaState extends State<SSPostMedia> {
           margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 2.0),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Theme.of(context).colorScheme.primary,
+            color: ColorTheme.novaTheme.colorScheme.primary,
           ),
         ),
         inactiveIndicator: Container(
@@ -51,7 +52,7 @@ class _SSPostMediaState extends State<SSPostMedia> {
           margin: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 2.0),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Theme.of(context).colorScheme.inversePrimary,
+            color: ColorTheme.novaTheme.colorScheme.inversePrimary,
           ),
         ),
       );
@@ -73,22 +74,20 @@ class _SSPostMediaState extends State<SSPostMedia> {
               width: 48,
               height: 48,
               decoration: ShapeDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
+                color: ColorTheme.novaTheme.colorScheme.primaryContainer,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4)),
               ),
               child: Center(
                 child: LMTextView(
                   text: 'PDF',
-                  textStyle: Theme.of(context)
-                      .textTheme
-                      .titleLarge!
+                  textStyle: ColorTheme.novaTheme.textTheme.titleLarge!
                       .copyWith(fontSize: 18),
                 ),
               ),
             ),
             showBorder: false,
-            backgroundColor: Theme.of(context).colorScheme.surface,
+            backgroundColor: ColorTheme.novaTheme.colorScheme.surface,
             size: PostHelper.getFileSizeString(bytes: e.attachmentMeta.size!),
             documentUrl: e.attachmentMeta.url,
             type: e.attachmentMeta.format!,
@@ -104,11 +103,11 @@ class _SSPostMediaState extends State<SSPostMedia> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Column(
-              children: documents != null && documents.length > 3 && isCollapsed
+              children: documents.length > 3 && isCollapsed
                   ? documents.sublist(0, 3)
                   : documents,
             ),
-            documents != null && documents.length > 3 && isCollapsed
+            documents.length > 3 && isCollapsed
                 ? GestureDetector(
                     onTap: () => setState(() {
                           isCollapsed = false;
@@ -116,7 +115,7 @@ class _SSPostMediaState extends State<SSPostMedia> {
                     child: LMTextView(
                       text: '+ ${documents.length - 3} more',
                       textStyle: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
+                        color: ColorTheme.novaTheme.colorScheme.secondary,
                       ),
                     ))
                 : const SizedBox()

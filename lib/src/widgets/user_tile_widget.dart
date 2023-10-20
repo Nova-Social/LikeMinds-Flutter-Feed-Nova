@@ -19,6 +19,7 @@ class LMUserTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = ColorTheme.novaTheme;
     return GestureDetector(
       onTap: () {
         if (user.sdkClientInfo != null) {
@@ -33,6 +34,7 @@ class LMUserTile extends StatelessWidget {
             LMProfilePicture(
               size: imageSize ?? 50,
               fallbackText: user.name,
+              backgroundColor: theme.primaryColor,
               onTap: () {
                 if (user.sdkClientInfo != null) {
                   locator<LikeMindsService>()
@@ -50,7 +52,7 @@ class LMUserTile extends StatelessWidget {
                   titleText ??
                       LMTextView(
                         text: user.name,
-                        textStyle: Theme.of(context).textTheme.bodyLarge,
+                        textStyle: ColorTheme.novaTheme.textTheme.bodyLarge,
                       ),
                   kVerticalPaddingMedium,
                   subText ?? const SizedBox(),

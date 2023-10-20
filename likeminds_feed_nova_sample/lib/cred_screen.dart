@@ -66,7 +66,7 @@ class _CredScreenState extends State<CredScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
+    ThemeData theme = ColorTheme.novaTheme;
     Size screenSize = MediaQuery.of(context).size;
     // return lmFeed;
     return Scaffold(

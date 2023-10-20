@@ -16,26 +16,29 @@ import 'package:likeminds_feed_nova_fl/src/widgets/delete_dialog.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/post/post_widget.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 
-class UserFeedWidget extends StatefulWidget {
-  final String userId;
-  const UserFeedWidget({
+class CompanyFeedWidget extends StatefulWidget {
+  final String companyId;
+  const CompanyFeedWidget({
     Key? key,
-    required this.userId,
+    required this.companyId,
   }) : super(key: key);
 
   @override
-  State<UserFeedWidget> createState() => _UserFeedWidgetState();
+  State<CompanyFeedWidget> createState() => _CompanyFeedWidgetState();
 }
 
-class _UserFeedWidgetState extends State<UserFeedWidget> {
+class _CompanyFeedWidgetState extends State<CompanyFeedWidget> {
   static const int pageSize = 10;
   ValueNotifier<bool> rebuildPostWidget = ValueNotifier(false);
+  String? widgetId;
+
   Map<String, User> users = {};
   Map<String, Topic> topics = {};
   Map<String, WidgetModel> widgets = {};
   int _pageFeed = 1;
   final PagingController<int, PostViewModel> _pagingController =
       PagingController(firstPageKey: 1);
+
   @override
   void initState() {
     super.initState();
@@ -44,13 +47,26 @@ class _UserFeedWidgetState extends State<UserFeedWidget> {
 
   void addPaginationListener() {
     _pagingController.addPageRequestListener((pageKey) async {
-      final userFeedRequest = (GetUserFeedRequestBuilder()
+      if (widgetId == null) {
+        GetWidgetRequest request = (GetWidgetRequestBuilder()
+              ..searchKey("metadata.company_id")
+              ..searchValue(widget.companyId)
+              ..page(1)
+              ..pageSize(10))
+            .build();
+        GetWidgetResponse response =
+            await locator<LikeMindsService>().getWidgets(request);
+        if (response.success) {
+          widgetId = response.widgets?.first.id;
+        }
+      }
+      final feedRequest = (GetFeedRequestBuilder()
             ..page(pageKey)
             ..pageSize(pageSize)
-            ..userId(widget.userId))
+            ..widgetIds([widgetId ?? '']))
           .build();
-      GetUserFeedResponse response =
-          await locator<LikeMindsService>().getUserFeed(userFeedRequest);
+      GetFeedResponse? response =
+          await locator<LikeMindsService>().getFeed(feedRequest);
       updatePagingControllers(response);
     });
   }
@@ -58,25 +74,19 @@ class _UserFeedWidgetState extends State<UserFeedWidget> {
   void refresh() => _pagingController.refresh();
 
   // This function updates the paging controller based on the state changes
-  void updatePagingControllers(GetUserFeedResponse response) {
-    if (response.success) {
+  void updatePagingControllers(GetFeedResponse? response) {
+    if (response != null) {
       _pageFeed++;
       List<PostViewModel> listOfPosts =
-          response.posts!.map((e) => PostViewModel.fromPost(post: e)).toList();
+          response.posts.map((e) => PostViewModel.fromPost(post: e)).toList();
       if (listOfPosts.length < 10) {
         _pagingController.appendLastPage(listOfPosts);
       } else {
         _pagingController.appendPage(listOfPosts, _pageFeed);
       }
-      if (response.topics != null) {
-        topics.addAll(response.topics!);
-      }
-      if (response.users != null) {
-        users.addAll(response.users!);
-      }
-      if (response.widgets != null) {
-        widgets.addAll(response.widgets!);
-      }
+      topics.addAll(response.topics);
+      widgets.addAll(response.widgets);
+      users.addAll(response.users);
     }
   }
 
@@ -121,6 +131,7 @@ class _UserFeedWidgetState extends State<UserFeedWidget> {
           }
           users.addAll(state.userData);
           topics.addAll(state.topics);
+          widgets.addAll(state.widgets);
           _pagingController.itemList = feedRoomItemList;
           rebuildPostWidget.value = !rebuildPostWidget.value;
         }
@@ -135,7 +146,7 @@ class _UserFeedWidgetState extends State<UserFeedWidget> {
           }
           users.addAll(state.userData);
           topics.addAll(state.topics);
-
+          widgets.addAll(state.widgets);
           rebuildPostWidget.value = !rebuildPostWidget.value;
         }
 

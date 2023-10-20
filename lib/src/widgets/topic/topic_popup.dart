@@ -113,7 +113,7 @@ class _TopicPopUpState extends State<TopicPopUp> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    ThemeData theme = Theme.of(context);
+    ThemeData theme = ColorTheme.novaTheme;
     return Container(
       width: min(screenSize.width, 265),
       constraints: const BoxConstraints(maxHeight: 250),

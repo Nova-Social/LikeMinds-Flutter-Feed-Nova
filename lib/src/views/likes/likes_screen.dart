@@ -141,7 +141,7 @@ class _LikesScreenState extends State<LikesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    theme = Theme.of(context);
+    theme = ColorTheme.novaTheme;
     return WillPopScope(
       onWillPop: () {
         Navigator.of(context).pop();
@@ -375,9 +375,10 @@ class LikesTile extends StatelessWidget {
                 user: user!,
                 titleText: LMTextView(
                   text: user!.name,
-                  textStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                  textStyle:
+                      ColorTheme.novaTheme.textTheme.bodyMedium!.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
       );
@@ -410,7 +411,7 @@ class DeletedLikesTile extends StatelessWidget {
           text: 'Deleted User',
           textStyle: TextStyle(
               fontSize: kFontMedium,
-              color: Theme.of(context).colorScheme.onSecondary),
+              color: ColorTheme.novaTheme.colorScheme.onSecondary),
         )
       ],
     );

@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:likeminds_feed/likeminds_feed.dart';
+import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
 import 'package:likeminds_feed_nova_fl/src/blocs/new_post/new_post_bloc.dart';
 import 'package:likeminds_feed_nova_fl/src/services/bloc_service.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
@@ -31,20 +32,17 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class NewPostScreen extends StatefulWidget {
-  final String? populatePostText;
-  final List<MediaModel>? populatePostMedia;
-
-  const NewPostScreen({
-    super.key,
-    this.populatePostText,
-    this.populatePostMedia,
-  });
+  CompanyUI? company;
+  NewPostScreen({super.key, this.company});
 
   @override
   State<NewPostScreen> createState() => _NewPostScreenState();
 }
 
 class _NewPostScreenState extends State<NewPostScreen> {
+  late String displayName;
+  late String displayImageURL;
+  late String creatorId;
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   Future<GetTopicsResponse>? getTopicsResponse;
@@ -92,6 +90,15 @@ class _NewPostScreenState extends State<NewPostScreen> {
     newPostBloc = locator<BlocService>().newPostBlocProvider;
     if (_focusNode.canRequestFocus) {
       _focusNode.requestFocus();
+    }
+    if (widget.company != null) {
+      displayName = widget.company!.name;
+      displayImageURL = widget.company!.imageUrl;
+      creatorId = widget.company!.id;
+    } else {
+      displayName = user.name;
+      displayImageURL = user.imageUrl;
+      creatorId = user.userUniqueId;
     }
   }
 
@@ -280,7 +287,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    theme = Theme.of(context);
+    theme = ColorTheme.novaTheme;
     Size screenSize = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: () {
@@ -467,8 +474,9 @@ class _NewPostScreenState extends State<NewPostScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               LMProfilePicture(
-                                fallbackText: user.name,
-                                imageUrl: user.imageUrl,
+                                fallbackText: displayName,
+                                backgroundColor: theme!.primaryColor,
+                                imageUrl: displayImageURL,
                                 onTap: () {
                                   if (user.sdkClientInfo != null) {
                                     locator<LikeMindsService>().routeToProfile(
@@ -483,7 +491,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(top: 6.0),
                                   child: LMTextView(
-                                    text: user.name,
+                                    text: displayName,
                                     overflow: TextOverflow.ellipsis,
                                     textStyle: theme!.textTheme.titleMedium,
                                   ),
@@ -836,8 +844,31 @@ class _NewPostScreenState extends State<NewPostScreen> {
                         );
                       },
                       title: const LMTextView(text: ''),
-                      onTap: () {
+                      onTap: () async {
                         _focusNode.unfocus();
+                        if (widget.company != null) {
+                          GetWidgetRequest request = (GetWidgetRequestBuilder()
+                                ..page(1)
+                                ..pageSize(10)
+                                ..searchKey("metadata.company_id")
+                                ..searchValue(widget.company!.id))
+                              .build();
+                          GetWidgetResponse response =
+                              await locator<LikeMindsService>()
+                                  .getWidgets(request);
+                          Map<String, dynamic> meta = widget.company!.toJson();
+
+                          if (response.success) {
+                            String? id = response.widgets?.first.id;
+                            meta['entity_id'] = id;
+                          }
+                          postMedia.add(
+                            MediaModel(
+                              mediaType: MediaType.widget,
+                              widgetsMeta: meta,
+                            ),
+                          );
+                        }
 
                         String postText = _controller.text;
                         postText = postText.trim();

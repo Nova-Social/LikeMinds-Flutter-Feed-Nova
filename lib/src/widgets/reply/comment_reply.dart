@@ -87,6 +87,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
           alignment: Alignment.topRight,
           child: LMReplyTile(
               comment: element,
+              style: ColorTheme.novaTheme.textTheme.labelMedium,
               width: screenSize!.width * 0.8,
               backgroundColor: theme!.colorScheme.surface,
               borderRadius: BorderRadius.circular(10.0),
@@ -220,6 +221,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                 imageUrl: user.imageUrl,
                 fallbackText: user.name,
                 boxShape: BoxShape.circle,
+                backgroundColor: theme!.primaryColor,
                 onTap: () {
                   if (user.sdkClientInfo != null) {
                     locator<LikeMindsService>()
@@ -227,6 +229,10 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                   }
                 },
                 size: 32,
+              ),
+              titleText: LMTextView(
+                text: user.name,
+                textStyle: theme!.textTheme.labelMedium,
               ),
               subtitleText: LMTextView(
                 text: timeago.format(element.createdAt),
@@ -290,7 +296,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
     addCommentReplyBloc = BlocProvider.of<AddCommentReplyBloc>(context);
     _commentRepliesBloc = BlocProvider.of<CommentRepliesBloc>(context);
     initialiseReply();
-    theme = Theme.of(context);
+    theme = ColorTheme.novaTheme;
     screenSize = MediaQuery.of(context).size;
     return ValueListenableBuilder(
       valueListenable: rebuildReplyList,
@@ -386,8 +392,8 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                 child: LMTextView(
                                   text: 'Show more replies',
                                   textStyle: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                    color: ColorTheme
+                                        .novaTheme.colorScheme.primary,
                                     fontSize: 14,
                                   ),
                                 ),

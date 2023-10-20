@@ -142,7 +142,7 @@ class _LikesListWidgetState extends State<LikesListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    theme = Theme.of(context);
+    theme = ColorTheme.novaTheme;
     return BlocConsumer(
       bloc: _likesBloc,
       buildWhen: (previous, current) {
@@ -262,7 +262,7 @@ class LikesTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
+    ThemeData theme = ColorTheme.novaTheme;
     if (user != null) {
       return Container(
         margin: const EdgeInsets.only(right: 20.0),
@@ -273,6 +273,7 @@ class LikesTile extends StatelessWidget {
                 : LMProfilePicture(
                     fallbackText: user!.name,
                     imageUrl: user!.imageUrl,
+                    backgroundColor: theme.primaryColor,
                     boxShape: BoxShape.circle,
                     size: 48,
                   ),

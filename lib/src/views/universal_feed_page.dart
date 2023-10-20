@@ -235,7 +235,7 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    theme = Theme.of(context);
+    theme = ColorTheme.novaTheme;
     return Scaffold(
       backgroundColor: ColorTheme.backgroundColor,
       appBar: AppBar(
@@ -562,16 +562,14 @@ class _FeedRoomViewState extends State<FeedRoomView> {
           width: 48,
           height: 48,
           decoration: ShapeDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer,
+            color: ColorTheme.novaTheme.colorScheme.primaryContainer,
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           ),
           child: Center(
             child: LMTextView(
               text: 'PDF',
-              textStyle: Theme.of(context)
-                  .textTheme
-                  .titleLarge!
+              textStyle: ColorTheme.novaTheme.textTheme.titleLarge!
                   .copyWith(fontSize: 18),
             ),
           ),
@@ -632,7 +630,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
   @override
   Widget build(BuildContext context) {
     NewPostBloc newPostBloc = locator<BlocService>().newPostBlocProvider;
-    ThemeData theme = Theme.of(context);
+    ThemeData theme = ColorTheme.novaTheme;
     return Scaffold(
       backgroundColor: theme.colorScheme.onBackground,
       body: Column(
@@ -908,6 +906,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                 NovaPostWidget(
                                   post: item,
                                   topics: widget.feedResponse.topics,
+                                  widgets: widget.feedResponse.widgets,
                                   user: widget.feedResponse.users[item.userId]!,
                                   onMenuTap: (int id) {
                                     if (id == postDeleteId) {
@@ -1093,8 +1092,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          const NewPostScreen(),
+                                      builder: (context) => NewPostScreen(),
                                     ),
                                   );
                                 } else {
@@ -1143,8 +1141,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) =>
-                                            const NewPostScreen(),
+                                        builder: (context) => NewPostScreen(),
                                       ),
                                     );
                                   } else {

@@ -25,6 +25,7 @@ class NovaPostWidget extends StatefulWidget {
   final PostViewModel post;
   final User user;
   final Map<String, Topic> topics;
+  final Map<String, WidgetModel> widgets;
   final bool isFeed;
   final Function() onTap;
   final Function(bool isDeleted) refresh;
@@ -41,6 +42,7 @@ class NovaPostWidget extends StatefulWidget {
     required this.refresh,
     required this.isFeed,
     required this.onMenuTap,
+    required this.widgets,
     this.expanded = false,
     this.showMenu = true,
   }) : super(key: key);
@@ -53,6 +55,9 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
   int postLikes = 0;
   int comments = 0;
   PostViewModel? postDetails;
+  String? displayName;
+  String? displayUrl;
+  String? companyId;
   bool? isLiked;
   bool? isPinned;
   ValueNotifier<bool> rebuildLikeWidget = ValueNotifier(false);
@@ -78,12 +83,45 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
     isPinned = postDetails!.isPinned;
   }
 
+  void getCompanyDetails() {
+    for (Attachment attachment in postDetails!.attachments ?? []) {
+      if (attachment.attachmentType == 5) {
+        if (widget.widgets
+            .containsKey(attachment.attachmentMeta.meta?['entity_id'])) {
+          displayName = widget
+              .widgets[attachment.attachmentMeta.meta?['entity_id']]!
+              .metadata['company_name'];
+          displayUrl = widget
+              .widgets[attachment.attachmentMeta.meta?['entity_id']]!
+              .metadata['company_image_url'];
+          companyId = widget
+              .widgets[attachment.attachmentMeta.meta?['entity_id']]!
+              .metadata['company_id'];
+        }
+        break;
+      }
+    }
+  }
+
+  bool checkAttachments(List<Attachment> attachemnts) {
+    if (postDetails!.attachments == null || postDetails!.attachments!.isEmpty) {
+      return false;
+    }
+    for (var attachment in attachemnts) {
+      if (attachment.attachmentType != 5) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     NewPostBloc newPostBloc = locator<BlocService>().newPostBlocProvider;
     timeago.setLocaleMessages('en', SSCustomMessages());
-    ThemeData theme = Theme.of(context);
+    ThemeData theme = ColorTheme.novaTheme;
+    getCompanyDetails();
     return InheritedPostProvider(
       post: widget.post.toPost(),
       child: Container(
@@ -170,8 +208,9 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                             showCustomTitle: false,
                             profilePicture: LMProfilePicture(
                               size: 52,
-                              fallbackText: widget.user.name,
-                              imageUrl: widget.user.imageUrl,
+                              fallbackText: displayName ?? widget.user.name,
+                              backgroundColor: theme.primaryColor,
+                              imageUrl: displayUrl ?? widget.user.imageUrl,
                               boxShape: BoxShape.circle,
                               onTap: () {
                                 if (widget.user.sdkClientInfo != null) {
@@ -184,7 +223,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                             ),
                             imageSize: 52,
                             titleText: LMTextView(
-                              text: widget.user.name,
+                              text: displayName ?? widget.user.name,
                               textStyle: theme.textTheme.titleLarge,
                             ),
                             createdAt: LMTextView(
@@ -302,13 +341,10 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                     expanded: widget.expanded,
                     expandText: widget.expanded ? '' : 'see more',
                   ),
-                  postDetails!.attachments != null &&
-                          postDetails!.attachments!.isNotEmpty &&
-                          postDetails!.text.isNotEmpty
+                  checkAttachments(postDetails!.attachments!)
                       ? const SizedBox(height: 16)
                       : const SizedBox(),
-                  postDetails!.attachments != null &&
-                          postDetails!.attachments!.isNotEmpty
+                  checkAttachments(postDetails!.attachments!)
                       ? postDetails!.attachments!.first.attachmentType == 4
                           ? LMLinkPreview(
                               attachment: postDetails!.attachments![0],

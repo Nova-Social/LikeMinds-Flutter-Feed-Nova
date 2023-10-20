@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
+import 'package:likeminds_feed_nova_sample/screens/company_screen.dart';
 import 'package:likeminds_feed_nova_sample/screens/profile_screen.dart';
 
 class TabApp extends StatefulWidget {
@@ -20,13 +21,12 @@ class _TabAppState extends State<TabApp> with TickerProviderStateMixin {
   void initState() {
     // TODO: implement initState
     super.initState();
-    tabController = TabController(length: 2, vsync: this);
+    tabController = TabController(length: 3, vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ColorTheme.novaTheme,
       home: Scaffold(
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: tabController.index,
@@ -64,6 +64,17 @@ class _TabAppState extends State<TabApp> with TickerProviderStateMixin {
               ),
               label: 'Profile',
             ),
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.group,
+                color: ColorTheme.lightWhite300,
+              ),
+              activeIcon: Icon(
+                Icons.group,
+                color: ColorTheme.primaryColor,
+              ),
+              label: 'Company',
+            ),
           ],
         ),
         body: TabBarView(
@@ -73,6 +84,7 @@ class _TabAppState extends State<TabApp> with TickerProviderStateMixin {
               feedWidget: widget.feedWidget,
             ), // First tab content
             const ProfileScreen(), // Second tab content
+            const CompanyScreen(),
           ],
         ),
       ),

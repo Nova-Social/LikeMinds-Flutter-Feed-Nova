@@ -47,7 +47,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
+    ThemeData theme = ColorTheme.novaTheme;
     return Scaffold(
       backgroundColor: theme.colorScheme.background,
       appBar: AppBar(

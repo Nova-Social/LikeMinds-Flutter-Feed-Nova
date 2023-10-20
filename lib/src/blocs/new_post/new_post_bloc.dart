@@ -52,18 +52,26 @@ class NewPostBloc extends Bloc<NewPostEvents, NewPostState> {
           ),
         );
         for (final media in postMedia) {
-          if (media.mediaType == MediaType.link) {
+          if (media.mediaType == MediaType.widget) {
+            attachments.add(
+              Attachment(
+                attachmentType: 5,
+                attachmentMeta: AttachmentMeta(meta: media.widgetsMeta),
+              ),
+            );
+          } else if (media.mediaType == MediaType.link) {
             attachments.add(
               Attachment(
                 attachmentType: 4,
                 attachmentMeta: AttachmentMeta(
+                  url: media.ogTags!.url,
+                  ogTags: AttachmentMetaOgTags(
+                    description: media.ogTags!.description,
+                    image: media.ogTags!.image,
+                    title: media.ogTags!.title,
                     url: media.ogTags!.url,
-                    ogTags: AttachmentMetaOgTags(
-                      description: media.ogTags!.description,
-                      image: media.ogTags!.image,
-                      title: media.ogTags!.title,
-                      url: media.ogTags!.url,
-                    )),
+                  ),
+                ),
               ),
             );
             linkCount = 1;
@@ -113,7 +121,7 @@ class NewPostBloc extends Bloc<NewPostEvents, NewPostState> {
         );
       }
       List<Topic> postTopics =
-          event.selectedTopics.map((e) => e.toTopic()).toList() as List<Topic>;
+          event.selectedTopics.map((e) => e.toTopic()).toList();
       final AddPostRequest request = (AddPostRequestBuilder()
             ..text(event.postText)
             ..attachments(attachments)
@@ -152,6 +160,7 @@ class NewPostBloc extends Bloc<NewPostEvents, NewPostState> {
           NewPostUploaded(
               postData: PostViewModel.fromPost(post: response.post!),
               userData: response.user!,
+              widgets: response.widgets ?? <String, WidgetModel>{},
               topics: response.topics ?? <String, Topic>{}),
         );
       } else {
@@ -181,6 +190,7 @@ class NewPostBloc extends Bloc<NewPostEvents, NewPostState> {
           EditPostUploaded(
             postData: PostViewModel.fromPost(post: response.post!),
             userData: response.user!,
+            widgets: response.widgets ?? <String, WidgetModel>{},
             topics: response.topics ?? <String, Topic>{},
           ),
         );

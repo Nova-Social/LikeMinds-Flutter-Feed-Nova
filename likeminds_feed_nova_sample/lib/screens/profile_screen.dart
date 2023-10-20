@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
-import 'package:likeminds_feed_nova_sample/user_local_preference.dart';
 import 'package:likeminds_feed/likeminds_feed.dart';
 
 class ProfileScreen extends StatefulWidget {
