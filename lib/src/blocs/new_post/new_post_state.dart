@@ -22,11 +22,13 @@ class NewPostUploaded extends NewPostState {
   final PostViewModel postData;
   final Map<String, User> userData;
   final Map<String, Topic> topics;
+  final Map<String, WidgetModel> widgets;
 
   const NewPostUploaded({
     required this.postData,
     required this.userData,
     required this.topics,
+    required this.widgets,
   });
 }
 
@@ -34,11 +36,13 @@ class EditPostUploaded extends NewPostState {
   final PostViewModel postData;
   final Map<String, User> userData;
   final Map<String, Topic> topics;
+  final Map<String, WidgetModel> widgets;
 
   const EditPostUploaded({
     required this.postData,
     required this.userData,
     required this.topics,
+    required this.widgets,
   });
 }
 

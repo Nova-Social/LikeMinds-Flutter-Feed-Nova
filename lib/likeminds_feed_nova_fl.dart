@@ -25,13 +25,19 @@ import 'package:likeminds_feed_nova_fl/src/utils/credentials/credentials.dart';
 import 'package:uni_links/uni_links.dart';
 
 export 'src/services/service_locator.dart';
+export 'src/services/bloc_service.dart';
 export 'src/utils/analytics/analytics.dart';
 export 'src/utils/notifications/notification_handler.dart';
 export 'src/utils/share/share_post.dart';
 export 'src/utils/constants/ui_constants.dart';
+export 'package:likeminds_feed_nova_fl/src/utils/utils.dart';
+export 'src/widgets/feed/user_feed_widget.dart';
+export 'src/widgets/feed/company_feed_widget.dart';
+export 'src/models/company_view_model.dart';
+export 'src/views/post/new_post_screen.dart';
 
 /// Flutter environment manager v0.0.1
-const prodFlag = !bool.fromEnvironment('DEBUG');
+const prodFlag = !bool.fromEnvironment('DEBUG', defaultValue: true);
 bool _initialURILinkHandled = false;
 
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
@@ -256,36 +262,36 @@ class _LMFeedState extends State<LMFeed> {
                     locator<LikeMindsService>().getCommunityConfigurations();
 
                     LMNotificationHandler.instance.registerDevice(user!.id);
-                    return MaterialApp(
-                      debugShowCheckedModeBanner: !isProd,
-                      navigatorKey: locator<NavigationService>().navigatorKey,
-                      theme: ColorTheme.novaTheme,
-                      title: 'LM Feed',
-                      home: FutureBuilder(
-                        future: locator<LikeMindsService>().getMemberState(),
-                        initialData: null,
-                        builder:
-                            (BuildContext context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData) {
-                            //TODO: Add Custom widget here
-                            return UniversalFeedScreen(
-                              openChatCallback: widget.openChatCallback,
-                              customWidgets: customWidgets,
-                            );
-                          }
-
-                          return Container(
-                            height: MediaQuery.of(context).size.height,
-                            width: MediaQuery.of(context).size.width,
-                            color: ColorTheme.backgroundColor,
-                            child: const Center(
-                              child: LMLoader(
-                                isPrimary: true,
-                              ),
-                            ),
+                    // return MaterialApp(
+                    // debugShowCheckedModeBanner: !isProd,
+                    // navigatorKey: locator<NavigationService>().navigatorKey,
+                    // theme: ColorTheme.novaTheme,
+                    // title: 'LM Feed',
+                    // home:
+                    return FutureBuilder(
+                      future: locator<LikeMindsService>().getMemberState(),
+                      initialData: null,
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          //TODO: Add Custom widget here
+                          return UniversalFeedScreen(
+                            openChatCallback: widget.openChatCallback,
+                            customWidgets: customWidgets,
                           );
-                        },
-                      ),
+                        }
+
+                        return Container(
+                          height: MediaQuery.of(context).size.height,
+                          width: MediaQuery.of(context).size.width,
+                          color: ColorTheme.backgroundColor,
+                          child: const Center(
+                            child: LMLoader(
+                              isPrimary: true,
+                            ),
+                          ),
+                        );
+                      },
+                      // ),
                     );
                   } else {}
                 } else if (snapshot.hasError) {

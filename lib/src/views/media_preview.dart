@@ -74,7 +74,7 @@ class _MediaPreviewState extends State<MediaPreview> {
   Widget build(BuildContext context) {
     final DateFormat formatter = DateFormat('MMMM d, hh:mm');
     final String formatted = formatter.format(post!.createdAt);
-    final ThemeData theme = Theme.of(context);
+    final ThemeData theme = ColorTheme.novaTheme;
     final Size screenSize = MediaQuery.of(context).size;
     final NewPostBloc newPostBloc = locator<BlocService>().newPostBlocProvider;
     return Scaffold(
@@ -105,6 +105,7 @@ class _MediaPreviewState extends State<MediaPreview> {
                   LMProfilePicture(
                     fallbackText: user.name,
                     imageUrl: user.imageUrl,
+                    backgroundColor: theme.primaryColor,
                     size: 36,
                     boxShape: BoxShape.circle,
                   ),
@@ -113,12 +114,12 @@ class _MediaPreviewState extends State<MediaPreview> {
                     child: LMTextView(
                       text: user.name,
                       textStyle:
-                          Theme.of(context).textTheme.bodyMedium!.copyWith(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                overflow: TextOverflow.ellipsis,
-                                color: kWhiteColor,
-                              ),
+                          ColorTheme.novaTheme.textTheme.bodyMedium!.copyWith(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        overflow: TextOverflow.ellipsis,
+                        color: kWhiteColor,
+                      ),
                     ),
                   ),
                 ],
@@ -230,7 +231,7 @@ class _MediaPreviewState extends State<MediaPreview> {
                               linkStyle: theme.textTheme.bodyMedium!
                                   .copyWith(color: theme.colorScheme.primary),
                               textAlign: TextAlign.left,
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              style: ColorTheme.novaTheme.textTheme.bodyMedium,
                             ),
                           ),
                         ),

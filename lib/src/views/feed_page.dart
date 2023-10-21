@@ -3,12 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:likeminds_feed/likeminds_feed.dart';
 import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
+import 'package:likeminds_feed_nova_fl/src/blocs/new_post/new_post_bloc.dart';
 import 'package:likeminds_feed_nova_fl/src/blocs/universal_feed/universal_feed_bloc.dart';
 import 'package:likeminds_feed_nova_fl/src/models/post_view_model.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/ui_constants.dart';
+import 'package:likeminds_feed_nova_fl/src/utils/post/post_action_id.dart';
+import 'package:likeminds_feed_nova_fl/src/utils/post/post_utils.dart';
+import 'package:likeminds_feed_nova_fl/src/views/post/edit_post_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post/new_post_screen.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post_detail_screen.dart';
+import 'package:likeminds_feed_nova_fl/src/views/report_screen.dart';
+import 'package:likeminds_feed_nova_fl/src/widgets/delete_dialog.dart';
 import 'package:likeminds_feed_nova_fl/src/widgets/post/post_widget.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 import 'package:overlay_support/overlay_support.dart';
@@ -115,6 +121,7 @@ class _FeedScreenState extends State<FeedScreen> {
 
   @override
   Widget build(BuildContext context) {
+    NewPostBloc newPostBloc = locator<BlocService>().newPostBlocProvider;
     return Scaffold(
       backgroundColor: kWhiteColor.withOpacity(0.95),
       appBar: AppBar(
@@ -182,25 +189,25 @@ class _FeedScreenState extends State<FeedScreen> {
                           width: 142,
                           borderRadius: 28,
                           backgroundColor:
-                              Theme.of(context).colorScheme.primary,
+                              ColorTheme.novaTheme.colorScheme.primary,
                           text: LMTextView(
                             text: "Create Post",
                             textStyle: TextStyle(
-                              color: Theme.of(context).colorScheme.onPrimary,
+                              color: ColorTheme.novaTheme.colorScheme.onPrimary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           icon: LMIcon(
                             type: LMIconType.icon,
                             icon: Icons.add,
-                            color: Theme.of(context).colorScheme.onPrimary,
+                            color: ColorTheme.novaTheme.colorScheme.onPrimary,
                           ),
                           onTap: () {
                             if (!postUploading.value) {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const NewPostScreen(),
+                                  builder: (context) => NewPostScreen(),
                                 ),
                               );
                             } else {
@@ -222,7 +229,113 @@ class _FeedScreenState extends State<FeedScreen> {
                           post: item,
                           user: feedResponse.users[item.userId]!,
                           topics: feedResponse.topics,
-                          onMenuTap: (int id) {},
+                          widgets: feedResponse.widgets,
+                          onMenuTap: (int id) {
+                            if (id == postDeleteId) {
+                              showDialog(
+                                  context: context,
+                                  builder: (childContext) =>
+                                      deleteConfirmationDialog(
+                                        childContext,
+                                        title: 'Delete Post?',
+                                        userId: item.userId,
+                                        content:
+                                            'Are you sure you want to permanently remove this post from Nova?',
+                                        action: (String reason) async {
+                                          Navigator.of(childContext).pop();
+                                          final res =
+                                              await locator<LikeMindsService>()
+                                                  .getMemberState();
+                                          //Implement delete post analytics tracking
+                                          LMAnalytics.get().track(
+                                            AnalyticsKeys.postDeleted,
+                                            {
+                                              "user_state": res.state == 1
+                                                  ? "CM"
+                                                  : "member",
+                                              "post_id": item.id,
+                                              "user_id": item.userId,
+                                            },
+                                          );
+                                          newPostBloc.add(
+                                            DeletePost(
+                                              postId: item.id,
+                                              reason: reason ?? 'Self Post',
+                                            ),
+                                          );
+                                        },
+                                        actionText: 'Yes, delete',
+                                      ));
+                            } else if (id == postPinId || id == postUnpinId) {
+                              try {
+                                String? postType = getPostType(
+                                    item.attachments?.first.attachmentType ??
+                                        0);
+                                if (item.isPinned) {
+                                  LMAnalytics.get()
+                                      .track(AnalyticsKeys.postUnpinned, {
+                                    "created_by_id": item.userId,
+                                    "post_id": item.id,
+                                    "post_type": postType,
+                                  });
+                                } else {
+                                  LMAnalytics.get()
+                                      .track(AnalyticsKeys.postPinned, {
+                                    "created_by_id": item.userId,
+                                    "post_id": item.id,
+                                    "post_type": postType,
+                                  });
+                                }
+                              } catch (_) {}
+
+                              newPostBloc.add(TogglePinPost(
+                                  postId: item.id, isPinned: !item.isPinned));
+                            } else if (id == postEditId) {
+                              try {
+                                String? postType;
+                                postType = getPostType(
+                                    item.attachments?.first.attachmentType ??
+                                        0);
+                                LMAnalytics.get().track(
+                                  AnalyticsKeys.postEdited,
+                                  {
+                                    "created_by_id": item.userId,
+                                    "post_id": item.id,
+                                    "post_type": postType,
+                                  },
+                                );
+                              } catch (err) {
+                                debugPrint(err.toString());
+                              }
+                              List<TopicUI> postTopics = [];
+
+                              if (item.topics.isNotEmpty &&
+                                  feedResponse.topics
+                                      .containsKey(item.topics.first)) {
+                                postTopics.add(TopicUI.fromTopic(
+                                    feedResponse.topics[item.topics.first]!));
+                              }
+
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => EditPostScreen(
+                                    postId: item.id,
+                                    selectedTopics: postTopics,
+                                  ),
+                                ),
+                              );
+                            } else if (id == postReportId) {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => ReportScreen(
+                                    entityCreatorId: item.userId,
+                                    entityId: item.id,
+                                    entityType: postReportEntityType,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
                           onTap: () {
                             Navigator.push(
                               context,
@@ -311,11 +424,11 @@ class _FeedScreenState extends State<FeedScreen> {
             width: 140,
             borderRadius: 28,
             placement: LMIconPlacement.start,
-            backgroundColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: ColorTheme.novaTheme.colorScheme.primary,
             text: LMTextView(
               text: "New Post",
               textStyle: TextStyle(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: ColorTheme.novaTheme.colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -323,13 +436,13 @@ class _FeedScreenState extends State<FeedScreen> {
               type: LMIconType.icon,
               icon: Icons.add,
               size: 12,
-              color: Theme.of(context).colorScheme.onPrimary,
+              color: ColorTheme.novaTheme.colorScheme.onPrimary,
             ),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const NewPostScreen(),
+                  builder: (context) => NewPostScreen(),
                 ),
               );
             },

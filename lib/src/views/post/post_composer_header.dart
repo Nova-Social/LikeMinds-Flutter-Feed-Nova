@@ -21,7 +21,7 @@ class PostComposerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
+    ThemeData theme = ColorTheme.novaTheme;
     return SizedBox(
       height: 56,
       child: Container(
@@ -66,7 +66,7 @@ class PostComposerHeader extends StatelessWidget {
                   ),
               borderRadius: 6,
               backgroundColor: active
-                  ? Theme.of(context).primaryColor
+                  ? ColorTheme.novaTheme.primaryColor
                   : ColorTheme.darkBlack300,
               onTap: () => onTap(),
             ),

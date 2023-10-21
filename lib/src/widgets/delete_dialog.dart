@@ -23,9 +23,10 @@ Dialog deleteConfirmationDialog(
   DeleteReason? reasonForDeletion;
   bool isCm = UserLocalPreference.instance.fetchMemberState();
   User user = UserLocalPreference.instance.fetchUserData();
-  ThemeData theme = Theme.of(context);
+  ThemeData theme = ColorTheme.novaTheme;
 
   return Dialog(
+    backgroundColor: theme.colorScheme.background,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(6.0),
     ),
@@ -223,9 +224,8 @@ Dialog deleteConfirmationDialog(
                                       ),
                                       Icon(
                                         Icons.arrow_drop_down,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
+                                        color: ColorTheme
+                                            .novaTheme.colorScheme.onPrimary,
                                       )
                                     ],
                                   )),

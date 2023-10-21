@@ -104,7 +104,7 @@ class _TopicBottomSheetState extends State<TopicBottomSheet> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
-    ThemeData theme = Theme.of(context);
+    ThemeData theme = ColorTheme.novaTheme;
     return Container(
       width: screenSize.width,
       constraints: BoxConstraints(

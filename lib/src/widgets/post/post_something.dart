@@ -14,13 +14,14 @@ class PostSomething extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = ColorTheme.novaTheme;
     User user = UserLocalPreference.instance.fetchUserData();
     Size screenSize = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: enabled
           ? () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const NewPostScreen()));
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => NewPostScreen()));
             }
           : () => toast("You do not have permission to create a post"),
       child: Container(
@@ -43,6 +44,7 @@ class PostSomething extends StatelessWidget {
               LMProfilePicture(
                 fallbackText: user.name,
                 imageUrl: user.imageUrl,
+                backgroundColor: theme.primaryColor,
                 boxShape: BoxShape.circle,
                 onTap: () {
                   if (user.sdkClientInfo != null) {

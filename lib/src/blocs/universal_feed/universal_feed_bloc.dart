@@ -30,9 +30,12 @@ class UniversalFeedBloc extends Bloc<UniversalFeedEvent, UniversalFeedState> {
     // if (!hasReachedMax(state, forLoadMore)) {
     Map<String, User> users = {};
     Map<String, Topic> topics = {};
+    Map<String, WidgetModel> widgets = {};
     if (state is UniversalFeedLoaded) {
       users = (state as UniversalFeedLoaded).feed.users;
       topics = (state as UniversalFeedLoaded).feed.topics;
+      widgets = (state as UniversalFeedLoaded).feed.widgets;
+
       emit(PaginatedUniversalFeedLoading(
           prevFeed: (state as UniversalFeedLoaded).feed));
     } else {
@@ -56,6 +59,7 @@ class UniversalFeedBloc extends Bloc<UniversalFeedEvent, UniversalFeedState> {
     } else {
       response.users.addAll(users);
       response.topics.addAll(topics);
+      response.widgets.addAll(widgets);
       emit(UniversalFeedLoaded(
           topics: event.topics ?? [],
           feed: response,
