@@ -87,7 +87,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
           alignment: Alignment.topRight,
           child: LMReplyTile(
               comment: element,
-              style: ColorTheme.novaTheme.textTheme.labelMedium,
+              textStyle: ColorTheme.novaTheme.textTheme.labelMedium,
               width: screenSize!.width * 0.8,
               backgroundColor: theme!.colorScheme.surface,
               borderRadius: BorderRadius.circular(10.0),

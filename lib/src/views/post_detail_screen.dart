@@ -1136,7 +1136,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                           setCommentState) {
                                                     return LMCommentTile(
                                                       key: ValueKey(item.id),
-                                                      style: ColorTheme
+                                                      textStyle: ColorTheme
                                                           .novaTheme
                                                           .textTheme
                                                           .labelMedium,

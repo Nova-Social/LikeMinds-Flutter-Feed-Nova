@@ -1141,7 +1141,8 @@ class _NewPostScreenState extends State<NewPostScreen> {
       );
       final config =
           await UserLocalPreference.instance.getCommunityConfigurations();
-      final sizeLimit = config.value!["max_image_size"]! / 1024;
+      double sizeLimit = (config.value!["max_image_size"]! / 1024) as double;
+      sizeLimit = sizeLimit.truncateToDouble();
       if (list != null && list.files.isNotEmpty) {
         if (postMedia.length + list.files.length > 10) {
           toast(
@@ -1156,7 +1157,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
           double fileSize = getFileSizeInDouble(fileBytes);
           if (fileSize > sizeLimit) {
             toast(
-              'Max file size allowed: ${sizeLimit}MB',
+              'Max file size allowed: ${sizeLimit.toInt()}MB',
               duration: Toast.LENGTH_LONG,
             );
             onUploadedMedia(false);
