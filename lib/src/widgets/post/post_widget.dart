@@ -25,11 +25,15 @@ class NovaPostWidget extends StatefulWidget {
   final PostViewModel post;
   final User user;
   final Map<String, Topic> topics;
+  final Map<String, WidgetModel> widgets;
   final bool isFeed;
   final Function() onTap;
   final Function(bool isDeleted) refresh;
   final Function(int) onMenuTap;
   final bool expanded;
+  final bool showMenu;
+  final bool showCompanyDetails;
+  final CompanyUI? company;
 
   const NovaPostWidget({
     Key? key,
@@ -40,7 +44,11 @@ class NovaPostWidget extends StatefulWidget {
     required this.refresh,
     required this.isFeed,
     required this.onMenuTap,
+    required this.widgets,
     this.expanded = false,
+    this.showMenu = true,
+    this.showCompanyDetails = true,
+    this.company,
   }) : super(key: key);
 
   @override
@@ -51,10 +59,16 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
   int postLikes = 0;
   int comments = 0;
   PostViewModel? postDetails;
+  String? displayName;
+  String? displayUrl;
+  String? companyId;
   bool? isLiked;
   bool? isPinned;
+  bool? showCompanyDetails;
+  Map<String, WidgetModel>? widgets;
   ValueNotifier<bool> rebuildLikeWidget = ValueNotifier(false);
   ValueNotifier<bool> rebuildPostWidget = ValueNotifier(false);
+  Attachment? linkAttachment;
 
   @override
   void initState() {
@@ -70,10 +84,54 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
 
   void setPostDetails() {
     postDetails = widget.post;
+    widgets = widget.widgets;
     postLikes = postDetails!.likeCount;
     comments = postDetails!.commentCount;
     isLiked = postDetails!.isLiked;
     isPinned = postDetails!.isPinned;
+    showCompanyDetails = widget.showCompanyDetails;
+    widgets = widget.widgets;
+    getCompanyDetails();
+  }
+
+  void getCompanyDetails() {
+    for (Attachment attachment in widget.post.attachments ?? []) {
+      if (attachment.attachmentType == 5) {
+        final entityId = attachment.attachmentMeta.meta?['entity_id'];
+        if (widgets != null && widgets!.containsKey(entityId)) {
+          displayName = widgets![entityId]!.metadata['company_name'];
+          displayUrl = widgets![entityId]!.metadata['company_image_url'];
+          companyId = widgets![entityId]!.metadata['company_id'];
+          print("displayName: $displayName");
+        }
+        break;
+      }
+    }
+  }
+
+  bool checkAttachments(List<Attachment> attachemnts) {
+    if (postDetails!.attachments == null || postDetails!.attachments!.isEmpty) {
+      return false;
+    }
+    for (var attachment in attachemnts) {
+      if (attachment.attachmentType != 5) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool checkForLinkPost() {
+    if (postDetails!.attachments == null || postDetails!.attachments!.isEmpty) {
+      return false;
+    }
+    for (var attachment in postDetails!.attachments!) {
+      if (attachment.attachmentType == 4) {
+        linkAttachment = attachment;
+        return true;
+      }
+    }
+    return false;
   }
 
   @override
@@ -81,7 +139,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
     Size screenSize = MediaQuery.of(context).size;
     NewPostBloc newPostBloc = locator<BlocService>().newPostBlocProvider;
     timeago.setLocaleMessages('en', SSCustomMessages());
-    ThemeData theme = Theme.of(context);
+    ThemeData theme = ColorTheme.novaTheme;
     return InheritedPostProvider(
       post: widget.post.toPost(),
       child: Container(
@@ -160,127 +218,146 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                         : const SizedBox(),
                   ),
                   ValueListenableBuilder(
-                      valueListenable: rebuildPostWidget,
-                      builder: (context, _, __) {
-                        return LMPostHeader(
-                            user: widget.user,
-                            isFeed: widget.isFeed,
-                            showCustomTitle: false,
-                            profilePicture: LMProfilePicture(
-                              size: 52,
-                              fallbackText: widget.user.name,
-                              imageUrl: widget.user.imageUrl,
-                              boxShape: BoxShape.circle,
-                              onTap: () {
-                                if (widget.user.sdkClientInfo != null) {
-                                  locator<LikeMindsService>().routeToProfile(
-                                      widget.user.sdkClientInfo!.userUniqueId);
-                                }
-                              },
-                              fallbackTextStyle: theme.textTheme.titleLarge!
-                                  .copyWith(fontSize: 28),
-                            ),
-                            imageSize: 52,
-                            titleText: LMTextView(
-                              text: widget.user.name,
-                              textStyle: theme.textTheme.titleLarge,
-                            ),
-                            createdAt: LMTextView(
-                              text: timeago.format(widget.post.createdAt),
-                              textStyle: theme.textTheme.labelMedium,
-                            ),
-                            editedText: LMTextView(
-                              text: "Edited",
-                              textStyle: theme.textTheme.labelMedium,
-                            ),
-                            menu: LMIconButton(
-                              icon: LMIcon(
-                                type: LMIconType.icon,
-                                icon: Icons.more_horiz,
-                                color: theme.colorScheme.onPrimary,
-                              ),
-                              onTap: (bool value) {
-                                showModalBottomSheet(
-                                  context: context,
-                                  elevation: 5,
-                                  isDismissible: true,
-                                  useRootNavigator: true,
-                                  clipBehavior: Clip.hardEdge,
-                                  backgroundColor: Colors.transparent,
-                                  enableDrag: false,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(32),
-                                      topRight: Radius.circular(32),
-                                    ),
+                    valueListenable: rebuildPostWidget,
+                    builder: (context, _, __) {
+                      return LMPostHeader(
+                          user: widget.user,
+                          isFeed: widget.isFeed,
+                          showCustomTitle: false,
+                          profilePicture: LMProfilePicture(
+                            size: 52,
+                            fallbackText: showCompanyDetails!
+                                ? displayName ?? widget.user.name
+                                : widget.user.name,
+                            backgroundColor: theme.primaryColor,
+                            imageUrl: showCompanyDetails!
+                                ? displayUrl ?? widget.user.imageUrl
+                                : widget.user.imageUrl,
+                            boxShape: BoxShape.circle,
+                            onTap: () {
+                              if (widget.user.sdkClientInfo != null) {
+                                locator<LikeMindsService>().routeToProfile(
+                                    widget.user.sdkClientInfo!.userUniqueId);
+                              }
+                            },
+                            fallbackTextStyle: theme.textTheme.titleLarge!
+                                .copyWith(fontSize: 28),
+                          ),
+                          imageSize: 52,
+                          titleText: LMTextView(
+                            text: showCompanyDetails!
+                                ? displayName ?? widget.user.name
+                                : widget.user.name,
+                            textStyle: theme.textTheme.titleLarge,
+                          ),
+                          subText: !showCompanyDetails! && displayName != null
+                              ? LMTextView(
+                                  text: "Created for $displayName",
+                                  textStyle: theme.textTheme.labelMedium,
+                                )
+                              : null,
+                          createdAt: LMTextView(
+                            text: timeago.format(widget.post.createdAt),
+                            textStyle: theme.textTheme.labelMedium,
+                          ),
+                          editedText: LMTextView(
+                            text: "Edited",
+                            textStyle: theme.textTheme.labelMedium,
+                          ),
+                          menu: widget.showMenu
+                              ? LMIconButton(
+                                  icon: LMIcon(
+                                    type: LMIconType.icon,
+                                    icon: Icons.more_horiz,
+                                    color: theme.colorScheme.onPrimary,
                                   ),
-                                  builder: (context) => LMBottomSheet(
-                                    height: max(170, screenSize.height * 0.25),
-                                    margin: const EdgeInsets.only(top: 30),
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(32),
-                                      topRight: Radius.circular(32),
-                                    ),
-                                    dragBar: Container(
-                                      width: 96,
-                                      height: 6,
-                                      decoration: ShapeDecoration(
-                                        color: theme.colorScheme.onSurface,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(99),
+                                  onTap: (bool value) {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      elevation: 5,
+                                      isDismissible: true,
+                                      useRootNavigator: true,
+                                      clipBehavior: Clip.hardEdge,
+                                      backgroundColor: Colors.transparent,
+                                      enableDrag: false,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(32),
+                                          topRight: Radius.circular(32),
                                         ),
                                       ),
-                                    ),
-                                    backgroundColor: theme.colorScheme.surface,
-                                    children: postDetails!.menuItems
-                                        .map(
-                                          (e) => GestureDetector(
-                                            onTap: () {
-                                              Navigator.of(context).pop();
-                                              widget.onMenuTap(e.id);
-                                            },
-                                            child: Container(
-                                              color: Colors.transparent,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 2.0,
-                                                      horizontal: 16.0),
-                                              margin: const EdgeInsets.only(
-                                                  bottom: 24.09),
-                                              width: screenSize.width - 32.0,
-                                              child: Row(children: [
-                                                getIconFromDropDownItemId(
-                                                  e.id,
-                                                  20,
-                                                  theme.colorScheme
-                                                      .onPrimaryContainer,
-                                                ),
-                                                kHorizontalPaddingLarge,
-                                                LMTextView(
-                                                  text: e.title,
-                                                  textStyle: theme
-                                                      .textTheme.headlineLarge!
-                                                      .copyWith(
-                                                          color: e.id ==
-                                                                  postDeleteId
-                                                              ? theme
-                                                                  .colorScheme
-                                                                  .error
-                                                              : theme
-                                                                  .colorScheme
-                                                                  .onPrimaryContainer),
-                                                ),
-                                              ]),
+                                      builder: (context) => LMBottomSheet(
+                                        height:
+                                            max(170, screenSize.height * 0.25),
+                                        margin: const EdgeInsets.only(top: 30),
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(32),
+                                          topRight: Radius.circular(32),
+                                        ),
+                                        dragBar: Container(
+                                          width: 96,
+                                          height: 6,
+                                          decoration: ShapeDecoration(
+                                            color: theme.colorScheme.onSurface,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(99),
                                             ),
                                           ),
-                                        )
-                                        .toList(),
-                                  ),
-                                );
-                              },
-                            ));
-                      }),
+                                        ),
+                                        backgroundColor:
+                                            theme.colorScheme.surface,
+                                        children: postDetails!.menuItems
+                                            .map(
+                                              (e) => GestureDetector(
+                                                onTap: () {
+                                                  Navigator.of(context).pop();
+                                                  widget.onMenuTap(e.id);
+                                                },
+                                                child: Container(
+                                                  color: Colors.transparent,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 2.0,
+                                                      horizontal: 16.0),
+                                                  margin: const EdgeInsets.only(
+                                                      bottom: 24.09),
+                                                  width:
+                                                      screenSize.width - 32.0,
+                                                  child: Row(children: [
+                                                    getIconFromDropDownItemId(
+                                                      e.id,
+                                                      20,
+                                                      theme.colorScheme
+                                                          .onPrimaryContainer,
+                                                    ),
+                                                    kHorizontalPaddingLarge,
+                                                    LMTextView(
+                                                      text: e.title,
+                                                      textStyle: theme.textTheme
+                                                          .headlineLarge!
+                                                          .copyWith(
+                                                              color: e.id ==
+                                                                      postDeleteId
+                                                                  ? theme
+                                                                      .colorScheme
+                                                                      .error
+                                                                  : theme
+                                                                      .colorScheme
+                                                                      .onPrimaryContainer),
+                                                    ),
+                                                  ]),
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                      ),
+                                    );
+                                  },
+                                )
+                              : const SizedBox());
+                    },
+                  ),
                   const SizedBox(height: 16),
                   LMPostContent(
                     onTagTap: (String userId) {
@@ -292,16 +369,13 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                     expanded: widget.expanded,
                     expandText: widget.expanded ? '' : 'see more',
                   ),
-                  postDetails!.attachments != null &&
-                          postDetails!.attachments!.isNotEmpty &&
-                          postDetails!.text.isNotEmpty
+                  checkAttachments(postDetails!.attachments!)
                       ? const SizedBox(height: 16)
                       : const SizedBox(),
-                  postDetails!.attachments != null &&
-                          postDetails!.attachments!.isNotEmpty
-                      ? postDetails!.attachments!.first.attachmentType == 4
+                  checkAttachments(postDetails!.attachments!)
+                      ? checkForLinkPost()
                           ? LMLinkPreview(
-                              attachment: postDetails!.attachments![0],
+                              attachment: linkAttachment,
                               backgroundColor: theme.colorScheme.surface,
                               showLinkUrl: false,
                               errorWidget: Container(
@@ -324,28 +398,27 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                 ),
                               ),
                               onTap: () {
-                                if (postDetails!.attachments!.first
-                                        .attachmentMeta.url !=
+                                if (linkAttachment?.attachmentMeta.url !=
                                     null) {
                                   launchUrl(
-                                    Uri.parse(postDetails!.attachments!.first
-                                        .attachmentMeta.url!),
+                                    Uri.parse(
+                                        linkAttachment!.attachmentMeta.url!),
                                     mode: LaunchMode.externalApplication,
                                   );
                                 }
                               },
                               border: const Border(),
                               title: LMTextView(
-                                text: postDetails!.attachments!.first
-                                        .attachmentMeta.ogTags?.title ??
+                                text: linkAttachment
+                                        ?.attachmentMeta.ogTags?.title ??
                                     "--",
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 textStyle: theme.textTheme.titleMedium,
                               ),
                               subtitle: LMTextView(
-                                text: postDetails!.attachments!.first
-                                        .attachmentMeta.ogTags?.description ??
+                                text: linkAttachment
+                                        ?.attachmentMeta.ogTags?.description ??
                                     "--",
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -375,6 +448,8 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                   width: screenSize.width - 32,
                                   boxFit: BoxFit.cover,
                                   showLinkUrl: false,
+                                  textColor: ColorTheme
+                                      .novaTheme.colorScheme.onPrimary,
                                   errorWidget: Container(
                                     color: theme.colorScheme.background,
                                     child: Column(

@@ -8,7 +8,7 @@ class TopicChipWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
+    ThemeData theme = ColorTheme.novaTheme;
     return Container(
       color: Colors.transparent,
       child: Row(

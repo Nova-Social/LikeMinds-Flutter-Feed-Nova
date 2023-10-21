@@ -60,7 +60,7 @@ class FadePageRoute<T> extends PageRoute<T> {
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
-//    final PageTransitionsTheme theme = Theme.of(context).pageTransitionsTheme;
+//    final PageTransitionsTheme theme = ColorTheme.novaTheme.pageTransitionsTheme;
     return _FadeInPageTransition(routeAnimation: animation, child: child);
   }
 

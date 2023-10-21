@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
+import 'package:likeminds_feed/likeminds_feed.dart';
 import 'package:timeago/timeago.dart';
 
 class SSCustomMessages implements LookupMessages {
@@ -86,4 +87,31 @@ Future<Map<String, int>> getNetworkImageDimensions(String image) async {
   dimensions.addAll({"width": decodedImage.width});
   dimensions.addAll({"height": decodedImage.height});
   return dimensions;
+}
+
+String? extractCompanyNameFromWidget(
+    Map<String, WidgetModel> widgets, String? entityId) {
+  if (entityId == null) return null;
+  if (widgets.containsKey(entityId)) {
+    return widgets[entityId]!.metadata['company_name'];
+  }
+  return null;
+}
+
+String? extractCompanyImageUrlFromWidget(
+    Map<String, WidgetModel> widgets, String? entityId) {
+  if (entityId == null) return null;
+  if (widgets.containsKey(entityId)) {
+    return widgets[entityId]!.metadata['company_image_url'];
+  }
+  return null;
+}
+
+String? extractCompanyIdFromWidget(
+    Map<String, WidgetModel> widgets, String? entityId) {
+  if (entityId == null) return null;
+  if (widgets.containsKey(entityId)) {
+    return widgets[entityId]!.metadata['company_id'];
+  }
+  return null;
 }

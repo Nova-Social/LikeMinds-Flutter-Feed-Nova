@@ -25,11 +25,13 @@ class EditPostScreen extends StatefulWidget {
   static const String route = '/edit_post_screen';
   final String postId;
   final List<TopicUI> selectedTopics;
+  final CompanyUI? company;
 
   const EditPostScreen({
     super.key,
     required this.postId,
     required this.selectedTopics,
+    this.company,
   });
 
   @override
@@ -60,6 +62,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
   Timer? _debounce;
   Size? screenSize;
   ThemeData? theme;
+  Map<String, WidgetModel>? widgets;
   final CustomPopupMenuController _controllerPopUp =
       CustomPopupMenuController();
 
@@ -231,7 +234,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
     // SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
     screenSize = MediaQuery.of(context).size;
     newPostBloc = locator<BlocService>().newPostBlocProvider;
-    theme = Theme.of(context);
+    theme = ColorTheme.novaTheme;
     return WillPopScope(
       onWillPop: () {
         if (textEditingController!.text != convertedPostText) {
@@ -403,6 +406,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.connectionState == ConnectionState.done) {
                     GetPostResponse response = snapshot.data!;
+                    widgets = response.widgets;
                     if (response.success) {
                       setPostData(response.post!);
                       return postEditWidget();
@@ -496,6 +500,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                     (postDetails!.attachments != null &&
                         postDetails!.attachments!.isNotEmpty)) {
                   checkTextLinks();
+
                   userTags = TaggingHelper.matchTags(
                       textEditingController!.text, userTags);
                   String result = TaggingHelper.encodeString(
@@ -588,8 +593,9 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         LMProfilePicture(
-                          fallbackText: user!.name,
-                          imageUrl: user!.imageUrl,
+                          fallbackText: widget.company?.name ?? user!.name,
+                          imageUrl: widget.company?.imageUrl ?? user!.imageUrl,
+                          backgroundColor: theme!.primaryColor,
                           boxShape: BoxShape.circle,
                           onTap: () {
                             if (user!.sdkClientInfo != null) {
@@ -604,7 +610,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                           child: Padding(
                             padding: const EdgeInsets.only(top: 6.0),
                             child: LMTextView(
-                              text: user!.name,
+                              text: widget.company?.name ?? user!.name,
                               overflow: TextOverflow.ellipsis,
                               textStyle: theme!.textTheme.titleMedium,
                             ),
@@ -719,7 +725,12 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                       MediaType.document
                                   ? getPostDocument(screenSize!.width)
                                   : Builder(builder: (context) {
-                                      int mediaLength = attachments!.length;
+                                      List<Attachment> mediaList = [
+                                        ...attachments!
+                                      ];
+                                      mediaList.removeWhere((element) =>
+                                          element.attachmentType == 5);
+                                      int mediaLength = mediaList.length;
                                       return Container(
                                         padding: const EdgeInsets.only(
                                           top: kPaddingSmall,
@@ -741,10 +752,9 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                                 SizedBox(
                                                   child: Stack(
                                                     children: [
-                                                      mapIntToMediaType(
-                                                                  attachments![
-                                                                          index]
-                                                                      .attachmentType) ==
+                                                      mapIntToMediaType(mediaList[
+                                                                      index]
+                                                                  .attachmentType) ==
                                                               MediaType.video
                                                           ? ClipRRect(
                                                               borderRadius:
@@ -768,7 +778,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                                                 color: Colors
                                                                     .black,
                                                                 child: LMVideo(
-                                                                  videoUrl: attachments![
+                                                                  videoUrl: mediaList[
                                                                           index]
                                                                       .attachmentMeta
                                                                       .url!,
@@ -831,7 +841,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                                                       .cover,
                                                                   borderRadius:
                                                                       18,
-                                                                  imageUrl: attachments![
+                                                                  imageUrl: mediaList[
                                                                           index]
                                                                       .attachmentMeta
                                                                       .url!,

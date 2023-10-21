@@ -114,7 +114,7 @@ class _TaggingAheadTextFieldState extends State<TaggingAheadTextField> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
+    ThemeData theme = ColorTheme.novaTheme;
     return SizedBox(
       child: TypeAheadField<UserTag>(
         tagColor: theme.colorScheme.primary,
@@ -186,6 +186,7 @@ class _TaggingAheadTextFieldState extends State<TaggingAheadTextField> {
                       child: LMProfilePicture(
                         fallbackText: opt.name!,
                         imageUrl: opt.imageUrl!,
+                        backgroundColor: theme.primaryColor,
                         onTap: null,
                         boxShape: BoxShape.circle,
                         size: 40,

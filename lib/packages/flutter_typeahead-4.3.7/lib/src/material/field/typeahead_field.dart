@@ -190,7 +190,7 @@ import 'package:extended_text_field/extended_text_field.dart';
 ///   Text(
 ///     '$error',
 ///     style: TextStyle(
-///       color: Theme.of(context).errorColor
+///       color: ColorTheme.novaTheme.errorColor
 ///     )
 ///   )
 /// ```
