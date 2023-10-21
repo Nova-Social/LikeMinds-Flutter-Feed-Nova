@@ -186,39 +186,38 @@ class _CompanyFeedWidgetState extends State<CompanyFeedWidget> {
                         onMenuTap: (int id) {
                           if (id == postDeleteId) {
                             showDialog(
-                                context: context,
-                                builder: (childContext) =>
-                                    deleteConfirmationDialog(
-                                      childContext,
-                                      title: 'Delete Post?',
-                                      userId: item.userId,
-                                      content:
-                                          'Are you sure you want to permanently remove this post from Nova?',
-                                      action: (String reason) async {
-                                        Navigator.of(childContext).pop();
-                                        final res =
-                                            await locator<LikeMindsService>()
-                                                .getMemberState();
-                                        //Implement delete post analytics tracking
-                                        LMAnalytics.get().track(
-                                          AnalyticsKeys.postDeleted,
-                                          {
-                                            "user_state": res.state == 1
-                                                ? "CM"
-                                                : "member",
-                                            "post_id": item.id,
-                                            "user_id": item.userId,
-                                          },
-                                        );
-                                        newPostBloc.add(
-                                          DeletePost(
-                                            postId: item.id,
-                                            reason: reason ?? 'Self Post',
-                                          ),
-                                        );
-                                      },
-                                      actionText: 'Yes, delete',
-                                    ));
+                              context: context,
+                              builder: (childContext) =>
+                                  deleteConfirmationDialog(
+                                childContext,
+                                title: 'Delete Post?',
+                                userId: item.userId,
+                                content:
+                                    'Are you sure you want to permanently remove this post from Nova?',
+                                action: (String reason) async {
+                                  Navigator.of(childContext).pop();
+                                  final res = await locator<LikeMindsService>()
+                                      .getMemberState();
+                                  //Implement delete post analytics tracking
+                                  LMAnalytics.get().track(
+                                    AnalyticsKeys.postDeleted,
+                                    {
+                                      "user_state":
+                                          res.state == 1 ? "CM" : "member",
+                                      "post_id": item.id,
+                                      "user_id": item.userId,
+                                    },
+                                  );
+                                  newPostBloc.add(
+                                    DeletePost(
+                                      postId: item.id,
+                                      reason: reason ?? 'Self Post',
+                                    ),
+                                  );
+                                },
+                                actionText: 'Yes, delete',
+                              ),
+                            );
                           } else if (id == postPinId || id == postUnpinId) {
                             try {
                               String? postType = getPostType(

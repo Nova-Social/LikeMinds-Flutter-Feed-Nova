@@ -68,6 +68,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
   Map<String, WidgetModel>? widgets;
   ValueNotifier<bool> rebuildLikeWidget = ValueNotifier(false);
   ValueNotifier<bool> rebuildPostWidget = ValueNotifier(false);
+  Attachment? linkAttachment;
 
   @override
   void initState() {
@@ -114,6 +115,19 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
     }
     for (var attachment in attachemnts) {
       if (attachment.attachmentType != 5) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool checkForLinkPost() {
+    if (postDetails!.attachments == null || postDetails!.attachments!.isEmpty) {
+      return false;
+    }
+    for (var attachment in postDetails!.attachments!) {
+      if (attachment.attachmentType == 4) {
+        linkAttachment = attachment;
         return true;
       }
     }
@@ -359,9 +373,9 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                       ? const SizedBox(height: 16)
                       : const SizedBox(),
                   checkAttachments(postDetails!.attachments!)
-                      ? postDetails!.attachments!.first.attachmentType == 4
+                      ? checkForLinkPost()
                           ? LMLinkPreview(
-                              attachment: postDetails!.attachments![0],
+                              attachment: linkAttachment,
                               backgroundColor: theme.colorScheme.surface,
                               showLinkUrl: false,
                               errorWidget: Container(
@@ -384,28 +398,27 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                 ),
                               ),
                               onTap: () {
-                                if (postDetails!.attachments!.first
-                                        .attachmentMeta.url !=
+                                if (linkAttachment?.attachmentMeta.url !=
                                     null) {
                                   launchUrl(
-                                    Uri.parse(postDetails!.attachments!.first
-                                        .attachmentMeta.url!),
+                                    Uri.parse(
+                                        linkAttachment!.attachmentMeta.url!),
                                     mode: LaunchMode.externalApplication,
                                   );
                                 }
                               },
                               border: const Border(),
                               title: LMTextView(
-                                text: postDetails!.attachments!.first
-                                        .attachmentMeta.ogTags?.title ??
+                                text: linkAttachment
+                                        ?.attachmentMeta.ogTags?.title ??
                                     "--",
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 textStyle: theme.textTheme.titleMedium,
                               ),
                               subtitle: LMTextView(
-                                text: postDetails!.attachments!.first
-                                        .attachmentMeta.ogTags?.description ??
+                                text: linkAttachment
+                                        ?.attachmentMeta.ogTags?.description ??
                                     "--",
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,

@@ -26,6 +26,7 @@ Dialog deleteConfirmationDialog(
   ThemeData theme = ColorTheme.novaTheme;
 
   return Dialog(
+    backgroundColor: theme.colorScheme.background,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(6.0),
     ),

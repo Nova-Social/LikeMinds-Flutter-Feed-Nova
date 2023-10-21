@@ -102,6 +102,20 @@ class _NewPostScreenState extends State<NewPostScreen> {
     }
   }
 
+  bool checkIfPostMediaIsAttached() {
+    if (postMedia.isNotEmpty) {
+      for (MediaModel media in postMedia) {
+        if (media.mediaType == MediaType.image ||
+            media.mediaType == MediaType.video ||
+            media.mediaType == MediaType.document ||
+            media.mediaType == MediaType.link) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   /* 
   * Removes the media from the list
   * whenever the user taps on the X button
@@ -280,9 +294,24 @@ class _NewPostScreenState extends State<NewPostScreen> {
     String link = getFirstValidLinkFromString(_controller.text);
     if (link.isEmpty) {
       linkModel = null;
-    } else if (linkModel != null && postMedia.isEmpty && showLinkPreview) {
+    } else if (linkModel != null &&
+        checkIfMediaIsAttached() &&
+        showLinkPreview) {
       postMedia.add(linkModel!);
     }
+  }
+
+  bool checkIfMediaIsAttached() {
+    if (postMedia.isNotEmpty) {
+      for (MediaModel media in postMedia) {
+        if (media.mediaType == MediaType.image ||
+            media.mediaType == MediaType.video ||
+            media.mediaType == MediaType.document) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   @override
@@ -872,7 +901,8 @@ class _NewPostScreenState extends State<NewPostScreen> {
 
                         String postText = _controller.text;
                         postText = postText.trim();
-                        if (postText.isNotEmpty || postMedia.isNotEmpty) {
+                        if (postText.isNotEmpty ||
+                            checkIfPostMediaIsAttached()) {
                           checkTextLinks();
                           userTags = TaggingHelper.matchTags(
                               _controller.text, userTags);
