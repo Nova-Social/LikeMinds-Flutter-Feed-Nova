@@ -121,6 +121,7 @@ class _UserFeedWidgetState extends State<UserFeedWidget> {
           }
           users.addAll(state.userData);
           topics.addAll(state.topics);
+          widgets.addAll(state.widgets);
           _pagingController.itemList = feedRoomItemList;
           rebuildPostWidget.value = !rebuildPostWidget.value;
         }
@@ -135,7 +136,7 @@ class _UserFeedWidgetState extends State<UserFeedWidget> {
           }
           users.addAll(state.userData);
           topics.addAll(state.topics);
-
+          widgets.addAll(state.widgets);
           rebuildPostWidget.value = !rebuildPostWidget.value;
         }
 
@@ -170,6 +171,7 @@ class _UserFeedWidgetState extends State<UserFeedWidget> {
                         post: item,
                         showMenu: true,
                         topics: topics,
+                        showCompanyDetails: false,
                         widgets: widgets,
                         user: users[item.userId]!,
                         onMenuTap: (int id) {

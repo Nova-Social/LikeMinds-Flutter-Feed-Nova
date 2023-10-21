@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -683,6 +681,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                 }
                 widget.feedResponse.users.addAll(curr.userData);
                 widget.feedResponse.topics.addAll(curr.topics);
+                widget.feedResponse.widgets.addAll(curr.widgets);
                 widget.feedRoomPagingController.itemList = feedRoomItemList;
                 postUploading.value = false;
                 rebuildPostWidget.value = !rebuildPostWidget.value;
@@ -699,6 +698,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                 }
                 widget.feedResponse.users.addAll(curr.userData);
                 widget.feedResponse.topics.addAll(curr.topics);
+                widget.feedResponse.widgets.addAll(curr.widgets);
                 postUploading.value = false;
                 rebuildPostWidget.value = !rebuildPostWidget.value;
               }
