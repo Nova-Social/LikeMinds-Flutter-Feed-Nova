@@ -435,6 +435,8 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                   width: screenSize.width - 32,
                                   boxFit: BoxFit.cover,
                                   showLinkUrl: false,
+                                  textColor: ColorTheme
+                                      .novaTheme.colorScheme.onPrimary,
                                   errorWidget: Container(
                                     color: theme.colorScheme.background,
                                     child: Column(

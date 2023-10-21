@@ -28,6 +28,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: const Text('My Profile'),
         backgroundColor: ColorTheme.backgroundColor,
       ),
+      floatingActionButton: SafeArea(
+        child: FloatingActionButton(
+            backgroundColor: ColorTheme.primaryColor,
+            child: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => NewPostScreen(),
+                ),
+              );
+            }),
+      ),
       body: CustomScrollView(
         slivers: [
           const SliverPadding(padding: EdgeInsets.only(bottom: 32)),

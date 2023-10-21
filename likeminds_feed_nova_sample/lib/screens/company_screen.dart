@@ -37,7 +37,7 @@ class _CompanyScreenState extends State<CompanyScreen> {
       ),
       floatingActionButton: SafeArea(
         child: FloatingActionButton(
-            backgroundColor: ColorTheme.backgroundColor,
+            backgroundColor: ColorTheme.primaryColor,
             child: const Icon(Icons.add),
             onPressed: () {
               Navigator.of(context).push(
