@@ -60,14 +60,19 @@ class _CompanyFeedWidgetState extends State<CompanyFeedWidget> {
           widgetId = response.widgets?.first.id;
         }
       }
-      final feedRequest = (GetFeedRequestBuilder()
-            ..page(pageKey)
-            ..pageSize(pageSize)
-            ..widgetIds([widgetId ?? '']))
-          .build();
-      GetFeedResponse? response =
-          await locator<LikeMindsService>().getFeed(feedRequest);
-      updatePagingControllers(response);
+
+      if (widgetId != null) {
+        final feedRequest = (GetFeedRequestBuilder()
+              ..page(pageKey)
+              ..pageSize(pageSize)
+              ..widgetIds([widgetId ?? '']))
+            .build();
+        GetFeedResponse? response =
+            await locator<LikeMindsService>().getFeed(feedRequest);
+        updatePagingControllers(response);
+      } else {
+        _pagingController.appendLastPage([]);
+      }
     });
   }
 

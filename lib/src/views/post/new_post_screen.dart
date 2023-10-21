@@ -705,42 +705,34 @@ class _NewPostScreenState extends State<NewPostScreen> {
                                                                         ),
                                                                       ),
                                                                     )
-                                                                  : ClipRRect(
-                                                                      borderRadius: const BorderRadius
-                                                                          .all(
-                                                                          Radius.circular(
-                                                                              20)),
-                                                                      child:
-                                                                          Container(
-                                                                        height: mediaLength ==
-                                                                                1
-                                                                            ? screenSize.width -
-                                                                                32
-                                                                            : 200,
-                                                                        width: mediaLength ==
-                                                                                1
-                                                                            ? screenSize.width -
-                                                                                32
-                                                                            : 200,
-                                                                        color: Colors
-                                                                            .black,
-                                                                        child:
-                                                                            LMImage(
-                                                                          height: mediaLength == 1
-                                                                              ? screenSize.width - 32
-                                                                              : 200,
-                                                                          width: mediaLength == 1
-                                                                              ? screenSize.width - 32
-                                                                              : 200,
-                                                                          boxFit:
-                                                                              BoxFit.cover,
-                                                                          borderRadius:
-                                                                              18,
-                                                                          imageFile:
-                                                                              postMedia[index].mediaFile!,
+                                                                  : postMedia[index]
+                                                                              .mediaFile ==
+                                                                          null
+                                                                      ? const SizedBox()
+                                                                      : ClipRRect(
+                                                                          borderRadius: const BorderRadius
+                                                                              .all(
+                                                                              Radius.circular(20)),
+                                                                          child:
+                                                                              Container(
+                                                                            height: mediaLength == 1
+                                                                                ? screenSize.width - 32
+                                                                                : 200,
+                                                                            width: mediaLength == 1
+                                                                                ? screenSize.width - 32
+                                                                                : 200,
+                                                                            color:
+                                                                                Colors.black,
+                                                                            child:
+                                                                                LMImage(
+                                                                              height: mediaLength == 1 ? screenSize.width - 32 : 200,
+                                                                              width: mediaLength == 1 ? screenSize.width - 32 : 200,
+                                                                              boxFit: BoxFit.cover,
+                                                                              borderRadius: 18,
+                                                                              imageFile: postMedia[index].mediaFile!,
+                                                                            ),
+                                                                          ),
                                                                         ),
-                                                                      ),
-                                                                    ),
                                                               Positioned(
                                                                 top: 4,
                                                                 right: 4,

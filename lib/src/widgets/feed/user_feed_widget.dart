@@ -77,6 +77,8 @@ class _UserFeedWidgetState extends State<UserFeedWidget> {
       if (response.widgets != null) {
         widgets.addAll(response.widgets!);
       }
+    } else {
+      _pagingController.appendLastPage([]);
     }
   }
 
