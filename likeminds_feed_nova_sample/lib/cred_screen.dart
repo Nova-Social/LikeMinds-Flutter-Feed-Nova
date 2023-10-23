@@ -8,12 +8,13 @@ import 'package:likeminds_feed_nova_sample/main.dart';
 import 'package:likeminds_feed_nova_sample/network_handling.dart';
 import 'package:flutter/material.dart';
 import 'package:likeminds_feed_nova_sample/screens/root_screen.dart';
-import 'package:likeminds_feed_nova_sample/user_local_preference.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:uni_links/uni_links.dart';
 
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
+
+bool _initialURILinkHandled = false;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
         title: 'Integration App for UI + SDK package',
         debugShowCheckedModeBanner: false,
         scaffoldMessengerKey: rootScaffoldMessengerKey,
+        navigatorKey: navigatorKey,
         theme: ColorTheme.novaTheme,
         home: const CredScreen(),
       ),
@@ -49,12 +51,16 @@ class _CredScreenState extends State<CredScreen> {
   final TextEditingController _userIdController = TextEditingController();
   LMFeed? lmFeed;
   String? userId;
+  StreamSubscription? _streamSubscription;
 
   @override
   void initState() {
     super.initState();
     NetworkConnectivity networkConnectivity = NetworkConnectivity.instance;
     networkConnectivity.initialise();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      initUniLinks(context);
+    });
   }
 
   @override
@@ -64,11 +70,64 @@ class _CredScreenState extends State<CredScreen> {
     super.dispose();
   }
 
+  Future initUniLinks(BuildContext context) async {
+    if (!_initialURILinkHandled) {
+      _initialURILinkHandled = true;
+      // Get the initial deep link if the app was launched with one
+      final initialLink = await getInitialLink();
+
+      // Handle the deep link
+      if (initialLink != null) {
+        // You can extract any parameters from the initialLink object here
+        // and use them to navigate to a specific screen in your app
+        debugPrint('Received initial deep link: $initialLink');
+
+        // TODO: add api key to the DeepLinkRequest
+        // TODO: add user id and user name of logged in user
+        SharePost().parseDeepLink((DeepLinkRequestBuilder()
+              // Add your api key here
+              ..apiKey(debug ? CredsDev.apiKey : CredsProd.apiKey)
+              ..isGuest(false)
+              ..link(initialLink)
+              // Add user name here
+              ..userName("Test User")
+              // Add user id here
+              ..userUniqueId('Test User Id'))
+            .build());
+      }
+
+      // Subscribe to link changes
+      _streamSubscription = linkStream.listen((String? link) async {
+        if (link != null) {
+          // Handle the deep link
+          // You can extract any parameters from the uri object here
+          // and use them to navigate to a specific screen in your app
+          debugPrint('Received deep link: $link');
+
+          // TODO: add api key to the DeepLinkRequest
+          // TODO: add user id and user name of logged in user
+          SharePost().parseDeepLink((DeepLinkRequestBuilder()
+                // Add your api key here
+                ..apiKey(debug ? CredsDev.apiKey : CredsProd.apiKey)
+                ..isGuest(false)
+                ..link(link)
+                // Add user name here
+                ..userName("Test User")
+                // Add user id here
+                ..userUniqueId('Test User Id'))
+              .build());
+        }
+      }, onError: (err) {
+        // Handle exception by warning the user their action did not succeed
+        // toast('An error occurred');
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     ThemeData theme = ColorTheme.novaTheme;
     Size screenSize = MediaQuery.of(context).size;
-    // return lmFeed;
     return Scaffold(
       backgroundColor: theme.colorScheme.background,
       body: Padding(

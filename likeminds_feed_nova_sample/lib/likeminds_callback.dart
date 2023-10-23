@@ -1,4 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:likeminds_feed/likeminds_feed.dart';
+import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
+import 'package:likeminds_feed_nova_sample/main.dart';
+import 'package:likeminds_feed_nova_sample/screens/company_screen.dart';
+import 'package:likeminds_feed_nova_sample/screens/profile_screen.dart';
 
 /// This class is used to implement the [LMSDKCallback] interface
 class LikeMindsCallback implements LMSDKCallback {
@@ -34,5 +39,18 @@ class LikeMindsCallback implements LMSDKCallback {
   @override
   void profileRouteCallback({required String lmUserId}) {
     print("LM User ID caught in callback : $lmUserId");
+    if (navigatorKey.currentState != null) {
+      navigatorKey.currentState!
+          .push(MaterialPageRoute(builder: (context) => const ProfileScreen()));
+    }
+  }
+
+  @override
+  void routeToCompanyCallback({required String companyId}) {
+    print("LM User ID caught in callback : $companyId");
+    if (navigatorKey.currentState != null) {
+      navigatorKey.currentState!
+          .push(MaterialPageRoute(builder: (context) => const CompanyScreen()));
+    }
   }
 }

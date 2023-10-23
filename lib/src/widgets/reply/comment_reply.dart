@@ -80,6 +80,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
       List<CommentReply> replies, Map<String, User> users) {
     ToggleLikeCommentBloc toggleLikeCommentBloc =
         BlocProvider.of<ToggleLikeCommentBloc>(context);
+    ThemeData theme = ColorTheme.novaTheme;
     return replies.mapIndexed((index, element) {
       User user = users[element.userId]!;
       return StatefulBuilder(builder: (context, setReplyState) {
@@ -87,9 +88,11 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
           alignment: Alignment.topRight,
           child: LMReplyTile(
               comment: element,
-              textStyle: ColorTheme.novaTheme.textTheme.labelMedium,
+              textStyle: theme.textTheme.labelMedium,
+              linkStyle: theme.textTheme.labelMedium!
+                  .copyWith(color: ColorTheme.primaryColor),
               width: screenSize!.width * 0.8,
-              backgroundColor: theme!.colorScheme.surface,
+              backgroundColor: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(10.0),
               margin: const EdgeInsets.only(bottom: 6.0, right: 16.0),
               onTagTap: (String userId) {
@@ -100,7 +103,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                 icon: LMIcon(
                   type: LMIconType.icon,
                   icon: Icons.more_vert,
-                  color: theme!.colorScheme.onPrimary,
+                  color: theme.colorScheme.onPrimary,
                 ),
                 onTap: (bool value) {
                   showModalBottomSheet(
@@ -124,8 +127,8 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                         topRight: Radius.circular(32),
                       ),
                       height: max(170, screenSize!.height * 0.25),
-                      dragBarColor: theme!.colorScheme.onSurface,
-                      backgroundColor: theme!.colorScheme.surface,
+                      dragBarColor: theme.colorScheme.onSurface,
+                      backgroundColor: theme.colorScheme.surface,
                       children: element.menuItems
                           .map(
                             (e) => GestureDetector(
@@ -197,15 +200,15 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                   getIconFromDropDownItemId(
                                     e.id,
                                     20,
-                                    theme!.colorScheme.onPrimaryContainer,
+                                    theme.colorScheme.onPrimaryContainer,
                                   ),
                                   kHorizontalPaddingLarge,
                                   LMTextView(
                                     text: e.title,
-                                    textStyle: theme!.textTheme.headlineLarge!
+                                    textStyle: theme.textTheme.headlineLarge!
                                         .copyWith(
                                             color: e.id == commentDeleteId
-                                                ? theme!.colorScheme.error
+                                                ? theme.colorScheme.error
                                                 : null),
                                   ),
                                 ]),
@@ -221,7 +224,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                 imageUrl: user.imageUrl,
                 fallbackText: user.name,
                 boxShape: BoxShape.circle,
-                backgroundColor: theme!.primaryColor,
+                backgroundColor: theme.primaryColor,
                 onTap: () {
                   if (user.sdkClientInfo != null) {
                     locator<LikeMindsService>()
@@ -232,11 +235,11 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
               ),
               titleText: LMTextView(
                 text: user.name,
-                textStyle: theme!.textTheme.labelMedium,
+                textStyle: theme.textTheme.labelMedium,
               ),
               subtitleText: LMTextView(
                 text: timeago.format(element.createdAt),
-                textStyle: theme!.textTheme.labelSmall,
+                textStyle: theme.textTheme.labelSmall,
               ),
               onMenuTap: (value) async {},
               commentActions: [
@@ -246,11 +249,11 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                 LMTextButton(
                   text: LMTextView(
                     text: "${element.likesCount}",
-                    textStyle: theme!.textTheme.labelMedium,
+                    textStyle: theme.textTheme.labelMedium,
                   ),
                   activeText: LMTextView(
                     text: "${element.likesCount}",
-                    textStyle: theme!.textTheme.labelMedium,
+                    textStyle: theme.textTheme.labelMedium,
                   ),
                   onTap: () {
                     toggleLikeCommentBloc.add(
@@ -280,7 +283,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                     type: LMIconType.svg,
                     assetPath: kAssetLikeFilledIcon,
                     size: 14,
-                    color: theme!.colorScheme.error,
+                    color: theme.colorScheme.error,
                   ),
                   isActive: element.isLiked,
                 ),

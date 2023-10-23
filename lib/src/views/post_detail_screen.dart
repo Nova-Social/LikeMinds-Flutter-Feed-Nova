@@ -1140,6 +1140,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                           .novaTheme
                                                           .textTheme
                                                           .labelMedium,
+                                                      linkStyle: ColorTheme
+                                                          .novaTheme
+                                                          .textTheme
+                                                          .labelMedium!
+                                                          .copyWith(
+                                                              color: ColorTheme
+                                                                  .novaTheme
+                                                                  .primaryColor),
                                                       width: screenSize.width,
                                                       backgroundColor: theme
                                                           .colorScheme.surface,

@@ -1,30 +1,24 @@
 library likeminds_feed_ss_fl;
 
-import 'dart:async';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_no_internet_widget/flutter_no_internet_widget.dart';
 import 'package:likeminds_feed/likeminds_feed.dart';
-import 'package:likeminds_feed_nova_fl/src/services/navigation_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/icons.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/network_handling.dart';
-import 'package:likeminds_feed_nova_fl/src/utils/share/share_post.dart';
 
 import 'package:likeminds_feed_nova_fl/src/utils/utils.dart';
 
 import 'package:likeminds_feed_nova_fl/src/views/universal_feed_page.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 
-import 'package:likeminds_feed_nova_fl/src/blocs/new_post/new_post_bloc.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/services/service_locator.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/ui_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/credentials/credentials.dart';
-import 'package:uni_links/uni_links.dart';
 
 export 'src/services/service_locator.dart';
+export 'src/services/navigation_service.dart';
 export 'src/services/bloc_service.dart';
 export 'src/utils/analytics/analytics.dart';
 export 'src/utils/notifications/notification_handler.dart';
@@ -38,7 +32,7 @@ export 'src/views/post/new_post_screen.dart';
 
 /// Flutter environment manager v0.0.1
 const prodFlag = !bool.fromEnvironment('DEBUG', defaultValue: true);
-bool _initialURILinkHandled = false;
+//bool _initialURILinkHandled = false;
 
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -117,57 +111,6 @@ class _LMFeedState extends State<LMFeed> {
   ValueNotifier<bool> rebuildOnConnectivityChange = ValueNotifier<bool>(false);
   Map<int, Widget>? customWidgets;
 
-  StreamSubscription? _streamSubscription;
-  // This widget is the root of your application.
-
-  Future initLinkRouting(BuildContext context) async {
-    if (!_initialURILinkHandled) {
-      _initialURILinkHandled = true;
-      // Get the initial deep link if the app was launched with one
-      final initialLink = await getInitialLink();
-
-      // Handle the deep link
-      if (initialLink != null) {
-        // You can extract any parameters from the initialLink object here
-        // and use them to navigate to a specific screen in your app
-        debugPrint('Received initial deep link: $initialLink');
-
-        // TODO: add api key to the DeepLinkRequest
-        // TODO: add user id and user name of logged in user
-        SharePost().parseDeepLink((DeepLinkRequestBuilder()
-              ..apiKey(widget.apiKey)
-              ..isGuest(false)
-              ..link(initialLink)
-              ..imageURL(widget.imageUrl)
-              ..userName(widget.userName ?? "Test User")
-              ..userUniqueId(widget.userId ?? 'Test User Id'))
-            .build());
-      }
-
-      // Subscribe to link changes
-      _streamSubscription = linkStream.listen((String? link) async {
-        if (link != null) {
-          // Handle the deep link
-          // You can extract any parameters from the uri object here
-          // and use them to navigate to a specific screen in your app
-          debugPrint('Received deep link: $link');
-
-          SharePost().parseDeepLink((DeepLinkRequestBuilder()
-                ..apiKey(widget.apiKey)
-                ..isGuest(false)
-                ..link(link)
-                ..imageURL(widget.imageUrl)
-                ..userName(widget.userName ?? "Test User")
-                ..userUniqueId(widget.userId ?? 'Test User Id'))
-              .build());
-        }
-      }, onError: (err) {
-        // Handle exception by warning the user their action did not succeed
-        // toast('An error occurred');
-      });
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -183,9 +126,6 @@ class _LMFeedState extends State<LMFeed> {
     userName = widget.userName!.isEmpty ? "Test username" : widget.userName!;
     imageUrl = widget.imageUrl;
     customWidgets = widget.customWidgets;
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      initLinkRouting(context);
-    });
     firebase();
   }
 
@@ -262,13 +202,14 @@ class _LMFeedState extends State<LMFeed> {
                     locator<LikeMindsService>().getCommunityConfigurations();
 
                     LMNotificationHandler.instance.registerDevice(user!.id);
-                    // return MaterialApp(
-                    // debugShowCheckedModeBanner: !isProd,
-                    // navigatorKey: locator<NavigationService>().navigatorKey,
-                    // theme: ColorTheme.novaTheme,
-                    // title: 'LM Feed',
-                    // home:
-                    return FutureBuilder(
+                    return
+                        // MaterialApp(
+                        //   debugShowCheckedModeBanner: !isProd,
+                        //   navigatorKey: locator<NavigationService>().navigatorKey,
+                        //   theme: ColorTheme.novaTheme,
+                        //   title: 'LM Feed',
+                        //  home:
+                        FutureBuilder(
                       future: locator<LikeMindsService>().getMemberState(),
                       initialData: null,
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
