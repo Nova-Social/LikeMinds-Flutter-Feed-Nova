@@ -53,15 +53,15 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
   final ScrollController _controller = ScrollController();
   // notifies value listenable builder to rebuild the topic feed
   ValueNotifier<bool> rebuildTopicFeed = ValueNotifier(false);
-  // future to get the topics
-  Future<GetTopicsResponse>? getTopicsResponse;
-  // list of selected topics by the user
+  // TODO Nova: Uncomment this when topics are enabled
+  // Future<GetTopicsResponse>? getTopicsResponse;
   List<TopicUI> selectedTopics = [];
   bool topicVisible = true;
   bool customWidgetAdded = false;
 
   // bloc to handle universal feed
-  late final UniversalFeedBloc _feedBloc; // bloc to fetch the feedroom data
+  late final UniversalFeedBloc
+      _feedBloc; // bloc to fetch the universalFeed data
   bool isCm = UserLocalPreference.instance
       .fetchMemberState(); // whether the logged in user is a community manager or not
 
@@ -73,7 +73,7 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
   // used to rebuild the appbar
   final ValueNotifier _rebuildAppBar = ValueNotifier(false);
 
-  // to control paging on FeedRoom View
+  // to control paging on universalFeed View
   final PagingController<int, PostViewModel> _pagingController =
       PagingController(firstPageKey: 1);
 
@@ -85,12 +85,13 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
   void initState() {
     super.initState();
     _addPaginationListener();
-    getTopicsResponse = locator<LikeMindsService>().getTopics(
-      (GetTopicsRequestBuilder()
-            ..page(1)
-            ..pageSize(20))
-          .build(),
-    );
+    // TODO Nova: Uncomment this when topics are enabled
+    // getTopicsResponse = locator<LikeMindsService>().getTopics(
+    //   (GetTopicsRequestBuilder()
+    //         ..page(1)
+    //         ..pageSize(20))
+    //       .build(),
+    // );
     Bloc.observer = SimpleBlocObserver();
     _feedBloc = UniversalFeedBloc();
     _feedBloc.add(GetUniversalFeed(offset: 1, topics: selectedTopics));
@@ -165,7 +166,7 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
     );
   }
 
-  int _pageFeed = 1; // current index of FeedRoom
+  int _pageFeed = 1; // current index of universalFeed
 
   void _addPaginationListener() {
     _pagingController.addPageRequestListener(
@@ -197,7 +198,7 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
   }
 
   // This function clears the paging controller
-  // whenever user uses pull to refresh on feedroom screen
+  // whenever user uses pull to refresh on universalFeed screen
   void clearPagingController() {
     /* Clearing paging controller while changing the
      event to prevent duplication of list */
@@ -205,31 +206,32 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
     _pageFeed = 1;
   }
 
-  void showTopicSelectSheet() {
-    showModalBottomSheet(
-      context: context,
-      elevation: 5,
-      isDismissible: true,
-      useRootNavigator: true,
-      backgroundColor: Colors.transparent,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(28.0),
-          topRight: Radius.circular(28.0),
-        ),
-      ),
-      enableDrag: false,
-      clipBehavior: Clip.hardEdge,
-      builder: (context) => TopicBottomSheet(
-        key: GlobalKey(),
-        backgroundColor: theme!.colorScheme.surface,
-        selectedTopics: selectedTopics,
-        onTopicSelected: (updatedTopics, tappedTopic) {
-          updateSelectedTopics(updatedTopics);
-        },
-      ),
-    );
-  }
+  // TODO Nova: Uncomment this when topics are enabled
+  // void showTopicSelectSheet() {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     elevation: 5,
+  //     isDismissible: true,
+  //     useRootNavigator: true,
+  //     backgroundColor: Colors.transparent,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.only(
+  //         topLeft: Radius.circular(28.0),
+  //         topRight: Radius.circular(28.0),
+  //       ),
+  //     ),
+  //     enableDrag: false,
+  //     clipBehavior: Clip.hardEdge,
+  //     builder: (context) => TopicBottomSheet(
+  //       key: GlobalKey(),
+  //       backgroundColor: theme!.colorScheme.surface,
+  //       selectedTopics: selectedTopics,
+  //       onTopicSelected: (updatedTopics, tappedTopic) {
+  //         updateSelectedTopics(updatedTopics);
+  //       },
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -279,159 +281,160 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
         },
         child: Column(
           children: [
-            ValueListenableBuilder(
-              valueListenable: rebuildTopicFeed,
-              builder: (context, _, __) {
-                return Visibility(
-                  visible: topicVisible,
-                  maintainAnimation: true,
-                  maintainState: true,
-                  child: FutureBuilder<GetTopicsResponse>(
-                      future: getTopicsResponse,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const SizedBox.shrink();
-                        } else if (snapshot.hasData &&
-                            snapshot.data != null &&
-                            snapshot.data!.success == true) {
-                          if (snapshot.data!.topics!.isNotEmpty) {
-                            return Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20.0, vertical: 12.0),
-                              child: GestureDetector(
-                                onTap: () => showTopicSelectSheet(),
-                                child: Row(
-                                  children: [
-                                    selectedTopics.isEmpty
-                                        ? LMTopicChip(
-                                            topic: (TopicUIBuilder()
-                                                  ..id("0")
-                                                  ..isEnabled(true)
-                                                  ..name("Topic"))
-                                                .build(),
-                                            borderRadius: 20.0,
-                                            borderWidth: 1,
-                                            height: 30,
-                                            showBorder: true,
-                                            borderColor: theme!
-                                                .colorScheme.onPrimaryContainer,
-                                            textStyle:
-                                                theme!.textTheme.bodyLarge,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12.0,
-                                                vertical: 4.0),
-                                            icon: LMIcon(
-                                              type: LMIconType.icon,
-                                              icon: CupertinoIcons.chevron_down,
-                                              size: 16,
-                                              color: theme!.colorScheme
-                                                  .onPrimaryContainer,
-                                            ),
-                                          )
-                                        : selectedTopics.length == 1
-                                            ? LMTopicChip(
-                                                topic: (TopicUIBuilder()
-                                                      ..id(selectedTopics
-                                                          .first.id)
-                                                      ..isEnabled(selectedTopics
-                                                          .first.isEnabled)
-                                                      ..name(selectedTopics
-                                                          .first.name))
-                                                    .build(),
-                                                borderRadius: 20.0,
-                                                showBorder: false,
-                                                height: 30,
-                                                backgroundColor:
-                                                    theme!.colorScheme.primary,
-                                                textStyle:
-                                                    theme!.textTheme.bodyLarge,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 12.0,
-                                                        vertical: 4.0),
-                                                icon: LMIcon(
-                                                  type: LMIconType.icon,
-                                                  icon: CupertinoIcons
-                                                      .chevron_down,
-                                                  size: 16,
-                                                  color: theme!.colorScheme
-                                                      .onPrimaryContainer,
-                                                ),
-                                              )
-                                            : LMTopicChip(
-                                                topic: (TopicUIBuilder()
-                                                      ..id("0")
-                                                      ..isEnabled(true)
-                                                      ..name("Topics"))
-                                                    .build(),
-                                                borderRadius: 20.0,
-                                                showBorder: false,
-                                                height: 30,
-                                                backgroundColor:
-                                                    theme!.colorScheme.primary,
-                                                textStyle:
-                                                    theme!.textTheme.bodyLarge,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 12.0,
-                                                        vertical: 4.0),
-                                                icon: Row(
-                                                  children: [
-                                                    kHorizontalPaddingXSmall,
-                                                    Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 4),
-                                                      decoration:
-                                                          ShapeDecoration(
-                                                        color: Colors.white,
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            4)),
-                                                      ),
-                                                      child: LMTextView(
-                                                        text: selectedTopics
-                                                            .length
-                                                            .toString(),
-                                                        textStyle: theme!
-                                                            .textTheme
-                                                            .bodySmall!
-                                                            .copyWith(
-                                                          color: theme!
-                                                              .colorScheme
-                                                              .primary,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    kHorizontalPaddingSmall,
-                                                    LMIcon(
-                                                      type: LMIconType.icon,
-                                                      icon: CupertinoIcons
-                                                          .chevron_down,
-                                                      size: 16,
-                                                      color: theme!.colorScheme
-                                                          .onPrimaryContainer,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          } else {
-                            return const SizedBox.shrink();
-                          }
-                        }
-                        return const SizedBox();
-                      }),
-                );
-              },
-            ),
+            // TODO Nova: Uncomment this when topics are enabled
+            // ValueListenableBuilder(
+            //   valueListenable: rebuildTopicFeed,
+            //   builder: (context, _, __) {
+            //     return Visibility(
+            //       visible: topicVisible,
+            //       maintainAnimation: true,
+            //       maintainState: true,
+            //       child: FutureBuilder<GetTopicsResponse>(
+            //           future: getTopicsResponse,
+            //           builder: (context, snapshot) {
+            //             if (snapshot.connectionState ==
+            //                 ConnectionState.waiting) {
+            //               return const SizedBox.shrink();
+            //             } else if (snapshot.hasData &&
+            //                 snapshot.data != null &&
+            //                 snapshot.data!.success == true) {
+            //               if (snapshot.data!.topics!.isNotEmpty) {
+            //                 return Container(
+            //                   padding: const EdgeInsets.symmetric(
+            //                       horizontal: 20.0, vertical: 12.0),
+            //                   child: GestureDetector(
+            //                     onTap: () => showTopicSelectSheet(),
+            //                     child: Row(
+            //                       children: [
+            //                         selectedTopics.isEmpty
+            //                             ? LMTopicChip(
+            //                                 topic: (TopicUIBuilder()
+            //                                       ..id("0")
+            //                                       ..isEnabled(true)
+            //                                       ..name("Topic"))
+            //                                     .build(),
+            //                                 borderRadius: 20.0,
+            //                                 borderWidth: 1,
+            //                                 height: 30,
+            //                                 showBorder: true,
+            //                                 borderColor: theme!
+            //                                     .colorScheme.onPrimaryContainer,
+            //                                 textStyle:
+            //                                     theme!.textTheme.bodyLarge,
+            //                                 padding: const EdgeInsets.symmetric(
+            //                                     horizontal: 12.0,
+            //                                     vertical: 4.0),
+            //                                 icon: LMIcon(
+            //                                   type: LMIconType.icon,
+            //                                   icon: CupertinoIcons.chevron_down,
+            //                                   size: 16,
+            //                                   color: theme!.colorScheme
+            //                                       .onPrimaryContainer,
+            //                                 ),
+            //                               )
+            //                             : selectedTopics.length == 1
+            //                                 ? LMTopicChip(
+            //                                     topic: (TopicUIBuilder()
+            //                                           ..id(selectedTopics
+            //                                               .first.id)
+            //                                           ..isEnabled(selectedTopics
+            //                                               .first.isEnabled)
+            //                                           ..name(selectedTopics
+            //                                               .first.name))
+            //                                         .build(),
+            //                                     borderRadius: 20.0,
+            //                                     showBorder: false,
+            //                                     height: 30,
+            //                                     backgroundColor:
+            //                                         theme!.colorScheme.primary,
+            //                                     textStyle:
+            //                                         theme!.textTheme.bodyLarge,
+            //                                     padding:
+            //                                         const EdgeInsets.symmetric(
+            //                                             horizontal: 12.0,
+            //                                             vertical: 4.0),
+            //                                     icon: LMIcon(
+            //                                       type: LMIconType.icon,
+            //                                       icon: CupertinoIcons
+            //                                           .chevron_down,
+            //                                       size: 16,
+            //                                       color: theme!.colorScheme
+            //                                           .onPrimaryContainer,
+            //                                     ),
+            //                                   )
+            //                                 : LMTopicChip(
+            //                                     topic: (TopicUIBuilder()
+            //                                           ..id("0")
+            //                                           ..isEnabled(true)
+            //                                           ..name("Topics"))
+            //                                         .build(),
+            //                                     borderRadius: 20.0,
+            //                                     showBorder: false,
+            //                                     height: 30,
+            //                                     backgroundColor:
+            //                                         theme!.colorScheme.primary,
+            //                                     textStyle:
+            //                                         theme!.textTheme.bodyLarge,
+            //                                     padding:
+            //                                         const EdgeInsets.symmetric(
+            //                                             horizontal: 12.0,
+            //                                             vertical: 4.0),
+            //                                     icon: Row(
+            //                                       children: [
+            //                                         kHorizontalPaddingXSmall,
+            //                                         Container(
+            //                                           padding: const EdgeInsets
+            //                                               .symmetric(
+            //                                               horizontal: 4),
+            //                                           decoration:
+            //                                               ShapeDecoration(
+            //                                             color: Colors.white,
+            //                                             shape:
+            //                                                 RoundedRectangleBorder(
+            //                                                     borderRadius:
+            //                                                         BorderRadius
+            //                                                             .circular(
+            //                                                                 4)),
+            //                                           ),
+            //                                           child: LMTextView(
+            //                                             text: selectedTopics
+            //                                                 .length
+            //                                                 .toString(),
+            //                                             textStyle: theme!
+            //                                                 .textTheme
+            //                                                 .bodySmall!
+            //                                                 .copyWith(
+            //                                               color: theme!
+            //                                                   .colorScheme
+            //                                                   .primary,
+            //                                             ),
+            //                                           ),
+            //                                         ),
+            //                                         kHorizontalPaddingSmall,
+            //                                         LMIcon(
+            //                                           type: LMIconType.icon,
+            //                                           icon: CupertinoIcons
+            //                                               .chevron_down,
+            //                                           size: 16,
+            //                                           color: theme!.colorScheme
+            //                                               .onPrimaryContainer,
+            //                                         ),
+            //                                       ],
+            //                                     ),
+            //                                   ),
+            //                       ],
+            //                     ),
+            //                   ),
+            //                 );
+            //               } else {
+            //                 return const SizedBox.shrink();
+            //               }
+            //             }
+            //             return const SizedBox();
+            //           }),
+            //     );
+            //   },
+            // ),
             Expanded(
               child: BlocConsumer(
                 bloc: _feedBloc,
@@ -462,20 +465,21 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
                 builder: ((context, state) {
                   if (state is UniversalFeedLoaded) {
                     // Log the event in the analytics
-                    return FeedRoomView(
+                    return UniversalFeedView(
                       isCm: isCm,
                       customWidgets: widget.customWidgets,
                       universalFeedBloc: _feedBloc,
                       feedResponse: state.feed,
-                      feedRoomPagingController: _pagingController,
+                      universalFeedPagingController: _pagingController,
                       user: user,
                       onRefresh: refresh,
                       scrollController: _controller,
-                      openTopicBottomSheet: showTopicSelectSheet,
+                      // TODO Nova: Uncomment this when topics are enabled
+                      openTopicBottomSheet: () {}, //showTopicSelectSheet,
                       selectedTopicIds: selectedTopics,
                     );
                   } else if (state is UniversalFeedError) {
-                    return FeedRoomErrorView(message: state.message);
+                    return UniversalFeedErrorView(message: state.message);
                   }
                   return const LMFeedShimmer();
                 }),
@@ -488,9 +492,9 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
   }
 }
 
-class FeedRoomErrorView extends StatelessWidget {
+class UniversalFeedErrorView extends StatelessWidget {
   final String message;
-  const FeedRoomErrorView({super.key, required this.message});
+  const UniversalFeedErrorView({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -499,24 +503,24 @@ class FeedRoomErrorView extends StatelessWidget {
   }
 }
 
-class FeedRoomView extends StatefulWidget {
+class UniversalFeedView extends StatefulWidget {
   final bool isCm;
   final User user;
   final UniversalFeedBloc universalFeedBloc;
   final GetFeedResponse feedResponse;
-  final PagingController<int, PostViewModel> feedRoomPagingController;
+  final PagingController<int, PostViewModel> universalFeedPagingController;
   final ScrollController scrollController;
   final VoidCallback onRefresh;
   final VoidCallback openTopicBottomSheet;
   final List<TopicUI> selectedTopicIds;
   final Map<int, Widget>? customWidgets;
 
-  const FeedRoomView({
+  const UniversalFeedView({
     super.key,
     required this.isCm,
     required this.universalFeedBloc,
     required this.feedResponse,
-    required this.feedRoomPagingController,
+    required this.universalFeedPagingController,
     required this.user,
     required this.onRefresh,
     required this.scrollController,
@@ -526,10 +530,10 @@ class FeedRoomView extends StatefulWidget {
   });
 
   @override
-  State<FeedRoomView> createState() => _FeedRoomViewState();
+  State<UniversalFeedView> createState() => _UniversalFeedViewState();
 }
 
-class _FeedRoomViewState extends State<FeedRoomView> {
+class _UniversalFeedViewState extends State<UniversalFeedView> {
   ValueNotifier<bool> rebuildPostWidget = ValueNotifier(false);
   final ValueNotifier postUploading = ValueNotifier(false);
   bool scrolledToTop = true;
@@ -637,10 +641,12 @@ class _FeedRoomViewState extends State<FeedRoomView> {
             bloc: newPostBloc,
             listener: (prev, curr) {
               if (curr is PostDeleted) {
-                List<PostViewModel>? feedRoomItemList =
-                    widget.feedRoomPagingController.itemList;
-                feedRoomItemList?.removeWhere((item) => item.id == curr.postId);
-                widget.feedRoomPagingController.itemList = feedRoomItemList;
+                List<PostViewModel>? universalFeedItemList =
+                    widget.universalFeedPagingController.itemList;
+                universalFeedItemList
+                    ?.removeWhere((item) => item.id == curr.postId);
+                widget.universalFeedPagingController.itemList =
+                    universalFeedItemList;
                 rebuildPostWidget.value = !rebuildPostWidget.value;
               }
               if (curr is NewPostUploading || curr is EditPostUploading) {
@@ -657,47 +663,48 @@ class _FeedRoomViewState extends State<FeedRoomView> {
               }
               if (curr is NewPostUploaded) {
                 PostViewModel item = curr.postData;
-                int index = widget.selectedTopicIds
-                    .indexWhere((element) => element.id == item.topics.first);
-                if (index == -1 && widget.selectedTopicIds.isNotEmpty) {
-                  return;
-                }
+                // int index = widget.selectedTopicIds
+                //     .indexWhere((element) => element.id == item.topics.first);
+                // if (index == -1 && widget.selectedTopicIds.isNotEmpty) {
+                //   return;
+                // }
                 int length =
-                    widget.feedRoomPagingController.itemList?.length ?? 0;
-                List<PostViewModel> feedRoomItemList =
-                    widget.feedRoomPagingController.itemList ?? [];
-                for (int i = 0; i < feedRoomItemList.length; i++) {
-                  if (!feedRoomItemList[i].isPinned) {
-                    feedRoomItemList.insert(i, item);
+                    widget.universalFeedPagingController.itemList?.length ?? 0;
+                List<PostViewModel> universalFeedItemList =
+                    widget.universalFeedPagingController.itemList ?? [];
+                for (int i = 0; i < universalFeedItemList.length; i++) {
+                  if (!universalFeedItemList[i].isPinned) {
+                    universalFeedItemList.insert(i, item);
                     break;
                   }
                 }
-                if (length == feedRoomItemList.length) {
-                  feedRoomItemList.add(item);
+                if (length == universalFeedItemList.length) {
+                  universalFeedItemList.add(item);
                 }
-                if (feedRoomItemList.isNotEmpty &&
-                    feedRoomItemList.length > 10) {
-                  feedRoomItemList.removeLast();
+                if (universalFeedItemList.isNotEmpty &&
+                    universalFeedItemList.length > 10) {
+                  universalFeedItemList.removeLast();
                 }
                 widget.feedResponse.users.addAll(curr.userData);
-                widget.feedResponse.topics.addAll(curr.topics);
+                // widget.feedResponse.topics.addAll(curr.topics);
                 widget.feedResponse.widgets.addAll(curr.widgets);
-                widget.feedRoomPagingController.itemList = feedRoomItemList;
+                widget.universalFeedPagingController.itemList =
+                    universalFeedItemList;
                 postUploading.value = false;
                 rebuildPostWidget.value = !rebuildPostWidget.value;
               }
               if (curr is EditPostUploaded) {
                 PostViewModel? item = curr.postData;
-                List<PostViewModel>? feedRoomItemList =
-                    widget.feedRoomPagingController.itemList;
-                int index = feedRoomItemList
+                List<PostViewModel>? universalFeedItemList =
+                    widget.universalFeedPagingController.itemList;
+                int index = universalFeedItemList
                         ?.indexWhere((element) => element.id == item.id) ??
                     -1;
                 if (index != -1) {
-                  feedRoomItemList?[index] = item;
+                  universalFeedItemList![index] = item;
                 }
                 widget.feedResponse.users.addAll(curr.userData);
-                widget.feedResponse.topics.addAll(curr.topics);
+                // widget.feedResponse.topics.addAll(curr.topics);
                 widget.feedResponse.widgets.addAll(curr.widgets);
                 postUploading.value = false;
                 rebuildPostWidget.value = !rebuildPostWidget.value;
@@ -710,13 +717,13 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                 );
               }
               if (curr is PostUpdateState) {
-                List<PostViewModel>? feedRoomItemList =
-                    widget.feedRoomPagingController.itemList;
-                int index = feedRoomItemList
+                List<PostViewModel>? universalFeedItemList =
+                    widget.universalFeedPagingController.itemList;
+                int index = universalFeedItemList
                         ?.indexWhere((element) => element.id == curr.post.id) ??
                     -1;
                 if (index != -1) {
-                  feedRoomItemList?[index] = curr.post;
+                  universalFeedItemList![index] = curr.post;
                 }
                 rebuildPostWidget.value = !rebuildPostWidget.value;
               }
@@ -811,57 +818,58 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                     valueListenable: rebuildPostWidget,
                     builder: (context, _, __) {
                       return PagedListView<int, PostViewModel>(
-                        pagingController: widget.feedRoomPagingController,
+                        pagingController: widget.universalFeedPagingController,
                         scrollController: _controller,
                         padding: EdgeInsets.zero,
                         builderDelegate:
                             PagedChildBuilderDelegate<PostViewModel>(
                           noItemsFoundIndicatorBuilder: (context) {
-                            if (widget.universalFeedBloc.state
-                                    is UniversalFeedLoaded &&
-                                (widget.universalFeedBloc.state
-                                        as UniversalFeedLoaded)
-                                    .topics
-                                    .isNotEmpty) {
-                              return Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    LMTextView(
-                                        text:
-                                            "Looks like there are no posts for this topic yet.",
-                                        textStyle: theme.textTheme.labelMedium),
-                                    const SizedBox(height: 16),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        LMTextButton(
-                                          borderRadius: 48,
-                                          height: 40,
-                                          border: Border.all(
-                                            color: theme.colorScheme.primary,
-                                            width: 2,
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8, horizontal: 12),
-                                          text: LMTextView(
-                                              text: "Change Filter",
-                                              textAlign: TextAlign.center,
-                                              textStyle: theme
-                                                  .textTheme.labelMedium!
-                                                  .copyWith(
-                                                      color: theme.colorScheme
-                                                          .primary)),
-                                          onTap: () =>
-                                              widget.openTopicBottomSheet(),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
+                            // TODO Nova: Uncomment this when topics are enabled
+                            // if (widget.universalFeedBloc.state
+                            //         is UniversalFeedLoaded &&
+                            //     (widget.universalFeedBloc.state
+                            //             as UniversalFeedLoaded)
+                            //         .topics
+                            //         .isNotEmpty) {
+                            //   return Center(
+                            //     child: Column(
+                            //       mainAxisAlignment: MainAxisAlignment.center,
+                            //       children: [
+                            //         LMTextView(
+                            //             text:
+                            //                 "Looks like there are no posts for this topic yet.",
+                            //             textStyle: theme.textTheme.labelMedium),
+                            //         const SizedBox(height: 16),
+                            //         Row(
+                            //           mainAxisAlignment:
+                            //               MainAxisAlignment.center,
+                            //           children: [
+                            //             LMTextButton(
+                            //               borderRadius: 48,
+                            //               height: 40,
+                            //               border: Border.all(
+                            //                 color: theme.colorScheme.primary,
+                            //                 width: 2,
+                            //               ),
+                            //               padding: const EdgeInsets.symmetric(
+                            //                   vertical: 8, horizontal: 12),
+                            //               text: LMTextView(
+                            //                   text: "Change Filter",
+                            //                   textAlign: TextAlign.center,
+                            //                   textStyle: theme
+                            //                       .textTheme.labelMedium!
+                            //                       .copyWith(
+                            //                           color: theme.colorScheme
+                            //                               .primary)),
+                            //               onTap: () =>
+                            //                   widget.openTopicBottomSheet(),
+                            //             ),
+                            //           ],
+                            //         ),
+                            //       ],
+                            //     ),
+                            //   );
+                            // }
                             return Center(
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -1034,12 +1042,13 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                   isFeed: true,
                                   refresh: (bool isDeleted) async {
                                     if (isDeleted) {
-                                      List<PostViewModel>? feedRoomItemList =
-                                          widget.feedRoomPagingController
+                                      List<PostViewModel>?
+                                          universalFeedItemList = widget
+                                              .universalFeedPagingController
                                               .itemList;
-                                      feedRoomItemList?.removeAt(index);
-                                      widget.feedRoomPagingController.itemList =
-                                          feedRoomItemList;
+                                      universalFeedItemList?.removeAt(index);
+                                      widget.universalFeedPagingController
+                                          .itemList = universalFeedItemList;
                                       rebuildPostWidget.value =
                                           !rebuildPostWidget.value;
                                     }
@@ -1067,18 +1076,67 @@ class _FeedRoomViewState extends State<FeedRoomView> {
       ),
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
       floatingActionButton: ValueListenableBuilder(
-          valueListenable: rebuildNewPostFAB,
-          builder: (context, value, __) {
-            return AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                width: value ? 140 : 56,
-                child: !value
-                    ? LMIconButton(
-                        containerSize: 56,
-                        padding: const EdgeInsets.all(12),
+        valueListenable: rebuildNewPostFAB,
+        builder: (context, value, __) {
+          return AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              width: value ? 140 : 56,
+              child: !value
+                  ? LMIconButton(
+                      containerSize: 56,
+                      padding: const EdgeInsets.all(12),
+                      borderRadius: 28,
+                      backgroundColor:
+                          right ? theme.colorScheme.primary : kGrey3Color,
+                      icon: LMIcon(
+                        type: LMIconType.icon,
+                        icon: Icons.add,
+                        fit: BoxFit.cover,
+                        size: 24,
+                        color: theme.colorScheme.onPrimaryContainer,
+                      ),
+                      onTap: right
+                          ? (_) {
+                              if (!postUploading.value) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => NewPostScreen(),
+                                  ),
+                                );
+                              } else {
+                                toast(
+                                  'A post is already uploading.',
+                                  duration: Toast.LENGTH_LONG,
+                                );
+                              }
+                            }
+                          : (value) => toast(
+                              "You do not have permission to create a post"),
+                    )
+                  : AnimatedContainer(
+                      duration: const Duration(milliseconds: 500),
+                      width: value ? 140 : 56,
+                      clipBehavior: Clip.hardEdge,
+                      decoration: const BoxDecoration(),
+                      child: LMTextButton(
+                        height: 56,
+                        width: 140,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 20,
+                        ),
                         borderRadius: 28,
                         backgroundColor:
                             right ? theme.colorScheme.primary : kGrey3Color,
+                        placement: LMIconPlacement.start,
+                        text: LMTextView(
+                          text: "New Post",
+                          textStyle: theme.textTheme.bodyMedium,
+                          maxLines: 1,
+                          overflow: TextOverflow.fade,
+                        ),
+                        margin: 5,
                         icon: LMIcon(
                           type: LMIconType.icon,
                           icon: Icons.add,
@@ -1087,7 +1145,7 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                           color: theme.colorScheme.onPrimaryContainer,
                         ),
                         onTap: right
-                            ? (_) {
+                            ? () {
                                 if (!postUploading.value) {
                                   Navigator.push(
                                     context,
@@ -1102,110 +1160,12 @@ class _FeedRoomViewState extends State<FeedRoomView> {
                                   );
                                 }
                               }
-                            : (value) => toast(
+                            : () => toast(
                                 "You do not have permission to create a post"),
-                      )
-                    : AnimatedContainer(
-                        duration: const Duration(milliseconds: 500),
-                        width: value ? 140 : 56,
-                        clipBehavior: Clip.hardEdge,
-                        decoration: const BoxDecoration(),
-                        child: LMTextButton(
-                          height: 56,
-                          width: 140,
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 20,
-                          ),
-                          borderRadius: 28,
-                          backgroundColor:
-                              right ? theme.colorScheme.primary : kGrey3Color,
-                          placement: LMIconPlacement.start,
-                          text: LMTextView(
-                            text: "New Post",
-                            textStyle: theme.textTheme.bodyMedium,
-                            maxLines: 1,
-                            overflow: TextOverflow.fade,
-                          ),
-                          margin: 5,
-                          icon: LMIcon(
-                            type: LMIconType.icon,
-                            icon: Icons.add,
-                            fit: BoxFit.cover,
-                            size: 24,
-                            color: theme.colorScheme.onPrimaryContainer,
-                          ),
-                          onTap: right
-                              ? () {
-                                  if (!postUploading.value) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => NewPostScreen(),
-                                      ),
-                                    );
-                                  } else {
-                                    toast(
-                                      'A post is already uploading.',
-                                      duration: Toast.LENGTH_LONG,
-                                    );
-                                  }
-                                }
-                              : () => toast(
-                                  "You do not have permission to create a post"),
-                        ),
-                      ));
-          }),
-      // floatingActionButton: ValueListenableBuilder(
-      //   valueListenable: rebuildPostWidget,
-      //   builder: (context, _, __) {
-      //     return widget.feedRoomPagingController.itemList == null ||
-      //             widget.feedRoomPagingController.itemList!.isEmpty
-      //         ? const SizedBox()
-      //         : LMTextButton(
-      //             height: 56,
-      //             width: 140,
-      //             padding: const EdgeInsets.symmetric(
-      //               vertical: 12,
-      //               horizontal: 20,
-      //             ),
-      //             borderRadius: 28,
-      //             backgroundColor:
-      //                 right ? theme.colorScheme.primary : kGrey3Color,
-      //             placement: LMIconPlacement.start,
-      //             text: LMTextView(
-      //               text: "New Post",
-      //               textStyle: theme.textTheme.bodyMedium,
-      //             ),
-      //             margin: 5,
-      //             icon: LMIcon(
-      //               type: LMIconType.icon,
-      //               icon: Icons.add,
-      //               fit: BoxFit.cover,
-      //               size: 24,
-      //               color: theme.colorScheme.onPrimary,
-      //             ),
-      //             onTap: right
-      //                 ? () {
-      //                     if (!postUploading.value) {
-      //                       Navigator.push(
-      //                         context,
-      //                         MaterialPageRoute(
-      //                           builder: (context) => const NewPostScreen(),
-      //                         ),
-      //                       );
-      //                     } else {
-      //                       toast(
-      //                         'A post is already uploading.',
-      //                         duration: Toast.LENGTH_LONG,
-      //                       );
-      //                     }
-      //                   }
-      //                 : () =>
-      //                     toast("You do not have permission to create a post"),
-      //           );
-      //   },
-      // ),
+                      ),
+                    ));
+        },
+      ),
     );
   }
 }
