@@ -7,23 +7,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:likeminds_feed/likeminds_feed.dart';
 import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
 import 'package:likeminds_feed_nova_fl/src/blocs/new_post/new_post_bloc.dart';
-import 'package:likeminds_feed_nova_fl/src/services/bloc_service.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
-import 'package:likeminds_feed_nova_fl/src/services/service_locator.dart';
-import 'package:likeminds_feed_nova_fl/src/utils/analytics/analytics.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart';
-import 'package:likeminds_feed_nova_fl/src/utils/constants/ui_constants.dart';
-import 'package:likeminds_feed_nova_fl/src/utils/local_preference/user_local_preference.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_media_picker.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_utils.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/tagging/tagging_textfield_ta.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post/post_composer_header.dart';
-import 'package:likeminds_feed_nova_fl/src/widgets/topic/topic_popup.dart';
+// TODO Nova: Uncomment this when topic is enabled
+// import 'package:likeminds_feed_nova_fl/src/widgets/topic/topic_popup.dart';
 
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 import 'package:open_filex/open_filex.dart';
@@ -45,7 +40,8 @@ class _NewPostScreenState extends State<NewPostScreen> {
   late String creatorId;
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  Future<GetTopicsResponse>? getTopicsResponse;
+  // TODO Nova: Uncomment this when topic is enabled
+  // Future<GetTopicsResponse>? getTopicsResponse;
   ValueNotifier<bool> rebuildLinkPreview = ValueNotifier(false);
   ValueNotifier<bool> rebuildPostButton = ValueNotifier(false);
   List<TopicUI> selectedTopic = [];
@@ -81,12 +77,13 @@ class _NewPostScreenState extends State<NewPostScreen> {
   void initState() {
     super.initState();
     user = UserLocalPreference.instance.fetchUserData();
-    getTopicsResponse =
-        locator<LikeMindsService>().getTopics((GetTopicsRequestBuilder()
-              ..page(1)
-              ..pageSize(20)
-              ..isEnabled(true))
-            .build());
+    // TODO Nova: Uncomment this when topic is enabled
+    // getTopicsResponse =
+    //     locator<LikeMindsService>().getTopics((GetTopicsRequestBuilder()
+    //           ..page(1)
+    //           ..pageSize(20)
+    //           ..isEnabled(true))
+    //         .build());
     newPostBloc = locator<BlocService>().newPostBlocProvider;
     if (_focusNode.canRequestFocus) {
       _focusNode.requestFocus();
@@ -177,6 +174,10 @@ class _NewPostScreenState extends State<NewPostScreen> {
     rebuildPostButton.value = !rebuildPostButton.value;
   }
 
+  /*
+  * updated the post media list
+  * with the files picked by the user
+  */
   void onUploadedDocument(bool uploadResponse) {
     if (uploadResponse) {
       isDocumentPost = true;
@@ -301,6 +302,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
     }
   }
 
+  // Checks if a attachment is there apart from custom widget [type 5]
   bool checkIfMediaIsAttached() {
     if (postMedia.isNotEmpty) {
       for (MediaModel media in postMedia) {
@@ -378,110 +380,111 @@ class _NewPostScreenState extends State<NewPostScreen> {
         value: SystemUiOverlayStyle.light,
         child: Scaffold(
           backgroundColor: theme!.colorScheme.background,
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 64.0, left: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: FutureBuilder<GetTopicsResponse>(
-                    future: getTopicsResponse,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done &&
-                          snapshot.hasData &&
-                          snapshot.data!.success == true) {
-                        if (snapshot.data!.topics!.isNotEmpty) {
-                          return ValueListenableBuilder(
-                            valueListenable: rebuildTopicFloatingButton,
-                            builder: (context, _, __) {
-                              return GestureDetector(
-                                onTap: () async {
-                                  if (_focusNode.hasFocus) {
-                                    FocusScopeNode currentFocus =
-                                        FocusScope.of(context);
-                                    currentFocus.unfocus();
-                                    await Future.delayed(
-                                        const Duration(milliseconds: 500));
-                                  }
-                                  _controllerPopUp.showMenu();
-                                },
-                                child: AbsorbPointer(
-                                  absorbing: true,
-                                  child: CustomPopupMenu(
-                                    controller: _controllerPopUp,
-                                    showArrow: false,
-                                    verticalMargin: 10,
-                                    horizontalMargin: 16.0,
-                                    pressType: PressType.singleClick,
-                                    menuBuilder: () => TopicPopUp(
-                                      selectedTopics: selectedTopic,
-                                      backgroundColor:
-                                          theme!.colorScheme.surface,
-                                      selectedTextColor:
-                                          theme!.colorScheme.onPrimary,
-                                      unSelectedTextColor:
-                                          theme!.colorScheme.onPrimary,
-                                      selectedColor: theme!.colorScheme.primary,
-                                      isEnabled: true,
-                                      onTopicSelected:
-                                          (updatedTopics, tappedTopic) {
-                                        if (selectedTopic.isEmpty) {
-                                          selectedTopic.add(tappedTopic);
-                                        } else {
-                                          if (selectedTopic.first.id ==
-                                              tappedTopic.id) {
-                                            selectedTopic.clear();
-                                          } else {
-                                            selectedTopic.clear();
-                                            selectedTopic.add(tappedTopic);
-                                          }
-                                        }
-                                        _controllerPopUp.hideMenu();
-                                        rebuildTopicFloatingButton.value =
-                                            !rebuildTopicFloatingButton.value;
-                                      },
-                                    ),
-                                    child: Container(
-                                      height: 36,
-                                      alignment: Alignment.bottomLeft,
-                                      margin: const EdgeInsets.only(left: 16.0),
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(500),
-                                        color: theme!.colorScheme.primary,
-                                      ),
-                                      child: LMTopicChip(
-                                        topic: selectedTopic.isEmpty
-                                            ? (TopicUIBuilder()
-                                                  ..id("0")
-                                                  ..isEnabled(true)
-                                                  ..name("Topic"))
-                                                .build()
-                                            : selectedTopic.first,
-                                        textStyle: theme!.textTheme.bodyMedium,
-                                        icon: LMIcon(
-                                          type: LMIconType.icon,
-                                          icon: CupertinoIcons.chevron_down,
-                                          size: 16,
-                                          color: theme!.colorScheme.onPrimary,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        }
-                      }
-                      return const SizedBox();
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // TODO Nova: Uncomment this when topic is enabled
+          // floatingActionButton: Padding(
+          //   padding: const EdgeInsets.only(bottom: 64.0, left: 16.0),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.start,
+          //     children: [
+          //       Align(
+          //         alignment: Alignment.bottomLeft,
+          //         child: FutureBuilder<GetTopicsResponse>(
+          //           future: getTopicsResponse,
+          //           builder: (context, snapshot) {
+          //             if (snapshot.connectionState == ConnectionState.done &&
+          //                 snapshot.hasData &&
+          //                 snapshot.data!.success == true) {
+          //               if (snapshot.data!.topics!.isNotEmpty) {
+          //                 return ValueListenableBuilder(
+          //                   valueListenable: rebuildTopicFloatingButton,
+          //                   builder: (context, _, __) {
+          //                     return GestureDetector(
+          //                       onTap: () async {
+          //                         if (_focusNode.hasFocus) {
+          //                           FocusScopeNode currentFocus =
+          //                               FocusScope.of(context);
+          //                           currentFocus.unfocus();
+          //                           await Future.delayed(
+          //                               const Duration(milliseconds: 500));
+          //                         }
+          //                         _controllerPopUp.showMenu();
+          //                       },
+          //                       child: AbsorbPointer(
+          //                         absorbing: true,
+          //                         child: CustomPopupMenu(
+          //                           controller: _controllerPopUp,
+          //                           showArrow: false,
+          //                           verticalMargin: 10,
+          //                           horizontalMargin: 16.0,
+          //                           pressType: PressType.singleClick,
+          //                           menuBuilder: () => TopicPopUp(
+          //                             selectedTopics: selectedTopic,
+          //                             backgroundColor:
+          //                                 theme!.colorScheme.surface,
+          //                             selectedTextColor:
+          //                                 theme!.colorScheme.onPrimary,
+          //                             unSelectedTextColor:
+          //                                 theme!.colorScheme.onPrimary,
+          //                             selectedColor: theme!.colorScheme.primary,
+          //                             isEnabled: true,
+          //                             onTopicSelected:
+          //                                 (updatedTopics, tappedTopic) {
+          //                               if (selectedTopic.isEmpty) {
+          //                                 selectedTopic.add(tappedTopic);
+          //                               } else {
+          //                                 if (selectedTopic.first.id ==
+          //                                     tappedTopic.id) {
+          //                                   selectedTopic.clear();
+          //                                 } else {
+          //                                   selectedTopic.clear();
+          //                                   selectedTopic.add(tappedTopic);
+          //                                 }
+          //                               }
+          //                               _controllerPopUp.hideMenu();
+          //                               rebuildTopicFloatingButton.value =
+          //                                   !rebuildTopicFloatingButton.value;
+          //                             },
+          //                           ),
+          //                           child: Container(
+          //                             height: 36,
+          //                             alignment: Alignment.bottomLeft,
+          //                             margin: const EdgeInsets.only(left: 16.0),
+          //                             decoration: BoxDecoration(
+          //                               borderRadius:
+          //                                   BorderRadius.circular(500),
+          //                               color: theme!.colorScheme.primary,
+          //                             ),
+          //                             child: LMTopicChip(
+          //                               topic: selectedTopic.isEmpty
+          //                                   ? (TopicUIBuilder()
+          //                                         ..id("0")
+          //                                         ..isEnabled(true)
+          //                                         ..name("Topic"))
+          //                                       .build()
+          //                                   : selectedTopic.first,
+          //                               textStyle: theme!.textTheme.bodyMedium,
+          //                               icon: LMIcon(
+          //                                 type: LMIconType.icon,
+          //                                 icon: CupertinoIcons.chevron_down,
+          //                                 size: 16,
+          //                                 color: theme!.colorScheme.onPrimary,
+          //                               ),
+          //                             ),
+          //                           ),
+          //                         ),
+          //                       ),
+          //                     );
+          //                   },
+          //                 );
+          //               }
+          //             }
+          //             return const SizedBox();
+          //           },
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
           body: SafeArea(
             child: Stack(
               children: [
@@ -905,7 +908,8 @@ class _NewPostScreenState extends State<NewPostScreen> {
                             CreateNewPost(
                               postText: result!,
                               postMedia: postMedia,
-                              selectedTopics: selectedTopic,
+                              // TODO Nova: Uncomment this when topic is enabled
+                              selectedTopics: const [], //selectedTopic,
                             ),
                           );
                           Navigator.pop(context);
