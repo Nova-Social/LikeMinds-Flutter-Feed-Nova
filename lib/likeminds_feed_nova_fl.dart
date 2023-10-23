@@ -117,57 +117,6 @@ class _LMFeedState extends State<LMFeed> {
   ValueNotifier<bool> rebuildOnConnectivityChange = ValueNotifier<bool>(false);
   Map<int, Widget>? customWidgets;
 
-  // StreamSubscription? _streamSubscription;
-  // // This widget is the root of your application.
-
-  // Future initUniLink(BuildContext context) async {
-  //   if (!_initialURILinkHandled) {
-  //     _initialURILinkHandled = true;
-  //     // Get the initial deep link if the app was launched with one
-  //     final initialLink = await getInitialLink();
-
-  //     // Handle the deep link
-  //     if (initialLink != null) {
-  //       // You can extract any parameters from the initialLink object here
-  //       // and use them to navigate to a specific screen in your app
-  //       debugPrint('Received initial deep link: $initialLink');
-
-  //       // TODO: add api key to the DeepLinkRequest
-  //       // TODO: add user id and user name of logged in user
-  //       SharePost().parseDeepLink((DeepLinkRequestBuilder()
-  //             ..apiKey(widget.apiKey)
-  //             ..isGuest(false)
-  //             ..link(initialLink)
-  //             ..imageURL(widget.imageUrl)
-  //             ..userName(widget.userName ?? "Test User")
-  //             ..userUniqueId(widget.userId ?? 'Test User Id'))
-  //           .build());
-  //     }
-
-  //     // Subscribe to link changes
-  //     _streamSubscription = linkStream.listen((String? link) async {
-  //       if (link != null) {
-  //         // Handle the deep link
-  //         // You can extract any parameters from the uri object here
-  //         // and use them to navigate to a specific screen in your app
-  //         debugPrint('Received deep link: $link');
-
-  //         SharePost().parseDeepLink((DeepLinkRequestBuilder()
-  //               ..apiKey(widget.apiKey)
-  //               ..isGuest(false)
-  //               ..link(link)
-  //               ..imageURL(widget.imageUrl)
-  //               ..userName(widget.userName ?? "Test User")
-  //               ..userUniqueId(widget.userId ?? 'Test User Id'))
-  //             .build());
-  //       }
-  //     }, onError: (err) {
-  //       // Handle exception by warning the user their action did not succeed
-  //       // toast('An error occurred');
-  //     });
-  //   }
-  // }
-
   @override
   void initState() {
     super.initState();
@@ -183,9 +132,6 @@ class _LMFeedState extends State<LMFeed> {
     userName = widget.userName!.isEmpty ? "Test username" : widget.userName!;
     imageUrl = widget.imageUrl;
     customWidgets = widget.customWidgets;
-    // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-    //   initUniLink(context);
-    // });
     firebase();
   }
 
@@ -262,13 +208,14 @@ class _LMFeedState extends State<LMFeed> {
                     locator<LikeMindsService>().getCommunityConfigurations();
 
                     LMNotificationHandler.instance.registerDevice(user!.id);
-                    // return MaterialApp(
-                    // debugShowCheckedModeBanner: !isProd,
-                    // navigatorKey: locator<NavigationService>().navigatorKey,
-                    // theme: ColorTheme.novaTheme,
-                    // title: 'LM Feed',
-                    // home:
-                    return FutureBuilder(
+                    return
+                        // MaterialApp(
+                        //   debugShowCheckedModeBanner: !isProd,
+                        //   navigatorKey: locator<NavigationService>().navigatorKey,
+                        //   theme: ColorTheme.novaTheme,
+                        //   title: 'LM Feed',
+                        //  home:
+                        FutureBuilder(
                       future: locator<LikeMindsService>().getMemberState(),
                       initialData: null,
                       builder: (BuildContext context, AsyncSnapshot snapshot) {

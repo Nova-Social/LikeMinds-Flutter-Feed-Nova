@@ -24,6 +24,8 @@ Future<void> _handleNotification(RemoteMessage message) async {
   await LMNotificationHandler.instance.handleNotification(message, true);
 }
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([
@@ -32,9 +34,11 @@ void main() async {
   ]);
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
   await setupNotifications();
+
   LMFeed.setupFeed(
     apiKey: debug ? CredsDev.apiKey : CredsProd.apiKey,
     lmCallBack: LikeMindsCallback(),
+    navigatorKey: navigatorKey,
   );
   await SampleUserLocalPreference.instance.initialize();
   runApp(const MyApp());
