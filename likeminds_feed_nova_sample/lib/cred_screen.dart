@@ -57,6 +57,9 @@ class _CredScreenState extends State<CredScreen> {
     super.initState();
     NetworkConnectivity networkConnectivity = NetworkConnectivity.instance;
     networkConnectivity.initialise();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      initUniLinks(context);
+    });
   }
 
   @override
@@ -66,7 +69,7 @@ class _CredScreenState extends State<CredScreen> {
     super.dispose();
   }
 
-  Future initUniLink(BuildContext context) async {
+  Future initUniLinks(BuildContext context) async {
     if (!_initialURILinkHandled) {
       _initialURILinkHandled = true;
       // Get the initial deep link if the app was launched with one
