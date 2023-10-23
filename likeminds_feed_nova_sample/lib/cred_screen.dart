@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
         title: 'Integration App for UI + SDK package',
         debugShowCheckedModeBanner: false,
         scaffoldMessengerKey: rootScaffoldMessengerKey,
+        navigatorKey: navigatorKey,
         theme: ColorTheme.novaTheme,
         home: const CredScreen(),
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
+import 'package:likeminds_feed_nova_sample/main.dart';
 import 'package:likeminds_feed_nova_sample/screens/company_screen.dart';
 import 'package:likeminds_feed_nova_sample/screens/profile_screen.dart';
 
