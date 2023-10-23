@@ -235,7 +235,10 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                 : widget.user.imageUrl,
                             boxShape: BoxShape.circle,
                             onTap: () {
-                              if (widget.user.sdkClientInfo != null) {
+                              if (companyId != null && companyId!.isNotEmpty) {
+                                locator<LikeMindsService>()
+                                    .routeToCompany(companyId!);
+                              } else if (widget.user.sdkClientInfo != null) {
                                 locator<LikeMindsService>().routeToProfile(
                                     widget.user.sdkClientInfo!.userUniqueId);
                               }

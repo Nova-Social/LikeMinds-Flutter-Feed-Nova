@@ -1,30 +1,24 @@
 library likeminds_feed_ss_fl;
 
-import 'dart:async';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_no_internet_widget/flutter_no_internet_widget.dart';
 import 'package:likeminds_feed/likeminds_feed.dart';
-import 'package:likeminds_feed_nova_fl/src/services/navigation_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/icons.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/network_handling.dart';
-import 'package:likeminds_feed_nova_fl/src/utils/share/share_post.dart';
 
 import 'package:likeminds_feed_nova_fl/src/utils/utils.dart';
 
 import 'package:likeminds_feed_nova_fl/src/views/universal_feed_page.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 
-import 'package:likeminds_feed_nova_fl/src/blocs/new_post/new_post_bloc.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/services/service_locator.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/ui_constants.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/credentials/credentials.dart';
-import 'package:uni_links/uni_links.dart';
 
 export 'src/services/service_locator.dart';
+export 'src/services/navigation_service.dart';
 export 'src/services/bloc_service.dart';
 export 'src/utils/analytics/analytics.dart';
 export 'src/utils/notifications/notification_handler.dart';

@@ -54,14 +54,15 @@ class SharePost {
                 ..imageUrl(request.imageURL ?? '')
                 ..userName(request.userName))
               .build());
-
-      locator<NavigationService>().navigatorKey.currentState!.push(
-            MaterialPageRoute(
-              builder: (context) => PostDetailScreen(
-                postId: postId,
+      if (!locator<NavigationService>().checkNullState()) {
+        locator<NavigationService>().navigatorKey.currentState!.push(
+              MaterialPageRoute(
+                builder: (context) => PostDetailScreen(
+                  postId: postId,
+                ),
               ),
-            ),
-          );
+            );
+      }
 
       return DeepLinkResponse(
         success: true,

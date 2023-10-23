@@ -55,12 +55,12 @@ abstract class ILikeMindsService {
   Future<GetUserFeedResponse> getUserFeed(GetUserFeedRequest userFeedRequest);
   Future<GetWidgetResponse> getWidgets(GetWidgetRequest request);
   void routeToProfile(String userId);
+  void routeToCompany(String userId);
 }
 
 class LikeMindsService implements ILikeMindsService {
   late final LMFeedClient _sdkApplication;
   late final MediaService _mediaService;
-
   int? feedroomId;
 
   set setFeedroomId(int feedroomId) {
@@ -300,5 +300,11 @@ class LikeMindsService implements ILikeMindsService {
   void routeToProfile(String userId) {
     debugPrint(userId);
     _sdkApplication.routeToProfile(userId);
+  }
+
+  @override
+  void routeToCompany(String userId) {
+    debugPrint(userId);
+    _sdkApplication.routeToCompany(userId);
   }
 }
