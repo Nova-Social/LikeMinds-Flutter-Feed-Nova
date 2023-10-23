@@ -366,6 +366,8 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                     onTagTap: (String userId) {
                       locator<LikeMindsService>().routeToProfile(userId);
                     },
+                    linkStyle: theme.textTheme.bodyMedium!
+                        .copyWith(color: theme.colorScheme.primary),
                     textStyle: theme.textTheme.bodyMedium,
                     expandTextStyle: theme.textTheme.bodyMedium!
                         .copyWith(color: theme.colorScheme.onPrimary),
