@@ -17,6 +17,7 @@ import 'package:likeminds_feed_nova_fl/src/utils/post/post_media_picker.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_utils.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/tagging/tagging_textfield_ta.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post/post_composer_header.dart';
+
 // TODO Nova: Uncomment this when topic is enabled
 // import 'package:likeminds_feed_nova_fl/src/widgets/topic/topic_popup.dart';
 
@@ -28,6 +29,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class NewPostScreen extends StatefulWidget {
   CompanyUI? company;
+
   NewPostScreen({super.key, this.company});
 
   @override
@@ -40,6 +42,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
   late String creatorId;
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+
   // TODO Nova: Uncomment this when topic is enabled
   // Future<GetTopicsResponse>? getTopicsResponse;
   ValueNotifier<bool> rebuildLinkPreview = ValueNotifier(false);
@@ -113,7 +116,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
     return false;
   }
 
-  /* 
+  /*
   * Removes the media from the list
   * whenever the user taps on the X button
   */
@@ -139,10 +142,10 @@ class _NewPostScreenState extends State<NewPostScreen> {
     }
   }
 
-  /* 
+  /*
   * Changes state to uploading
   * for showing a circular loader while the user is
-  * picking files 
+  * picking files
   */
   void onUploading() {
     setState(() {
@@ -150,9 +153,9 @@ class _NewPostScreenState extends State<NewPostScreen> {
     });
   }
 
-  /* 
+  /*
   * Changes state to uploaded
-  * for showing the picked files 
+  * for showing the picked files
   */
   void onUploadedMedia(bool uploadResponse) {
     if (uploadResponse) {
@@ -200,9 +203,9 @@ class _NewPostScreenState extends State<NewPostScreen> {
   }
 
   /*
-  * This function return a list 
+  * This function return a list
   * containing LMDocument widget
-  * which generates preview for a document 
+  * which generates preview for a document
   */
   Widget getPostDocument(double width) {
     return ListView.builder(
@@ -286,7 +289,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
     }
   }
 
-  /* 
+  /*
   * This function adds the link model in attachemnt
   * If the link model is not present in the attachment
   * and the link preview is enabled (no media is there)
@@ -489,17 +492,17 @@ class _NewPostScreenState extends State<NewPostScreen> {
             child: Stack(
               children: [
                 kVerticalPaddingMedium,
-                SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16.0,
-                      right: 16.0,
-                      top: 72.0,
-                      bottom: 40.0,
-                    ),
-                    child: Column(
-                      children: [
-                        Padding(
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 16.0,
+                    right: 16.0,
+                    top: 72.0,
+                    bottom: 40.0,
+                  ),
+                  child: CustomScrollView(
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: Padding(
                           padding: const EdgeInsets.only(top: 4.0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -532,273 +535,286 @@ class _NewPostScreenState extends State<NewPostScreen> {
                             ],
                           ),
                         ),
-                        kVerticalPaddingLarge,
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  Container(
-                                    decoration: const BoxDecoration(),
-                                    constraints: BoxConstraints(
-                                        maxHeight: screenSize.height * 0.8),
-                                    child: TaggingAheadTextField(
-                                      isDown: true,
-                                      minLines: 3,
-                                      decoration: InputDecoration(
-                                        border: InputBorder.none,
-                                        hintText: 'What\'s on your mind?',
-                                        hintStyle: theme!.textTheme.labelMedium,
+                      ),
+                      const SliverPadding(
+                        padding: EdgeInsets.only(bottom: 16.0),
+                      ),
+                      SliverToBoxAdapter(
+                        child: TaggingAheadTextField(
+                          isDown: true,
+                          minLines: 3,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'What\'s on your mind?',
+                            hintStyle: theme!.textTheme.labelMedium,
+                          ),
+                          onTagSelected: (tag) {
+                            userTags.add(tag);
+                          },
+                          controller: _controller,
+                          focusNode: _focusNode,
+                          onChange: _onTextChanged,
+                        ),
+                      ),
+                      const SliverPadding(
+                        padding: EdgeInsets.only(bottom: 20.0),
+                      ),
+                      if (isUploading)
+                        const SliverToBoxAdapter(
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              top: kPaddingMedium,
+                              bottom: kPaddingLarge,
+                            ),
+                            child: Center(child: LMLoader()),
+                          ),
+                        ),
+                      SliverToBoxAdapter(
+                        child: ValueListenableBuilder(
+                          valueListenable: rebuildLinkPreview,
+                          builder: (context, value, child) {
+                            return (postMedia.isEmpty &&
+                                    linkModel != null &&
+                                    showLinkPreview)
+                                ? Stack(
+                                    children: [
+                                      LMLinkPreview(
+                                        linkModel: linkModel,
+                                        backgroundColor:
+                                            theme!.colorScheme.surface,
+                                        showLinkUrl: false,
+                                        onTap: () {
+                                          launchUrl(
+                                            Uri.parse(
+                                                linkModel?.ogTags?.url ?? ''),
+                                            mode:
+                                                LaunchMode.externalApplication,
+                                          );
+                                        },
+                                        border: const Border(),
+                                        title: LMTextView(
+                                          text:
+                                              linkModel?.ogTags?.title ?? "--",
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          textStyle:
+                                              theme!.textTheme.titleMedium,
+                                        ),
+                                        subtitle: LMTextView(
+                                          text:
+                                              linkModel?.ogTags?.description ??
+                                                  "--",
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          textStyle:
+                                              theme!.textTheme.displayMedium,
+                                        ),
                                       ),
-                                      onTagSelected: (tag) {
-                                        userTags.add(tag);
-                                      },
-                                      controller: _controller,
-                                      focusNode: _focusNode,
-                                      onChange: _onTextChanged,
+                                      Positioned(
+                                        top: 5,
+                                        right: 5,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            showLinkPreview = false;
+                                            rebuildLinkPreview.value =
+                                                !rebuildLinkPreview.value;
+                                          },
+                                          child: const CloseButtonIcon(),
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                : const SizedBox();
+                          },
+                        ),
+                      ),
+                      if (postMedia.isNotEmpty)
+                        postMedia.first.mediaType == MediaType.document
+                            ? SliverToBoxAdapter(
+                                child: getPostDocument(screenSize.width))
+                            : SliverToBoxAdapter(
+                                child: Builder(builder: (context) {
+                                  int mediaLength = postMedia.length;
+                                  return Container(
+                                    padding: const EdgeInsets.only(
+                                      top: kPaddingSmall,
                                     ),
-                                  ),
-                                  kVerticalPaddingXLarge,
-                                  if (isUploading)
-                                    const Padding(
-                                      padding: EdgeInsets.only(
-                                        top: kPaddingMedium,
-                                        bottom: kPaddingLarge,
-                                      ),
-                                      child: LMLoader(),
-                                    ),
-                                  ValueListenableBuilder(
-                                      valueListenable: rebuildLinkPreview,
-                                      builder: (context, value, child) {
-                                        return (postMedia.isEmpty &&
-                                                linkModel != null &&
-                                                showLinkPreview)
-                                            ? Stack(
-                                                children: [
-                                                  LMLinkPreview(
-                                                    linkModel: linkModel,
-                                                    backgroundColor: theme!
-                                                        .colorScheme.surface,
-                                                    showLinkUrl: false,
-                                                    onTap: () {
-                                                      launchUrl(
-                                                        Uri.parse(linkModel
-                                                                ?.ogTags?.url ??
-                                                            ''),
-                                                        mode: LaunchMode
-                                                            .externalApplication,
-                                                      );
-                                                    },
-                                                    border: const Border(),
-                                                    title: LMTextView(
-                                                      text: linkModel
-                                                              ?.ogTags?.title ??
-                                                          "--",
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      textStyle: theme!
-                                                          .textTheme
-                                                          .titleMedium,
-                                                    ),
-                                                    subtitle: LMTextView(
-                                                      text: linkModel?.ogTags
-                                                              ?.description ??
-                                                          "--",
-                                                      maxLines: 2,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      textStyle: theme!
-                                                          .textTheme
-                                                          .displayMedium,
-                                                    ),
-                                                  ),
-                                                  Positioned(
-                                                    top: 5,
-                                                    right: 5,
-                                                    child: GestureDetector(
-                                                      onTap: () {
-                                                        showLinkPreview = false;
-                                                        rebuildLinkPreview
-                                                                .value =
-                                                            !rebuildLinkPreview
-                                                                .value;
-                                                      },
-                                                      child:
-                                                          const CloseButtonIcon(),
-                                                    ),
-                                                  )
-                                                ],
-                                              )
-                                            : const SizedBox();
-                                      }),
-                                  if (postMedia.isNotEmpty)
-                                    postMedia.first.mediaType ==
-                                            MediaType.document
-                                        ? getPostDocument(screenSize.width)
-                                        : Builder(builder: (context) {
-                                            int mediaLength = postMedia.length;
-                                            return Container(
-                                              padding: const EdgeInsets.only(
-                                                top: kPaddingSmall,
-                                              ),
-                                              height: mediaLength == 1
-                                                  ? screenSize.width - 32
-                                                  : 200,
-                                              alignment: Alignment.center,
-                                              child: ListView.builder(
-                                                itemCount: mediaLength,
-                                                physics: mediaLength == 1
-                                                    ? const NeverScrollableScrollPhysics()
-                                                    : null,
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                itemBuilder:
-                                                    (BuildContext context,
-                                                        int index) {
-                                                  return Stack(children: [
-                                                    Row(
-                                                      children: [
-                                                        SizedBox(
-                                                          child: Stack(
-                                                            children: [
-                                                              postMedia[index]
-                                                                          .mediaType ==
-                                                                      MediaType
-                                                                          .video
-                                                                  ? ClipRRect(
-                                                                      borderRadius: const BorderRadius
-                                                                          .all(
-                                                                          Radius.circular(
-                                                                              20)),
-                                                                      child:
-                                                                          Container(
-                                                                        height: mediaLength ==
-                                                                                1
-                                                                            ? screenSize.width -
-                                                                                32
-                                                                            : 200,
-                                                                        width: mediaLength ==
-                                                                                1
-                                                                            ? screenSize.width -
-                                                                                32
-                                                                            : 200,
-                                                                        color: Colors
-                                                                            .black,
-                                                                        child:
-                                                                            LMVideo(
-                                                                          videoFile:
-                                                                              postMedia[index].mediaFile!,
-                                                                          height: mediaLength == 1
-                                                                              ? screenSize.width - 32
-                                                                              : 200,
-                                                                          width: mediaLength == 1
-                                                                              ? screenSize.width - 32
-                                                                              : 200,
-                                                                          boxFit:
-                                                                              BoxFit.cover,
-                                                                          showControls:
-                                                                              false,
-                                                                          // width:
-                                                                          //     300,
-                                                                          borderRadius:
-                                                                              18,
-                                                                        ),
-                                                                      ),
-                                                                    )
-                                                                  : postMedia[index]
-                                                                              .mediaFile ==
-                                                                          null
-                                                                      ? const SizedBox()
-                                                                      : ClipRRect(
-                                                                          borderRadius: const BorderRadius
-                                                                              .all(
-                                                                              Radius.circular(20)),
-                                                                          child:
-                                                                              Container(
-                                                                            height: mediaLength == 1
-                                                                                ? screenSize.width - 32
-                                                                                : 200,
-                                                                            width: mediaLength == 1
-                                                                                ? screenSize.width - 32
-                                                                                : 200,
-                                                                            color:
-                                                                                Colors.black,
-                                                                            child:
-                                                                                LMImage(
-                                                                              height: mediaLength == 1 ? screenSize.width - 32 : 200,
-                                                                              width: mediaLength == 1 ? screenSize.width - 32 : 200,
-                                                                              boxFit: BoxFit.cover,
-                                                                              borderRadius: 18,
-                                                                              imageFile: postMedia[index].mediaFile!,
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                              Positioned(
-                                                                top: 4,
-                                                                right: 4,
+                                    height: mediaLength == 1
+                                        ? screenSize.width - 32
+                                        : 200,
+                                    alignment: Alignment.center,
+                                    child: ListView.builder(
+                                      itemCount: mediaLength,
+                                      physics: mediaLength == 1
+                                          ? const NeverScrollableScrollPhysics()
+                                          : null,
+                                      scrollDirection: Axis.horizontal,
+                                      itemBuilder:
+                                          (BuildContext context, int index) {
+                                        return Stack(children: [
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                child: Stack(
+                                                  children: [
+                                                    postMedia[index]
+                                                                .mediaType ==
+                                                            MediaType.video
+                                                        ? ClipRRect(
+                                                            borderRadius:
+                                                                const BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(
+                                                                            20)),
+                                                            child: Container(
+                                                              height: mediaLength ==
+                                                                      1
+                                                                  ? screenSize
+                                                                          .width -
+                                                                      32
+                                                                  : 200,
+                                                              width: mediaLength ==
+                                                                      1
+                                                                  ? screenSize
+                                                                          .width -
+                                                                      32
+                                                                  : 200,
+                                                              color:
+                                                                  Colors.black,
+                                                              child: LMVideo(
+                                                                videoFile: postMedia[
+                                                                        index]
+                                                                    .mediaFile!,
+                                                                height: mediaLength ==
+                                                                        1
+                                                                    ? screenSize
+                                                                            .width -
+                                                                        32
+                                                                    : 200,
+                                                                width: mediaLength ==
+                                                                        1
+                                                                    ? screenSize
+                                                                            .width -
+                                                                        32
+                                                                    : 200,
+                                                                boxFit: BoxFit
+                                                                    .cover,
+                                                                showControls:
+                                                                    false,
+                                                                // width:
+                                                                //     300,
+                                                                borderRadius:
+                                                                    18,
+                                                              ),
+                                                            ),
+                                                          )
+                                                        : postMedia[index]
+                                                                    .mediaFile ==
+                                                                null
+                                                            ? const SizedBox()
+                                                            : ClipRRect(
+                                                                borderRadius:
+                                                                    const BorderRadius
+                                                                        .all(
+                                                                        Radius.circular(
+                                                                            20)),
                                                                 child:
                                                                     Container(
-                                                                  decoration:
-                                                                      const BoxDecoration(
-                                                                          boxShadow: [
-                                                                        BoxShadow(
-                                                                            offset: Offset(
-                                                                                0.0, 5.0),
-                                                                            blurRadius:
-                                                                                30.0,
-                                                                            spreadRadius:
-                                                                                -3.0,
-                                                                            color:
-                                                                                Colors.black38),
-                                                                      ]),
+                                                                  height: mediaLength ==
+                                                                          1
+                                                                      ? screenSize
+                                                                              .width -
+                                                                          32
+                                                                      : 200,
+                                                                  width: mediaLength ==
+                                                                          1
+                                                                      ? screenSize
+                                                                              .width -
+                                                                          32
+                                                                      : 200,
+                                                                  color: Colors
+                                                                      .black,
                                                                   child:
-                                                                      LMIconButton(
-                                                                    onTap: (active) =>
-                                                                        removeAttachmenetAtIndex(
-                                                                            index),
-                                                                    icon:
-                                                                        LMIcon(
-                                                                      type: LMIconType
-                                                                          .icon,
-                                                                      icon: CupertinoIcons
-                                                                          .xmark_circle_fill,
-                                                                      backgroundColor: theme!
-                                                                          .colorScheme
-                                                                          .background
-                                                                          .withOpacity(
-                                                                              0.5),
-                                                                      color: theme!
-                                                                          .colorScheme
-                                                                          .onPrimary,
-                                                                    ),
+                                                                      LMImage(
+                                                                    height: mediaLength ==
+                                                                            1
+                                                                        ? screenSize.width -
+                                                                            32
+                                                                        : 200,
+                                                                    width: mediaLength ==
+                                                                            1
+                                                                        ? screenSize.width -
+                                                                            32
+                                                                        : 200,
+                                                                    boxFit: BoxFit
+                                                                        .cover,
+                                                                    borderRadius:
+                                                                        18,
+                                                                    imageFile: postMedia[
+                                                                            index]
+                                                                        .mediaFile!,
                                                                   ),
                                                                 ),
-                                                              )
-                                                            ],
+                                                              ),
+                                                    Positioned(
+                                                      top: 4,
+                                                      right: 4,
+                                                      child: Container(
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                                boxShadow: [
+                                                              BoxShadow(
+                                                                  offset:
+                                                                      Offset(
+                                                                          0.0,
+                                                                          5.0),
+                                                                  blurRadius:
+                                                                      30.0,
+                                                                  spreadRadius:
+                                                                      -3.0,
+                                                                  color: Colors
+                                                                      .black38),
+                                                            ]),
+                                                        child: LMIconButton(
+                                                          onTap: (active) =>
+                                                              removeAttachmenetAtIndex(
+                                                                  index),
+                                                          icon: LMIcon(
+                                                            type:
+                                                                LMIconType.icon,
+                                                            icon: CupertinoIcons
+                                                                .xmark_circle_fill,
+                                                            backgroundColor:
+                                                                theme!
+                                                                    .colorScheme
+                                                                    .background
+                                                                    .withOpacity(
+                                                                        0.5),
+                                                            color: theme!
+                                                                .colorScheme
+                                                                .onPrimary,
                                                           ),
                                                         ),
-                                                        const SizedBox(
-                                                            width: 8),
-                                                      ],
-                                                    ),
-                                                  ]);
-                                                },
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
                                               ),
-                                            );
-                                          }),
-                                  kVerticalPaddingMedium,
-                                ],
+                                              const SizedBox(width: 8),
+                                            ],
+                                          ),
+                                        ]);
+                                      },
+                                    ),
+                                  );
+                                }),
                               ),
-                            ),
-                          ],
+                      const SliverToBoxAdapter(
+                        child: SizedBox(
+                          height: 80,
                         ),
-                        kVerticalPaddingXLarge,
-                        const SizedBox(height: 55),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
                 // const Spacer(),
