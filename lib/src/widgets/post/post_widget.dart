@@ -361,18 +361,21 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                               : const SizedBox());
                     },
                   ),
-                  const SizedBox(height: 16),
-                  LMPostContent(
-                    onTagTap: (String userId) {
-                      locator<LikeMindsService>().routeToProfile(userId);
-                    },
-                    linkStyle: theme.textTheme.bodyMedium!
-                        .copyWith(color: theme.colorScheme.primary),
-                    textStyle: theme.textTheme.bodyMedium,
-                    expandTextStyle: theme.textTheme.bodyMedium!
-                        .copyWith(color: theme.colorScheme.onPrimary),
-                    expanded: widget.expanded,
-                    expandText: widget.expanded ? '' : 'see more',
+                  Padding(
+                    padding: EdgeInsets.only(
+                        top: postDetails!.text.isEmpty ? 0.0 : 16.0),
+                    child: LMPostContent(
+                      onTagTap: (String userId) {
+                        locator<LikeMindsService>().routeToProfile(userId);
+                      },
+                      linkStyle: theme.textTheme.bodyMedium!
+                          .copyWith(color: theme.colorScheme.primary),
+                      textStyle: theme.textTheme.bodyMedium,
+                      expandTextStyle: theme.textTheme.bodyMedium!
+                          .copyWith(color: theme.colorScheme.onPrimary),
+                      expanded: widget.expanded,
+                      expandText: widget.expanded ? '' : 'see more',
+                    ),
                   ),
                   checkAttachments(postDetails!.attachments!)
                       ? const SizedBox(height: 16)
