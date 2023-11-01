@@ -569,13 +569,16 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                 state) {
                                                               if (state
                                                                   is AddCommentReplyLoading) {
-                                                                return const SizedBox(
+                                                                return SizedBox(
                                                                   height: 15,
                                                                   width: 15,
                                                                   child:
                                                                       CircularProgressIndicator(
                                                                     strokeWidth:
                                                                         2,
+                                                                    color: ColorTheme
+                                                                        .novaTheme
+                                                                        .primaryColor,
                                                                   ),
                                                                 );
                                                               }
@@ -683,13 +686,16 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                 state) {
                                                               if (state
                                                                   is AddCommentLoading) {
-                                                                return const SizedBox(
+                                                                return SizedBox(
                                                                   height: 15,
                                                                   width: 15,
                                                                   child:
                                                                       CircularProgressIndicator(
                                                                     strokeWidth:
                                                                         2,
+                                                                    color: ColorTheme
+                                                                        .novaTheme
+                                                                        .primaryColor,
                                                                   ),
                                                                 );
                                                               }
@@ -1604,7 +1610,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         }),
                   );
                 }
-                return const Center(child: CircularProgressIndicator());
+                return Center(
+                    child: CircularProgressIndicator(
+                  color: ColorTheme.novaTheme.primaryColor,
+                ));
               },
             )),
       ),

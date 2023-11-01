@@ -155,7 +155,7 @@ class _FeedScreenState extends State<FeedScreen> {
             return true;
           },
           listener: (context, state) => updatePagingControllers(state),
-          builder: ((context, state) {
+          builder: (context, state) {
             if (state is UniversalFeedLoaded) {
               GetFeedResponse feedResponse = state.feed;
               return PagedListView<int, PostViewModel>(
@@ -385,8 +385,12 @@ class _FeedScreenState extends State<FeedScreen> {
                 ),
               );
             }
-            return const Center(child: CircularProgressIndicator());
-          }),
+            return Center(
+              child: CircularProgressIndicator(
+                color: ColorTheme.novaTheme.primaryColor,
+              ),
+            );
+          },
         ),
       ),
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,

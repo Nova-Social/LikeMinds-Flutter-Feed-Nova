@@ -11,6 +11,7 @@ class TopicBottomSheet extends StatefulWidget {
   final Function(List<TopicUI>, TopicUI) onTopicSelected;
   final bool? isEnabled;
   final Color? backgroundColor;
+
   const TopicBottomSheet({
     Key? key,
     required this.selectedTopics,
@@ -157,7 +158,11 @@ class _TopicBottomSheetState extends State<TopicBottomSheet> {
               },
               builder: (context, state) {
                 if (state is TopicLoading) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: ColorTheme.novaTheme.primaryColor,
+                    ),
+                  );
                 }
 
                 if (state is TopicLoaded) {

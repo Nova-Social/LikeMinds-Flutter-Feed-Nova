@@ -560,13 +560,17 @@ class _NewPostScreenState extends State<NewPostScreen> {
                         padding: EdgeInsets.only(bottom: 20.0),
                       ),
                       if (isUploading)
-                        const SliverToBoxAdapter(
+                        SliverToBoxAdapter(
                           child: Padding(
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                               top: kPaddingMedium,
                               bottom: kPaddingLarge,
                             ),
-                            child: Center(child: LMLoader()),
+                            child: Center(
+                              child: LMLoader(
+                                color: ColorTheme.novaTheme.primaryColor,
+                              ),
+                            ),
                           ),
                         ),
                       SliverToBoxAdapter(

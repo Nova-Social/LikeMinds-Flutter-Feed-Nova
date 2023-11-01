@@ -151,7 +151,11 @@ class _TopicPopUpState extends State<TopicPopUp> {
         },
         builder: (context, state) {
           if (state is TopicLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(
+                color: ColorTheme.novaTheme.primaryColor,
+              ),
+            );
           }
 
           if (state is TopicLoaded) {

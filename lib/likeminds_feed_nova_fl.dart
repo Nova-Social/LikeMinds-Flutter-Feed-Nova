@@ -180,7 +180,10 @@ class _LMFeedState extends State<LMFeed> {
         debugPrint('Connected to internet');
         rebuildOnConnectivityChange.value = !rebuildOnConnectivityChange.value;
       },
-      loadingWidget: const Center(child: CircularProgressIndicator()),
+      loadingWidget: Center(
+          child: CircularProgressIndicator(
+        color: ColorTheme.novaTheme.primaryColor,
+      )),
       online: ValueListenableBuilder(
           valueListenable: rebuildOnConnectivityChange,
           builder: (context, _, __) {
@@ -226,9 +229,10 @@ class _LMFeedState extends State<LMFeed> {
                           height: MediaQuery.of(context).size.height,
                           width: MediaQuery.of(context).size.width,
                           color: ColorTheme.backgroundColor,
-                          child: const Center(
+                          child: Center(
                             child: LMLoader(
                               isPrimary: true,
+                              color: ColorTheme.novaTheme.primaryColor,
                             ),
                           ),
                         );
