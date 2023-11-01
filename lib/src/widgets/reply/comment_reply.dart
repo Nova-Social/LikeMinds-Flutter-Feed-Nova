@@ -330,13 +330,15 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
             }
             if (state is CommentRepliesLoading) {
               if (state.commentId == widget.reply.id) {
-                return const Padding(
-                  padding: EdgeInsets.only(top: 8.0),
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
                   child: Center(
                     child: SizedBox(
                       height: 20,
                       width: 20,
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: ColorTheme.novaTheme.primaryColor,
+                      ),
                     ),
                   ),
                 );

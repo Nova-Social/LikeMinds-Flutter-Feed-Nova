@@ -49,7 +49,7 @@ dependencies:
     path: ../LikeMinds-Flutter-Feed-UI
 
   likeminds_feed: 1.6.3
-  #  path: ../LikeMinds-Flutter-Feed-SDK
+   # path: ../LikeMinds-Flutter-Feed-SDK
 
 dev_dependencies:
   flutter_test:
