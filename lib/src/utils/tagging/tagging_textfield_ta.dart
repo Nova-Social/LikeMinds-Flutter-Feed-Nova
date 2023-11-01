@@ -15,7 +15,7 @@ class TaggingAheadTextField extends StatefulWidget {
   final TextEditingController controller;
   final InputDecoration? decoration;
   final Function(String)? onChange;
-  final int maxLines;
+  final int? maxLines;
   final int minLines;
 
   const TaggingAheadTextField({
@@ -26,7 +26,7 @@ class TaggingAheadTextField extends StatefulWidget {
     required this.focusNode,
     this.decoration,
     required this.onChange,
-    this.maxLines = 200,
+    this.maxLines,
     this.minLines = 1,
   });
 
