@@ -1066,10 +1066,12 @@ class _UniversalFeedViewState extends State<UniversalFeedView> {
                           },
                           firstPageProgressIndicatorBuilder: (context) =>
                               const LMFeedShimmer(),
-                          newPageProgressIndicatorBuilder: (context) =>
-                              const Padding(
+                          newPageProgressIndicatorBuilder: (context) => Padding(
                             padding: EdgeInsets.all(16.0),
-                            child: Center(child: CircularProgressIndicator()),
+                            child: Center(
+                                child: CircularProgressIndicator(
+                              color: ColorTheme.novaTheme.primaryColor,
+                            )),
                           ),
                         ),
                       );

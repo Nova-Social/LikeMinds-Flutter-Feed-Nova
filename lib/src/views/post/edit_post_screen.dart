@@ -404,7 +404,11 @@ class _EditPostScreenState extends State<EditPostScreen> {
                 future: postFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: ColorTheme.novaTheme.primaryColor,
+                      ),
+                    );
                   } else if (snapshot.connectionState == ConnectionState.done) {
                     GetPostResponse response = snapshot.data!;
                     widgets = response.widgets;
@@ -670,11 +674,13 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                   children: [
                                     LMLinkPreview(
                                       linkModel: linkModel,
-                                      backgroundColor: theme!.colorScheme.surface,
+                                      backgroundColor:
+                                          theme!.colorScheme.surface,
                                       showLinkUrl: false,
                                       onTap: () {
                                         launchUrl(
-                                          Uri.parse(linkModel?.ogTags?.url ?? ''),
+                                          Uri.parse(
+                                              linkModel?.ogTags?.url ?? ''),
                                           mode: LaunchMode.externalApplication,
                                         );
                                       },
@@ -690,7 +696,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                             "--",
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
-                                        textStyle: theme!.textTheme.displayMedium,
+                                        textStyle:
+                                            theme!.textTheme.displayMedium,
                                       ),
                                     ),
                                     Positioned(
@@ -744,7 +751,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                           SizedBox(
                                             child: Stack(
                                               children: [
-                                                mapIntToMediaType(mediaList[index]
+                                                mapIntToMediaType(mediaList[
+                                                                index]
                                                             .attachmentType) ==
                                                         MediaType.video
                                                     ? ClipRRect(
@@ -754,12 +762,14 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                                                 Radius.circular(
                                                                     20)),
                                                         child: Container(
-                                                          height: mediaLength == 1
+                                                          height: mediaLength ==
+                                                                  1
                                                               ? screenSize!
                                                                       .width -
                                                                   32
                                                               : 200,
-                                                          width: mediaLength == 1
+                                                          width: mediaLength ==
+                                                                  1
                                                               ? screenSize!
                                                                       .width -
                                                                   32
@@ -782,7 +792,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                                                         .width -
                                                                     32
                                                                 : 200,
-                                                            boxFit: BoxFit.cover,
+                                                            boxFit:
+                                                                BoxFit.cover,
                                                             showControls: false,
                                                             borderRadius: 18,
                                                           ),
@@ -795,12 +806,14 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                                                 Radius.circular(
                                                                     20)),
                                                         child: Container(
-                                                          height: mediaLength == 1
+                                                          height: mediaLength ==
+                                                                  1
                                                               ? screenSize!
                                                                       .width -
                                                                   32
                                                               : 200,
-                                                          width: mediaLength == 1
+                                                          width: mediaLength ==
+                                                                  1
                                                               ? screenSize!
                                                                       .width -
                                                                   32
@@ -819,7 +832,8 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                                                         .width -
                                                                     32
                                                                 : 200,
-                                                            boxFit: BoxFit.cover,
+                                                            boxFit:
+                                                                BoxFit.cover,
                                                             borderRadius: 18,
                                                             imageUrl: mediaList[
                                                                     index]

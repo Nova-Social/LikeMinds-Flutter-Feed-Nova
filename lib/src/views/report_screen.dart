@@ -95,7 +95,9 @@ class _ReportScreenState extends State<ReportScreen> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
+                            return CircularProgressIndicator(
+                              color: ColorTheme.novaTheme.primaryColor,
+                            );
                           } else if (snapshot.connectionState ==
                                   ConnectionState.done &&
                               snapshot.hasData &&
