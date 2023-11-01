@@ -161,6 +161,7 @@ class _LMFeedState extends State<LMFeed> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: ColorTheme.primaryColor,
+                  fontFamily: 'Gantari',
                   fontSize: 14,
                 ),
               ),
@@ -246,6 +247,7 @@ class _LMFeedState extends State<LMFeed> {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: ColorTheme.white,
+                            fontFamily: 'Gantari',
                             fontSize: 16,
                           )),
                     ),

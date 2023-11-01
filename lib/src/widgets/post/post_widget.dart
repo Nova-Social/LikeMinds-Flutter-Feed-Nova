@@ -207,8 +207,10 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                   kHorizontalPaddingMedium,
                                   LMTextView(
                                     text: "Pinned Post",
-                                    textStyle:
-                                        TextStyle(color: ColorTheme.white),
+                                    textStyle: TextStyle(
+                                      color: ColorTheme.white,
+                                      fontFamily: 'Gantari',
+                                    ),
                                   )
                                 ],
                               ),
@@ -361,21 +363,24 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                               : const SizedBox());
                     },
                   ),
-                  const SizedBox(height: 16),
-                  LMPostContent(
-                    onTagTap: (String userId) {
-                      locator<LikeMindsService>().routeToProfile(userId);
-                    },
-                    linkStyle: theme.textTheme.bodyMedium!
-                        .copyWith(color: theme.colorScheme.primary),
-                    textStyle: theme.textTheme.bodyMedium,
-                    expandTextStyle: theme.textTheme.bodyMedium!
-                        .copyWith(color: theme.colorScheme.onPrimary),
-                    expanded: widget.expanded,
-                    expandText: widget.expanded ? '' : 'see more',
+                  postDetails!.text.isEmpty ? const SizedBox.shrink() : Padding(
+                    padding: const EdgeInsets.only(
+                        top:  8.0),
+                    child: LMPostContent(
+                      onTagTap: (String userId) {
+                        locator<LikeMindsService>().routeToProfile(userId);
+                      },
+                      linkStyle: theme.textTheme.bodyMedium!
+                          .copyWith(color: theme.colorScheme.primary),
+                      textStyle: theme.textTheme.bodyMedium,
+                      expandTextStyle: theme.textTheme.bodyMedium!
+                          .copyWith(color: theme.colorScheme.onPrimary),
+                      expanded: widget.expanded,
+                      expandText: widget.expanded ? '' : 'see more',
+                    ),
                   ),
                   checkAttachments(postDetails!.attachments!)
-                      ? const SizedBox(height: 16)
+                      ? SizedBox(height: postDetails!.text.isEmpty ? 8.0 : 16.0)
                       : const SizedBox(),
                   checkAttachments(postDetails!.attachments!)
                       ? checkForLinkPost()

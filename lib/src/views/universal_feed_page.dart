@@ -45,14 +45,17 @@ class UniversalFeedScreen extends StatefulWidget {
 
 class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
   ThemeData? theme;
-  /* 
+
+  /*
   * defines the height of topic feed bar
   * initialy set to 0, after fetching the topics
   * it is set to 62 if the topics are not empty
   */
   final ScrollController _controller = ScrollController();
+
   // notifies value listenable builder to rebuild the topic feed
   ValueNotifier<bool> rebuildTopicFeed = ValueNotifier(false);
+
   // TODO Nova: Uncomment this when topics are enabled
   // Future<GetTopicsResponse>? getTopicsResponse;
   List<TopicUI> selectedTopics = [];
@@ -252,6 +255,7 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
               color: kWhiteColor,
               fontSize: 28,
               fontWeight: FontWeight.w800,
+              fontFamily: 'Gantari',
             ),
           ),
         ),
@@ -475,7 +479,8 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
                       onRefresh: refresh,
                       scrollController: _controller,
                       // TODO Nova: Uncomment this when topics are enabled
-                      openTopicBottomSheet: () {}, //showTopicSelectSheet,
+                      openTopicBottomSheet: () {},
+                      //showTopicSelectSheet,
                       selectedTopicIds: selectedTopics,
                     );
                   } else if (state is UniversalFeedError) {
@@ -494,6 +499,7 @@ class _UniversalFeedScreenState extends State<UniversalFeedScreen> {
 
 class UniversalFeedErrorView extends StatelessWidget {
   final String message;
+
   const UniversalFeedErrorView({super.key, required this.message});
 
   @override
@@ -595,6 +601,7 @@ class _UniversalFeedViewState extends State<UniversalFeedView> {
   }
 
   var iconContainerHeight = 90.00;
+
   @override
   void initState() {
     super.initState();

@@ -165,6 +165,10 @@ Dialog deleteConfirmationDialog(
                                                                                 null
                                                                             ? -1
                                                                             : reasonForDeletion!.id,
+                                                                       fillColor: MaterialStateProperty.all(reasonForDeletion != null &&
+                                                                                reasonForDeletion!.id == reportTags[index].id
+                                                                            ? theme.colorScheme.primary
+                                                                            : Colors.white),
                                                                         onChanged:
                                                                             (value) {},
                                                                         activeColor: theme
@@ -177,6 +181,9 @@ Dialog deleteConfirmationDialog(
                                                                       reportTags[
                                                                               index]
                                                                           .name,
+                                                                      style: theme
+                                                                          .textTheme
+                                                                          .labelMedium,
                                                                     ),
                                                                   ],
                                                                 ),
@@ -221,6 +228,7 @@ Dialog deleteConfirmationDialog(
                                         reasonForDeletion == null
                                             ? 'Reason for deletion'
                                             : reasonForDeletion!.name,
+                                        style: theme.textTheme.titleMedium,
                                       ),
                                       Icon(
                                         Icons.arrow_drop_down,
@@ -234,7 +242,7 @@ Dialog deleteConfirmationDialog(
                     })
                   : const SizedBox.shrink(),
           kVerticalPaddingLarge,
-          const Divider(),
+          const Divider(color: kGrey3Color),
           LMTextButton(
             onTap: () {
               if (user.userUniqueId != userId && isCm) {
@@ -251,7 +259,7 @@ Dialog deleteConfirmationDialog(
                   .copyWith(color: theme.colorScheme.error),
             ),
           ),
-          const Divider(),
+          const Divider(color: kGrey3Color),
           LMTextButton(
             onTap: () {
               Navigator.of(context).pop();

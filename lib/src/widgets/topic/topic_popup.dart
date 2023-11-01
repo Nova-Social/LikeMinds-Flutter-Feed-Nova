@@ -214,6 +214,7 @@ class _TopicPopUpState extends State<TopicPopUp> {
                                                     : widget.unSelectedTextColor ??
                                                         appBlack,
                                                 fontSize: 14,
+                                                fontFamily: 'Gantari',
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),

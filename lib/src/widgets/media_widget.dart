@@ -116,6 +116,7 @@ class _SSPostMediaState extends State<SSPostMedia> {
                       text: '+ ${documents.length - 3} more',
                       textStyle: TextStyle(
                         color: ColorTheme.novaTheme.colorScheme.secondary,
+                        fontFamily: 'Gantari',
                       ),
                     ))
                 : const SizedBox()

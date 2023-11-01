@@ -82,6 +82,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
         showBorder: false,
         type: attachments![index].attachmentMeta.format!,
         backgroundColor: theme!.colorScheme.surface,
+        textColor: theme!.colorScheme.onPrimary,
         documentIcon: Container(
           width: 48,
           height: 48,

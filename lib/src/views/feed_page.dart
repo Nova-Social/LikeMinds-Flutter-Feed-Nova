@@ -127,10 +127,10 @@ class _FeedScreenState extends State<FeedScreen> {
       appBar: AppBar(
         backgroundColor: kWhiteColor,
         centerTitle: false,
-        title: const LMTextView(
+        title: LMTextView(
           text: "Feed",
           textAlign: TextAlign.start,
-          textStyle: TextStyle(
+          textStyle: ColorTheme.novaTheme.textTheme.titleLarge!.copyWith(
             color: Colors.black,
             fontSize: 28,
             fontWeight: FontWeight.w800,
@@ -175,12 +175,14 @@ class _FeedScreenState extends State<FeedScreen> {
                         const Text("No posts to show",
                             style: TextStyle(
                               fontSize: 24,
+                              fontFamily: 'Gantari',
                               fontWeight: FontWeight.bold,
                             )),
                         const SizedBox(height: 12),
                         const Text("Be the first one to post here",
                             style: TextStyle(
                                 fontSize: 16,
+                                fontFamily: 'Gantari',
                                 fontWeight: FontWeight.w300,
                                 color: kGrey2Color)),
                         const SizedBox(height: 28),
@@ -192,7 +194,9 @@ class _FeedScreenState extends State<FeedScreen> {
                               ColorTheme.novaTheme.colorScheme.primary,
                           text: LMTextView(
                             text: "Create Post",
-                            textStyle: TextStyle(
+                            textStyle: ColorTheme
+                                .novaTheme.textTheme.titleLarge!
+                                .copyWith(
                               color: ColorTheme.novaTheme.colorScheme.onPrimary,
                               fontWeight: FontWeight.bold,
                             ),
@@ -430,6 +434,7 @@ class _FeedScreenState extends State<FeedScreen> {
               textStyle: TextStyle(
                 color: ColorTheme.novaTheme.colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
+                fontFamily: 'Gantari',
               ),
             ),
             icon: LMIcon(

@@ -397,6 +397,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                   textStyle: TextStyle(
                                     color: ColorTheme
                                         .novaTheme.colorScheme.primary,
+                                    fontFamily: 'Gantari',
                                     fontSize: 14,
                                   ),
                                 ),
@@ -408,6 +409,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                       ' ${replies.length} of ${reply!.repliesCount}',
                                   textStyle: const TextStyle(
                                     fontSize: 11,
+                                    fontFamily: 'Gantari',
                                     color: kGrey3Color,
                                   ),
                                 ),
@@ -452,6 +454,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                 'Show more replies',
                                 style: TextStyle(
                                   color: kBlueGreyColor,
+                                  fontFamily: 'Gantari',
                                   fontSize: 14,
                                 ),
                               ),
@@ -460,6 +463,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                               ' ${replies.length} of ${reply!.repliesCount}',
                               style: const TextStyle(
                                 fontSize: 11,
+                                fontFamily: 'Gantari',
                                 color: kGrey3Color,
                               ),
                             )
@@ -501,6 +505,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                   'Show more replies',
                                   style: TextStyle(
                                     color: kBlueGreyColor,
+                                    fontFamily: 'Gantari',
                                     fontSize: 14,
                                   ),
                                 ),
@@ -509,6 +514,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                 ' ${replies.length} of ${reply!.repliesCount}',
                                 style: const TextStyle(
                                   fontSize: 11,
+                                  fontFamily: 'Gantari',
                                   color: kGrey3Color,
                                 ),
                               )
@@ -554,6 +560,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                   'Show more replies',
                                   style: TextStyle(
                                     color: kBlueGreyColor,
+                                    fontFamily: 'Gantari',
                                     fontSize: 14,
                                   ),
                                 ),
@@ -563,6 +570,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                 style: const TextStyle(
                                   fontSize: 11,
                                   color: kGrey3Color,
+                                  fontFamily: 'Gantari',
                                 ),
                               )
                             ],

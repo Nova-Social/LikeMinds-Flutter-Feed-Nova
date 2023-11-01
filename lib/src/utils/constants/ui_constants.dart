@@ -36,7 +36,7 @@ class ColorTheme {
       titleMedium: TextStyle(
         fontSize: 14,
         color: ColorTheme.white,
-        //fontFamily: 'Gantari',
+        fontFamily: 'Gantari',
         fontWeight: FontWeight.w700,
         ////height: 0,
       ),

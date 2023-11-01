@@ -35,6 +35,7 @@ import 'package:timeago/timeago.dart' as timeago;
 class PostDetailScreen extends StatefulWidget {
   final String postId;
   final bool fromCommentButton;
+
   const PostDetailScreen({
     super.key,
     required this.postId,
@@ -600,6 +601,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                                   ? theme.colorScheme.onPrimary
                                                                                   : ColorTheme.novaTheme.colorScheme.primary
                                                                               : Colors.transparent,
+                                                                          fontFamily:
+                                                                              'Gantari',
                                                                           fontSize:
                                                                               14,
                                                                         ),
@@ -710,6 +713,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                             TextStyle(
                                                                           fontSize:
                                                                               14,
+                                                                          fontFamily:
+                                                                              'Gantari',
                                                                           color: _commentController!.value.text.isEmpty
                                                                               ? theme.colorScheme.onPrimary
                                                                               : ColorTheme.novaTheme.colorScheme.primary,
@@ -1490,6 +1495,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                             color: theme
                                                                 .colorScheme
                                                                 .onPrimary,
+                                                            fontFamily:
+                                                                'Gantari',
                                                           ),
                                                         ),
                                                         kHorizontalPaddingSmall,
@@ -1522,6 +1529,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                         TextStyle(
                                                                       fontSize:
                                                                           kFontSmall,
+                                                                      fontFamily:
+                                                                          'Gantari',
                                                                       color: theme
                                                                           .colorScheme
                                                                           .onPrimary,
@@ -1555,6 +1564,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                                             .novaTheme
                                                                             .colorScheme
                                                                             .primary,
+                                                                        fontFamily:
+                                                                            'Gantari',
                                                                       ),
                                                                     ),
                                                                   )
