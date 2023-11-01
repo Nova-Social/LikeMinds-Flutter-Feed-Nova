@@ -44,7 +44,7 @@ dependencies:
   shared_preferences: 
   overlay_support:
   flutter_bloc: 
-  likeminds_feed: 1.6.1
+  likeminds_feed: 1.6.3
    # path: ../../LikeMinds-Flutter-Feed-SDK
 
 
