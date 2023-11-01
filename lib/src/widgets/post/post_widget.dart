@@ -207,8 +207,10 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                                   kHorizontalPaddingMedium,
                                   LMTextView(
                                     text: "Pinned Post",
-                                    textStyle:
-                                        TextStyle(color: ColorTheme.white),
+                                    textStyle: TextStyle(
+                                      color: ColorTheme.white,
+                                      fontFamily: 'Gantari',
+                                    ),
                                   )
                                 ],
                               ),
@@ -361,9 +363,9 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                               : const SizedBox());
                     },
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: postDetails!.text.isEmpty ? 0.0 : 16.0),
+                  postDetails!.text.isEmpty ? const SizedBox.shrink() : Padding(
+                    padding: const EdgeInsets.only(
+                        top:  8.0),
                     child: LMPostContent(
                       onTagTap: (String userId) {
                         locator<LikeMindsService>().routeToProfile(userId);
@@ -378,7 +380,7 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                     ),
                   ),
                   checkAttachments(postDetails!.attachments!)
-                      ? const SizedBox(height: 16)
+                      ? SizedBox(height: postDetails!.text.isEmpty ? 8.0 : 16.0)
                       : const SizedBox(),
                   checkAttachments(postDetails!.attachments!)
                       ? checkForLinkPost()

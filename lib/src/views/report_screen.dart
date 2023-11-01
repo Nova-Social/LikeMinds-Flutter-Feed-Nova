@@ -185,7 +185,10 @@ class _ReportScreenState extends State<ReportScreen> {
                                 const EdgeInsets.symmetric(horizontal: 24.0),
                             child: TextField(
                               cursorColor: Colors.white,
-                              style: const TextStyle(color: Colors.white),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Gantari',
+                              ),
                               controller: reportReasonController,
                               decoration: InputDecoration(
                                 fillColor: Colors.white,

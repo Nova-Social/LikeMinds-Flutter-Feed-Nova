@@ -40,7 +40,7 @@ Widget getDummyUserConnectionwidget(double width) {
                       style: TextStyle(
                         color: Color(0xFF965EFF),
                         fontSize: 16,
-                        fontFamily: 'Poppins',
+                        fontFamily: 'Gantari',
                         fontWeight: FontWeight.w600,
                         height: 0.08,
                       ),
