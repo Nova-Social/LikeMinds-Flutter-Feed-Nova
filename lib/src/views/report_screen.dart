@@ -95,7 +95,9 @@ class _ReportScreenState extends State<ReportScreen> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
+                            return CircularProgressIndicator(
+                              color: ColorTheme.novaTheme.primaryColor,
+                            );
                           } else if (snapshot.connectionState ==
                                   ConnectionState.done &&
                               snapshot.hasData &&
@@ -124,40 +126,49 @@ class _ReportScreenState extends State<ReportScreen> {
                                                 },
                                               );
                                             },
-                                            child: Chip(
-                                              label: LMTextView(
-                                                text: e.name,
-                                                textStyle: theme
-                                                    .textTheme.bodyLarge!
-                                                    .copyWith(
-                                                  color: selectedTags
-                                                          .contains(e.id)
-                                                      ? theme
-                                                          .colorScheme.primary
-                                                      : theme.colorScheme
-                                                          .onPrimaryContainer,
+                                            child: Container(
+                                              color:
+                                                  theme.colorScheme.background,
+                                              child: Chip(
+                                                label: LMTextView(
+                                                  text: e.name,
+                                                  textStyle: theme
+                                                      .textTheme.bodyLarge!
+                                                      .copyWith(
+                                                    color: selectedTags
+                                                            .contains(e.id)
+                                                        ? theme
+                                                            .colorScheme.primary
+                                                        : theme.colorScheme
+                                                            .onPrimaryContainer,
+                                                  ),
                                                 ),
-                                              ),
-                                              backgroundColor: selectedTags
-                                                      .contains(e.id)
-                                                  ? theme.colorScheme.primary
-                                                      .withOpacity(0.2)
-                                                  : theme.colorScheme.surface,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12.0),
-                                                side: BorderSide(
-                                                  color: selectedTags
-                                                          .contains(e.id)
-                                                      ? theme
-                                                          .colorScheme.primary
-                                                      : Colors.transparent,
+                                                backgroundColor: selectedTags
+                                                        .contains(e.id)
+                                                    ? const Color.fromRGBO(
+                                                        47, 36, 67, 1)
+                                                    : theme.colorScheme.surface,
+                                                color:
+                                                    MaterialStateProperty.all(
+                                                        Colors.transparent),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          12.0),
+                                                  side: BorderSide(
+                                                    color: selectedTags
+                                                            .contains(e.id)
+                                                        ? theme
+                                                            .colorScheme.primary
+                                                        : Colors.transparent,
+                                                  ),
                                                 ),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 16.0),
+                                                labelPadding: EdgeInsets.zero,
+                                                elevation: 0,
                                               ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16.0),
-                                              labelPadding: EdgeInsets.zero,
                                             ),
                                           ),
                                         )
@@ -176,16 +187,34 @@ class _ReportScreenState extends State<ReportScreen> {
                                 const EdgeInsets.symmetric(horizontal: 24.0),
                             child: TextField(
                               cursorColor: Colors.white,
-                              style: const TextStyle(color: Colors.white),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'Gantari',
+                              ),
                               controller: reportReasonController,
                               decoration: InputDecoration(
                                 fillColor: Colors.white,
-                                focusColor: Colors.white,
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                focusColor: theme.colorScheme.primary,
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderSide: BorderSide(
+                                    color: theme.colorScheme.primary,
+                                  ),
                                 ),
                                 labelText: 'Reason',
                                 labelStyle: theme.textTheme.labelMedium,
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderSide: BorderSide(
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                ),
                               ),
                             ),
                           )

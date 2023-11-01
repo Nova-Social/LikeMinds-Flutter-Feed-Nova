@@ -244,12 +244,14 @@ class _LikesScreenState extends State<LikesScreen> {
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
+                            fontFamily: 'Gantari',
                           )),
                       SizedBox(height: 12),
                       Text("Be the first one to like this comment",
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w300,
+                              fontFamily: 'Gantari',
                               color: kGrey2Color)),
                       SizedBox(height: 28),
                     ],
@@ -318,12 +320,14 @@ class _LikesScreenState extends State<LikesScreen> {
                         Text("No likes to show",
                             style: TextStyle(
                               fontSize: 24,
+                              fontFamily: 'Gantari',
                               fontWeight: FontWeight.bold,
                             )),
                         SizedBox(height: 12),
                         Text("Be the first one to like this post",
                             style: TextStyle(
                                 fontSize: 16,
+                                fontFamily: 'Gantari',
                                 fontWeight: FontWeight.w300,
                                 color: kGrey2Color)),
                         SizedBox(height: 28),
@@ -361,6 +365,7 @@ class _LikesScreenState extends State<LikesScreen> {
 
 class LikesTile extends StatelessWidget {
   final User? user;
+
   const LikesTile({super.key, required this.user});
 
   @override
@@ -384,7 +389,12 @@ class LikesTile extends StatelessWidget {
       );
     } else {
       return const Center(
-        child: LMTextView(text: "No likes yet"),
+        child: LMTextView(
+          text: "No likes yet",
+          textStyle: TextStyle(
+            fontFamily: 'Gantari',
+          ),
+        ),
       );
     }
   }
@@ -411,6 +421,7 @@ class DeletedLikesTile extends StatelessWidget {
           text: 'Deleted User',
           textStyle: TextStyle(
               fontSize: kFontMedium,
+              fontFamily: 'Gantari',
               color: ColorTheme.novaTheme.colorScheme.onSecondary),
         )
       ],

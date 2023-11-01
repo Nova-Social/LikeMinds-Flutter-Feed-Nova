@@ -1,25 +1,21 @@
 import 'dart:async';
 
-import 'package:custom_pop_up_menu/custom_pop_up_menu.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:likeminds_feed/likeminds_feed.dart';
 import 'package:likeminds_feed_nova_fl/likeminds_feed_nova_fl.dart';
 import 'package:likeminds_feed_nova_fl/src/blocs/new_post/new_post_bloc.dart';
-import 'package:likeminds_feed_nova_fl/src/services/bloc_service.dart';
 import 'package:likeminds_feed_nova_fl/src/services/likeminds_service.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/constants/assets_constants.dart';
-import 'package:likeminds_feed_nova_fl/src/utils/constants/ui_constants.dart';
-import 'package:likeminds_feed_nova_fl/src/utils/local_preference/user_local_preference.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/post/post_utils.dart';
 import 'package:likeminds_feed_nova_fl/src/utils/tagging/tagging_textfield_ta.dart';
 import 'package:likeminds_feed_nova_fl/src/views/post/post_composer_header.dart';
-import 'package:likeminds_feed_nova_fl/src/widgets/topic/topic_popup.dart';
 import 'package:likeminds_feed_ui_fl/likeminds_feed_ui_fl.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+// TODO: uncomment code for topic feature
+//import 'package:likeminds_feed_nova_fl/src/widgets/topic/topic_popup.dart';
 
 class EditPostScreen extends StatefulWidget {
   static const String route = '/edit_post_screen';
@@ -40,11 +36,13 @@ class EditPostScreen extends StatefulWidget {
 
 class _EditPostScreenState extends State<EditPostScreen> {
   late Future<GetPostResponse> postFuture;
-  ValueNotifier<bool> rebuildTopicFeed = ValueNotifier<bool>(false);
-  List<TopicUI> selectedTopics = [];
   final FocusNode _focusNode = FocusNode();
   TextEditingController? textEditingController;
-  Future<GetTopicsResponse>? getTopicsResponse;
+
+  // TODO: uncomment code for topic feature
+  // Future<GetTopicsResponse>? getTopicsResponse;
+  // ValueNotifier<bool> rebuildTopicFeed = ValueNotifier<bool>(false);
+  // List<TopicUI> selectedTopics = [];
   ValueNotifier<bool> rebuildAttachments = ValueNotifier(false);
   late String postId;
   Post? postDetails;
@@ -63,8 +61,6 @@ class _EditPostScreenState extends State<EditPostScreen> {
   Size? screenSize;
   ThemeData? theme;
   Map<String, WidgetModel>? widgets;
-  final CustomPopupMenuController _controllerPopUp =
-      CustomPopupMenuController();
 
   void _onTextChanged(String p0) {
     if (_debounce?.isActive ?? false) {
@@ -86,6 +82,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
         showBorder: false,
         type: attachments![index].attachmentMeta.format!,
         backgroundColor: theme!.colorScheme.surface,
+        textColor: theme!.colorScheme.onPrimary,
         documentIcon: Container(
           width: 48,
           height: 48,
@@ -110,10 +107,11 @@ class _EditPostScreenState extends State<EditPostScreen> {
     );
   }
 
-  void updateSelectedTopics(List<TopicUI> topics) {
-    selectedTopics = topics;
-    rebuildTopicFeed.value = !rebuildTopicFeed.value;
-  }
+  // TODO: uncomment code for topic feature
+  // void updateSelectedTopics(List<TopicUI> topics) {
+  //   selectedTopics = topics;
+  //   rebuildTopicFeed.value = !rebuildTopicFeed.value;
+  // }
 
   void handleTextLinks(String text) async {
     String link = getFirstValidLinkFromString(text);
@@ -155,23 +153,25 @@ class _EditPostScreenState extends State<EditPostScreen> {
           ..page(1)
           ..pageSize(10))
         .build());
-    getTopicsResponse =
-        locator<LikeMindsService>().getTopics((GetTopicsRequestBuilder()
-              ..page(1)
-              ..pageSize(20)
-              ..isEnabled(true))
-            .build());
+    // TODO: uncomment code for topic feature
+    // getTopicsResponse =
+    //     locator<LikeMindsService>().getTopics((GetTopicsRequestBuilder()
+    //           ..page(1)
+    //           ..pageSize(20)
+    //           ..isEnabled(true))
+    //         .build());
+    // selectedTopics = widget.selectedTopics;
     if (_focusNode.canRequestFocus) {
       _focusNode.requestFocus();
     }
-    selectedTopics = widget.selectedTopics;
   }
 
   @override
   void didUpdateWidget(covariant EditPostScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     postId = widget.postId;
-    selectedTopics = widget.selectedTopics;
+    // TODO: uncomment code for topic feature
+    //selectedTopics = widget.selectedTopics;
   }
 
   void checkTextLinks() {
@@ -294,116 +294,121 @@ class _EditPostScreenState extends State<EditPostScreen> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: theme!.colorScheme.background,
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 64.0, left: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Align(
-                  alignment: Alignment.bottomLeft,
-                  child: FutureBuilder<GetTopicsResponse>(
-                    future: getTopicsResponse,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done &&
-                          snapshot.hasData &&
-                          snapshot.data!.success == true) {
-                        if (snapshot.data!.topics!.isNotEmpty) {
-                          return ValueListenableBuilder(
-                            valueListenable: rebuildTopicFeed,
-                            builder: (context, _, __) {
-                              return GestureDetector(
-                                onTap: () async {
-                                  if (_focusNode.hasFocus) {
-                                    FocusScopeNode currentFocus =
-                                        FocusScope.of(context);
-                                    currentFocus.unfocus();
-                                    await Future.delayed(
-                                        const Duration(milliseconds: 500));
-                                  }
-                                  _controllerPopUp.showMenu();
-                                },
-                                child: AbsorbPointer(
-                                  absorbing: true,
-                                  child: CustomPopupMenu(
-                                    controller: _controllerPopUp,
-                                    showArrow: false,
-                                    verticalMargin: 10,
-                                    horizontalMargin: 16.0,
-                                    pressType: PressType.singleClick,
-                                    menuBuilder: () => TopicPopUp(
-                                      selectedTopics: selectedTopics,
-                                      backgroundColor:
-                                          theme!.colorScheme.surface,
-                                      selectedTextColor:
-                                          theme!.colorScheme.onPrimary,
-                                      unSelectedTextColor:
-                                          theme!.colorScheme.onPrimary,
-                                      selectedColor: theme!.colorScheme.primary,
-                                      isEnabled: true,
-                                      onTopicSelected:
-                                          (updatedTopics, tappedTopic) {
-                                        if (selectedTopics.isEmpty) {
-                                          selectedTopics.add(tappedTopic);
-                                        } else {
-                                          if (selectedTopics.first.id ==
-                                              tappedTopic.id) {
-                                            selectedTopics.clear();
-                                          } else {
-                                            selectedTopics.clear();
-                                            selectedTopics.add(tappedTopic);
-                                          }
-                                        }
-                                        _controllerPopUp.hideMenu();
-                                        rebuildTopicFeed.value =
-                                            !rebuildTopicFeed.value;
-                                      },
-                                    ),
-                                    child: Container(
-                                      height: 36,
-                                      alignment: Alignment.bottomLeft,
-                                      margin: const EdgeInsets.only(left: 16.0),
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(500),
-                                        color: theme!.colorScheme.primary,
-                                      ),
-                                      child: LMTopicChip(
-                                        topic: selectedTopics.isEmpty
-                                            ? (TopicUIBuilder()
-                                                  ..id("0")
-                                                  ..isEnabled(true)
-                                                  ..name("Topic"))
-                                                .build()
-                                            : selectedTopics.first,
-                                        textStyle: theme!.textTheme.bodyMedium,
-                                        icon: LMIcon(
-                                          type: LMIconType.icon,
-                                          icon: CupertinoIcons.chevron_down,
-                                          size: 16,
-                                          color: theme!.colorScheme.onPrimary,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        }
-                      }
-                      return const SizedBox();
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // TODO: uncomment code for topic feature
+          // floatingActionButton: Padding(
+          //   padding: const EdgeInsets.only(bottom: 64.0, left: 16.0),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.start,
+          //     children: [
+          //       Align(
+          //         alignment: Alignment.bottomLeft,
+          //         child: FutureBuilder<GetTopicsResponse>(
+          //           future: getTopicsResponse,
+          //           builder: (context, snapshot) {
+          //             if (snapshot.connectionState == ConnectionState.done &&
+          //                 snapshot.hasData &&
+          //                 snapshot.data!.success == true) {
+          //               if (snapshot.data!.topics!.isNotEmpty) {
+          //                 return ValueListenableBuilder(
+          //                   valueListenable: rebuildTopicFeed,
+          //                   builder: (context, _, __) {
+          //                     return GestureDetector(
+          //                       onTap: () async {
+          //                         if (_focusNode.hasFocus) {
+          //                           FocusScopeNode currentFocus =
+          //                               FocusScope.of(context);
+          //                           currentFocus.unfocus();
+          //                           await Future.delayed(
+          //                               const Duration(milliseconds: 500));
+          //                         }
+          //                         _controllerPopUp.showMenu();
+          //                       },
+          //                       child: AbsorbPointer(
+          //                         absorbing: true,
+          //                         child: CustomPopupMenu(
+          //                           controller: _controllerPopUp,
+          //                           showArrow: false,
+          //                           verticalMargin: 10,
+          //                           horizontalMargin: 16.0,
+          //                           pressType: PressType.singleClick,
+          //                           menuBuilder: () => TopicPopUp(
+          //                             selectedTopics: selectedTopics,
+          //                             backgroundColor:
+          //                                 theme!.colorScheme.surface,
+          //                             selectedTextColor:
+          //                                 theme!.colorScheme.onPrimary,
+          //                             unSelectedTextColor:
+          //                                 theme!.colorScheme.onPrimary,
+          //                             selectedColor: theme!.colorScheme.primary,
+          //                             isEnabled: true,
+          //                             onTopicSelected:
+          //                                 (updatedTopics, tappedTopic) {
+          //                               if (selectedTopics.isEmpty) {
+          //                                 selectedTopics.add(tappedTopic);
+          //                               } else {
+          //                                 if (selectedTopics.first.id ==
+          //                                     tappedTopic.id) {
+          //                                   selectedTopics.clear();
+          //                                 } else {
+          //                                   selectedTopics.clear();
+          //                                   selectedTopics.add(tappedTopic);
+          //                                 }
+          //                               }
+          //                               _controllerPopUp.hideMenu();
+          //                               rebuildTopicFeed.value =
+          //                                   !rebuildTopicFeed.value;
+          //                             },
+          //                           ),
+          //                           child: Container(
+          //                             height: 36,
+          //                             alignment: Alignment.bottomLeft,
+          //                             margin: const EdgeInsets.only(left: 16.0),
+          //                             decoration: BoxDecoration(
+          //                               borderRadius:
+          //                                   BorderRadius.circular(500),
+          //                               color: theme!.colorScheme.primary,
+          //                             ),
+          //                             child: LMTopicChip(
+          //                               topic: selectedTopics.isEmpty
+          //                                   ? (TopicUIBuilder()
+          //                                         ..id("0")
+          //                                         ..isEnabled(true)
+          //                                         ..name("Topic"))
+          //                                       .build()
+          //                                   : selectedTopics.first,
+          //                               textStyle: theme!.textTheme.bodyMedium,
+          //                               icon: LMIcon(
+          //                                 type: LMIconType.icon,
+          //                                 icon: CupertinoIcons.chevron_down,
+          //                                 size: 16,
+          //                                 color: theme!.colorScheme.onPrimary,
+          //                               ),
+          //                             ),
+          //                           ),
+          //                         ),
+          //                       ),
+          //                     );
+          //                   },
+          //                 );
+          //               }
+          //             }
+          //             return const SizedBox();
+          //           },
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
           body: SafeArea(
             child: FutureBuilder(
                 future: postFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: ColorTheme.novaTheme.primaryColor,
+                      ),
+                    );
                   } else if (snapshot.connectionState == ConnectionState.done) {
                     GetPostResponse response = snapshot.data!;
                     widgets = response.widgets;
@@ -506,67 +511,68 @@ class _EditPostScreenState extends State<EditPostScreen> {
                   String result = TaggingHelper.encodeString(
                       textEditingController!.text, userTags);
 
-                  List<String> disabledTopics = [];
-                  for (TopicUI topic in selectedTopics) {
-                    if (!topic.isEnabled) {
-                      disabledTopics.add(topic.name);
-                    }
-                  }
-
-                  if (disabledTopics.isNotEmpty) {
-                    showDialog(
-                      context: context,
-                      builder: (dialogContext) => AlertDialog(
-                        shadowColor: Colors.transparent,
-                        backgroundColor: theme!.colorScheme.background,
-                        elevation: 0,
-                        title: const Text(
-                          "Topic Disabled",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                          ),
-                        ),
-                        content: LMTextView(
-                          text:
-                              "The following topics have been disabled. Please remove them to save the post.\n${disabledTopics.join(', ')}.",
-                          textStyle: theme!.textTheme.labelLarge,
-                        ),
-                        actions: <Widget>[
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(right: 4.0, bottom: 10.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                LMTextButton(
-                                  text: LMTextView(
-                                    text: 'Okay',
-                                    textStyle: theme!.textTheme.headlineMedium!
-                                        .copyWith(
-                                            color: theme!.colorScheme.error),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0, vertical: 4.0),
-                                  onTap: () {
-                                    Navigator.of(dialogContext).pop();
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                    return;
-                  }
+                  // List<String> disabledTopics = [];
+                  // for (TopicUI topic in selectedTopics) {
+                  //   if (!topic.isEnabled) {
+                  //     disabledTopics.add(topic.name);
+                  //   }
+                  // }
+                  //
+                  // if (disabledTopics.isNotEmpty) {
+                  //   showDialog(
+                  //     context: context,
+                  //     builder: (dialogContext) => AlertDialog(
+                  //       shadowColor: Colors.transparent,
+                  //       backgroundColor: theme!.colorScheme.background,
+                  //       elevation: 0,
+                  //       title: const Text(
+                  //         "Topic Disabled",
+                  //         style: TextStyle(
+                  //           fontWeight: FontWeight.w700,
+                  //           fontSize: 16,
+                  //         ),
+                  //       ),
+                  //       content: LMTextView(
+                  //         text:
+                  //             "The following topics have been disabled. Please remove them to save the post.\n${disabledTopics.join(', ')}.",
+                  //         textStyle: theme!.textTheme.labelLarge,
+                  //       ),
+                  //       actions: <Widget>[
+                  //         Padding(
+                  //           padding:
+                  //               const EdgeInsets.only(right: 4.0, bottom: 10.0),
+                  //           child: Row(
+                  //             mainAxisAlignment: MainAxisAlignment.end,
+                  //             children: [
+                  //               LMTextButton(
+                  //                 text: LMTextView(
+                  //                   text: 'Okay',
+                  //                   textStyle: theme!.textTheme.headlineMedium!
+                  //                       .copyWith(
+                  //                           color: theme!.colorScheme.error),
+                  //                 ),
+                  //                 padding: const EdgeInsets.symmetric(
+                  //                     horizontal: 16.0, vertical: 4.0),
+                  //                 onTap: () {
+                  //                   Navigator.of(dialogContext).pop();
+                  //                 },
+                  //               ),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   );
+                  //   return;
+                  // }
 
                   newPostBloc?.add(
                     EditPost(
                       postText: result,
                       attachments: attachments,
                       postId: postId,
-                      selectedTopics: selectedTopics,
+                      // TODO: uncomment code for topic feature
+                      selectedTopics: const [], //selectedTopics,
                     ),
                   );
                   Navigator.of(context).pop();
@@ -579,292 +585,281 @@ class _EditPostScreenState extends State<EditPostScreen> {
               },
             ),
             kVerticalPaddingMedium,
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 6.0,
-              ),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        LMProfilePicture(
-                          fallbackText: widget.company?.name ?? user!.name,
-                          imageUrl: widget.company?.imageUrl ?? user!.imageUrl,
-                          backgroundColor: theme!.primaryColor,
-                          boxShape: BoxShape.circle,
-                          onTap: () {
-                            if (user!.sdkClientInfo != null) {
-                              locator<LikeMindsService>().routeToProfile(
-                                  user!.sdkClientInfo!.userUniqueId);
-                            }
-                          },
-                          size: 48,
-                        ),
-                        kHorizontalPaddingLarge,
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 6.0),
-                            child: LMTextView(
-                              text: widget.company?.name ?? user!.name,
-                              overflow: TextOverflow.ellipsis,
-                              textStyle: theme!.textTheme.titleMedium,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  kVerticalPaddingLarge,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 6.0,
+                ),
+                child: CustomScrollView(
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              decoration: const BoxDecoration(),
-                              constraints: BoxConstraints(
-                                  maxHeight: screenSize!.height * 0.8),
-                              child: TaggingAheadTextField(
-                                isDown: true,
-                                minLines: 3,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  hintText: 'What\'s on your mind?',
-                                  hintStyle: theme!.textTheme.labelMedium,
+                            LMProfilePicture(
+                              fallbackText: widget.company?.name ?? user!.name,
+                              imageUrl:
+                                  widget.company?.imageUrl ?? user!.imageUrl,
+                              backgroundColor: theme!.primaryColor,
+                              boxShape: BoxShape.circle,
+                              onTap: () {
+                                if (user!.sdkClientInfo != null) {
+                                  locator<LikeMindsService>().routeToProfile(
+                                      user!.sdkClientInfo!.userUniqueId);
+                                }
+                              },
+                              size: 48,
+                            ),
+                            kHorizontalPaddingLarge,
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 6.0),
+                                child: LMTextView(
+                                  text: widget.company?.name ?? user!.name,
+                                  overflow: TextOverflow.ellipsis,
+                                  textStyle: theme!.textTheme.titleMedium,
                                 ),
-                                onTagSelected: (tag) {
-                                  userTags.add(tag);
-                                },
-                                controller: textEditingController!,
-                                focusNode: _focusNode,
-                                onChange: _onTextChanged,
                               ),
                             ),
-                            kVerticalPaddingXLarge,
-                            ValueListenableBuilder(
-                                valueListenable: rebuildAttachments,
-                                builder: (context, value, child) =>
-                                    ((attachments != null &&
-                                                    attachments!.isNotEmpty) &&
-                                                mapIntToMediaType(attachments!
-                                                        .first
-                                                        .attachmentType) ==
-                                                    MediaType.link &&
-                                                showLinkPreview) ||
-                                            (linkModel != null &&
-                                                showLinkPreview)
-                                        ? Stack(
-                                            children: [
-                                              LMLinkPreview(
-                                                linkModel: linkModel,
-                                                backgroundColor:
-                                                    theme!.colorScheme.surface,
-                                                showLinkUrl: false,
-                                                onTap: () {
-                                                  launchUrl(
-                                                    Uri.parse(linkModel
-                                                            ?.ogTags?.url ??
-                                                        ''),
-                                                    mode: LaunchMode
-                                                        .externalApplication,
-                                                  );
-                                                },
-                                                border: const Border(),
-                                                title: LMTextView(
-                                                  text: linkModel
-                                                          ?.ogTags?.title ??
-                                                      "--",
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  textStyle: theme!
-                                                      .textTheme.titleMedium,
-                                                ),
-                                                subtitle: LMTextView(
-                                                  text: linkModel?.ogTags
-                                                          ?.description ??
-                                                      "--",
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  textStyle: theme!
-                                                      .textTheme.displayMedium,
-                                                ),
-                                              ),
-                                              Positioned(
-                                                top: 5,
-                                                right: 5,
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    showLinkPreview = false;
-                                                    rebuildAttachments.value =
-                                                        !rebuildAttachments
-                                                            .value;
-                                                  },
-                                                  child:
-                                                      const CloseButtonIcon(),
-                                                ),
-                                              )
-                                            ],
-                                          )
-                                        : const SizedBox()),
-                            if (attachments != null &&
-                                attachments!.isNotEmpty &&
-                                mapIntToMediaType(
-                                        attachments!.first.attachmentType) !=
-                                    MediaType.link)
-                              mapIntToMediaType(
-                                          attachments!.first.attachmentType) ==
-                                      MediaType.document
-                                  ? getPostDocument(screenSize!.width)
-                                  : Builder(builder: (context) {
-                                      List<Attachment> mediaList = [
-                                        ...attachments!
-                                      ];
-                                      mediaList.removeWhere((element) =>
-                                          element.attachmentType == 5);
-                                      int mediaLength = mediaList.length;
-                                      return Container(
-                                        padding: const EdgeInsets.only(
-                                          top: kPaddingSmall,
-                                        ),
-                                        height: mediaLength == 1
-                                            ? screenSize!.width - 32
-                                            : 200,
-                                        alignment: Alignment.center,
-                                        child: ListView.builder(
-                                          itemCount: mediaLength,
-                                          physics: mediaLength == 1
-                                              ? const NeverScrollableScrollPhysics()
-                                              : null,
-                                          scrollDirection: Axis.horizontal,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return Row(
-                                              children: [
-                                                SizedBox(
-                                                  child: Stack(
-                                                    children: [
-                                                      mapIntToMediaType(mediaList[
-                                                                      index]
-                                                                  .attachmentType) ==
-                                                              MediaType.video
-                                                          ? ClipRRect(
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .all(
-                                                                      Radius.circular(
-                                                                          20)),
-                                                              child: Container(
-                                                                height: mediaLength ==
-                                                                        1
-                                                                    ? screenSize!
-                                                                            .width -
-                                                                        32
-                                                                    : 200,
-                                                                width: mediaLength ==
-                                                                        1
-                                                                    ? screenSize!
-                                                                            .width -
-                                                                        32
-                                                                    : 200,
-                                                                color: Colors
-                                                                    .black,
-                                                                child: LMVideo(
-                                                                  videoUrl: mediaList[
-                                                                          index]
-                                                                      .attachmentMeta
-                                                                      .url!,
-                                                                  height: mediaLength ==
-                                                                          1
-                                                                      ? screenSize!
-                                                                              .width -
-                                                                          32
-                                                                      : 200,
-                                                                  width: mediaLength ==
-                                                                          1
-                                                                      ? screenSize!
-                                                                              .width -
-                                                                          32
-                                                                      : 200,
-                                                                  boxFit: BoxFit
-                                                                      .cover,
-                                                                  showControls:
-                                                                      false,
-                                                                  borderRadius:
-                                                                      18,
-                                                                ),
-                                                              ),
-                                                            )
-                                                          : ClipRRect(
-                                                              borderRadius:
-                                                                  const BorderRadius
-                                                                      .all(
-                                                                      Radius.circular(
-                                                                          20)),
-                                                              child: Container(
-                                                                height: mediaLength ==
-                                                                        1
-                                                                    ? screenSize!
-                                                                            .width -
-                                                                        32
-                                                                    : 200,
-                                                                width: mediaLength ==
-                                                                        1
-                                                                    ? screenSize!
-                                                                            .width -
-                                                                        32
-                                                                    : 200,
-                                                                color: Colors
-                                                                    .black,
-                                                                child: LMImage(
-                                                                  height: mediaLength ==
-                                                                          1
-                                                                      ? screenSize!
-                                                                              .width -
-                                                                          32
-                                                                      : 200,
-                                                                  width: mediaLength ==
-                                                                          1
-                                                                      ? screenSize!
-                                                                              .width -
-                                                                          32
-                                                                      : 200,
-                                                                  boxFit: BoxFit
-                                                                      .cover,
-                                                                  borderRadius:
-                                                                      18,
-                                                                  imageUrl: mediaList[
-                                                                          index]
-                                                                      .attachmentMeta
-                                                                      .url!,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 8),
-                                              ],
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    }),
-                            kVerticalPaddingMedium,
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SliverPadding(
+                      padding: EdgeInsets.only(
+                        top: 16.0,
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: SizedBox(
+                        width: screenSize!.width - 24.0,
+                        child: TaggingAheadTextField(
+                          isDown: true,
+                          minLines: 3,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'What\'s on your mind?',
+                            hintStyle: theme!.textTheme.labelMedium,
+                          ),
+                          onTagSelected: (tag) {
+                            userTags.add(tag);
+                          },
+                          controller: textEditingController!,
+                          focusNode: _focusNode,
+                          onChange: _onTextChanged,
+                        ),
+                      ),
+                    ),
+                    const SliverPadding(
+                      padding: EdgeInsets.only(
+                        top: 20.0,
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: ValueListenableBuilder(
+                          valueListenable: rebuildAttachments,
+                          builder: (context, value, child) => ((attachments !=
+                                              null &&
+                                          attachments!.isNotEmpty) &&
+                                      mapIntToMediaType(attachments!
+                                              .first.attachmentType) ==
+                                          MediaType.link &&
+                                      showLinkPreview) ||
+                                  (linkModel != null && showLinkPreview)
+                              ? Stack(
+                                  children: [
+                                    LMLinkPreview(
+                                      linkModel: linkModel,
+                                      backgroundColor:
+                                          theme!.colorScheme.surface,
+                                      showLinkUrl: false,
+                                      onTap: () {
+                                        launchUrl(
+                                          Uri.parse(
+                                              linkModel?.ogTags?.url ?? ''),
+                                          mode: LaunchMode.externalApplication,
+                                        );
+                                      },
+                                      border: const Border(),
+                                      title: LMTextView(
+                                        text: linkModel?.ogTags?.title ?? "--",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        textStyle: theme!.textTheme.titleMedium,
+                                      ),
+                                      subtitle: LMTextView(
+                                        text: linkModel?.ogTags?.description ??
+                                            "--",
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        textStyle:
+                                            theme!.textTheme.displayMedium,
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 5,
+                                      right: 5,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          showLinkPreview = false;
+                                          rebuildAttachments.value =
+                                              !rebuildAttachments.value;
+                                        },
+                                        child: const CloseButtonIcon(),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              : const SizedBox()),
+                    ),
+                    if (attachments != null &&
+                        attachments!.isNotEmpty &&
+                        mapIntToMediaType(attachments!.first.attachmentType) !=
+                            MediaType.link)
+                      mapIntToMediaType(attachments!.first.attachmentType) ==
+                              MediaType.document
+                          ? SliverToBoxAdapter(
+                              child: getPostDocument(screenSize!.width))
+                          : SliverToBoxAdapter(
+                              child: Builder(builder: (context) {
+                                List<Attachment> mediaList = [...attachments!];
+                                mediaList.removeWhere(
+                                    (element) => element.attachmentType == 5);
+                                int mediaLength = mediaList.length;
+                                return Container(
+                                  padding: const EdgeInsets.only(
+                                    top: kPaddingSmall,
+                                  ),
+                                  height: mediaLength == 1
+                                      ? screenSize!.width - 32
+                                      : 200,
+                                  alignment: Alignment.center,
+                                  child: ListView.builder(
+                                    itemCount: mediaLength,
+                                    physics: mediaLength == 1
+                                        ? const NeverScrollableScrollPhysics()
+                                        : null,
+                                    scrollDirection: Axis.horizontal,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Row(
+                                        children: [
+                                          SizedBox(
+                                            child: Stack(
+                                              children: [
+                                                mapIntToMediaType(mediaList[
+                                                                index]
+                                                            .attachmentType) ==
+                                                        MediaType.video
+                                                    ? ClipRRect(
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                .all(
+                                                                Radius.circular(
+                                                                    20)),
+                                                        child: Container(
+                                                          height: mediaLength ==
+                                                                  1
+                                                              ? screenSize!
+                                                                      .width -
+                                                                  32
+                                                              : 200,
+                                                          width: mediaLength ==
+                                                                  1
+                                                              ? screenSize!
+                                                                      .width -
+                                                                  32
+                                                              : 200,
+                                                          color: Colors.black,
+                                                          child: LMVideo(
+                                                            videoUrl: mediaList[
+                                                                    index]
+                                                                .attachmentMeta
+                                                                .url!,
+                                                            height: mediaLength ==
+                                                                    1
+                                                                ? screenSize!
+                                                                        .width -
+                                                                    32
+                                                                : 200,
+                                                            width: mediaLength ==
+                                                                    1
+                                                                ? screenSize!
+                                                                        .width -
+                                                                    32
+                                                                : 200,
+                                                            boxFit:
+                                                                BoxFit.cover,
+                                                            showControls: false,
+                                                            borderRadius: 18,
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : ClipRRect(
+                                                        borderRadius:
+                                                            const BorderRadius
+                                                                .all(
+                                                                Radius.circular(
+                                                                    20)),
+                                                        child: Container(
+                                                          height: mediaLength ==
+                                                                  1
+                                                              ? screenSize!
+                                                                      .width -
+                                                                  32
+                                                              : 200,
+                                                          width: mediaLength ==
+                                                                  1
+                                                              ? screenSize!
+                                                                      .width -
+                                                                  32
+                                                              : 200,
+                                                          color: Colors.black,
+                                                          child: LMImage(
+                                                            height: mediaLength ==
+                                                                    1
+                                                                ? screenSize!
+                                                                        .width -
+                                                                    32
+                                                                : 200,
+                                                            width: mediaLength ==
+                                                                    1
+                                                                ? screenSize!
+                                                                        .width -
+                                                                    32
+                                                                : 200,
+                                                            boxFit:
+                                                                BoxFit.cover,
+                                                            borderRadius: 18,
+                                                            imageUrl: mediaList[
+                                                                    index]
+                                                                .attachmentMeta
+                                                                .url!,
+                                                          ),
+                                                        ),
+                                                      ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                );
+                              }),
+                            ),
+                    const SliverPadding(
+                      padding: EdgeInsets.only(
+                        top: 80.0,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

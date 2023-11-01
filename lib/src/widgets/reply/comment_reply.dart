@@ -330,13 +330,15 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
             }
             if (state is CommentRepliesLoading) {
               if (state.commentId == widget.reply.id) {
-                return const Padding(
-                  padding: EdgeInsets.only(top: 8.0),
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
                   child: Center(
                     child: SizedBox(
                       height: 20,
                       width: 20,
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: ColorTheme.novaTheme.primaryColor,
+                      ),
                     ),
                   ),
                 );
@@ -397,6 +399,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                   textStyle: TextStyle(
                                     color: ColorTheme
                                         .novaTheme.colorScheme.primary,
+                                    fontFamily: 'Gantari',
                                     fontSize: 14,
                                   ),
                                 ),
@@ -408,6 +411,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                       ' ${replies.length} of ${reply!.repliesCount}',
                                   textStyle: const TextStyle(
                                     fontSize: 11,
+                                    fontFamily: 'Gantari',
                                     color: kGrey3Color,
                                   ),
                                 ),
@@ -452,6 +456,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                 'Show more replies',
                                 style: TextStyle(
                                   color: kBlueGreyColor,
+                                  fontFamily: 'Gantari',
                                   fontSize: 14,
                                 ),
                               ),
@@ -460,6 +465,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                               ' ${replies.length} of ${reply!.repliesCount}',
                               style: const TextStyle(
                                 fontSize: 11,
+                                fontFamily: 'Gantari',
                                 color: kGrey3Color,
                               ),
                             )
@@ -501,6 +507,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                   'Show more replies',
                                   style: TextStyle(
                                     color: kBlueGreyColor,
+                                    fontFamily: 'Gantari',
                                     fontSize: 14,
                                   ),
                                 ),
@@ -509,6 +516,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                 ' ${replies.length} of ${reply!.repliesCount}',
                                 style: const TextStyle(
                                   fontSize: 11,
+                                  fontFamily: 'Gantari',
                                   color: kGrey3Color,
                                 ),
                               )
@@ -554,6 +562,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                   'Show more replies',
                                   style: TextStyle(
                                     color: kBlueGreyColor,
+                                    fontFamily: 'Gantari',
                                     fontSize: 14,
                                   ),
                                 ),
@@ -563,6 +572,7 @@ class _CommentReplyWidgetState extends State<CommentReplyWidget> {
                                 style: const TextStyle(
                                   fontSize: 11,
                                   color: kGrey3Color,
+                                  fontFamily: 'Gantari',
                                 ),
                               )
                             ],

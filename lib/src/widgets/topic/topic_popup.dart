@@ -151,7 +151,11 @@ class _TopicPopUpState extends State<TopicPopUp> {
         },
         builder: (context, state) {
           if (state is TopicLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(
+                color: ColorTheme.novaTheme.primaryColor,
+              ),
+            );
           }
 
           if (state is TopicLoaded) {
@@ -214,6 +218,7 @@ class _TopicPopUpState extends State<TopicPopUp> {
                                                     : widget.unSelectedTextColor ??
                                                         appBlack,
                                                 fontSize: 14,
+                                                fontFamily: 'Gantari',
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),

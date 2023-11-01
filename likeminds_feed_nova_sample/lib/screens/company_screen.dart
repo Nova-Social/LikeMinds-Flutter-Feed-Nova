@@ -69,6 +69,7 @@ class _CompanyScreenState extends State<CompanyScreen> {
                   dummyCompany.name,
                   style: const TextStyle(
                     fontSize: 28,
+                    fontFamily: 'Gantari',
                     fontWeight: FontWeight.bold,
                     color: ColorTheme.lightWhite300,
                   ),
@@ -86,6 +87,7 @@ class _CompanyScreenState extends State<CompanyScreen> {
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   color: ColorTheme.lightWhite300,
+                  fontFamily: 'Gantari',
                 ),
               ),
             ),
