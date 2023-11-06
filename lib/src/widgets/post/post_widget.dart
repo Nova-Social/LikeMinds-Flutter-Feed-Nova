@@ -625,17 +625,17 @@ class _NovaPostWidgetState extends State<NovaPostWidget> {
                         ),
                       ),
                       const Spacer(),
-                      LMIconButton(
-                        onTap: (value) {
-                          SharePost().sharePost(widget.post.id);
-                        },
-                        icon: LMIcon(
-                          type: LMIconType.svg,
-                          assetPath: kAssetShareIcon,
-                          color: theme.colorScheme.onPrimary,
-                          size: 20,
-                        ),
-                      ),
+                      // LMIconButton(
+                      //   onTap: (value) {
+                      //     SharePost().sharePost(widget.post.id);
+                      //   },
+                      //   icon: LMIcon(
+                      //     type: LMIconType.svg,
+                      //     assetPath: kAssetShareIcon,
+                      //     color: theme.colorScheme.onPrimary,
+                      //     size: 20,
+                      //   ),
+                      // ),
                     ],
                     // children: [
 
